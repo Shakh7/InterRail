@@ -1,0 +1,25 @@
+.excel_file {
+    color: #188f14;
+}
+.c_icon {
+    font-size: 18px
+}
+.c_icon_hoverable {
+    font-size: 18px;
+    transition: 0.1s;
+    cursor: pointer;
+}
+.c_icon_hoverable:hover {
+    transition: 0.1s;
+    transform: scale(1.4);
+}
+.edit_icon {
+    
+}
+.zip_file{ 
+    color: #650f7b
+}
+.user-circlar-avatar {
+    border-radius: 50%;
+    margin-right: 5px;
+}
