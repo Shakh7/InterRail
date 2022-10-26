@@ -1,4 +1,4 @@
-# velzon
+# InterRail
 
 ## Project setup
 ```
