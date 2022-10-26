@@ -1,4 +1,4 @@
-# InterRail
+#InterRail
 
 ## Project setup
 ```
