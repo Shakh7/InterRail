@@ -140,17 +140,14 @@
                       <tr v-for="(container, i) in ctr_type.expanses" :key="i">
                         <th>{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-                          <input class="form-control form-control-sm w-100 border-info"
-                                 type="text" placeholder="Container" v-if="container.container"
-                                 v-model="container.container">
+<!--                          <input class="form-control form-control-sm w-100 border-info"-->
+<!--                                 type="text" placeholder="Container" v-if="container.container"-->
+<!--                                 v-model="container.container">-->
 
-                          {{ Object.prototype.hasOwnProperty.call(container, 'myKey') }}
-
-                          {{ typeof (container.container)}}
-
-                          <input class="form-control form-control-sm w-100 border-info"
-                                 type="text" placeholder="Container" v-if="container.container !== null"
-                                 v-model="container.container.name">
+<!--                          <input class="form-control form-control-sm w-100 border-info"-->
+<!--                                 type="text" placeholder="Container" v-if="container.container !== null"-->
+<!--                                 v-model="container.container.name">-->
+                          {{container.container=== null}}
                         </td>
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"
@@ -419,7 +416,7 @@ export default {
   },
   created() {
     const fetchData = async () => {
-      let response = await fetch(`http://178.62.91.121:5000/api/container_order/list/${this.$route.params.id}/`)
+      let response = await fetch(`http://178.62.91.121:5000/container_order/list/${this.$route.params.id}/`)
       let data = await response.json()
       console.log(data)
       if (data.length === 0) {

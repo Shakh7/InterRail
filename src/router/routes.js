@@ -92,11 +92,16 @@ export default [
                 component: () => import("../views/pages/orders/list.vue"),
             },
             {
-                path: 'create/',
-                name: 'order_create',
-                meta: {title: "New Order",},
-                props: route => ({query: route.query.type}),
-                component: () => import("../views/pages/orders/create.vue"),
+                path: 'create-container/',
+                name: 'create_container',
+                meta: {title: "Container Order",},
+                component: () => import("../views/pages/orders/createBeta.vue"),
+            },
+            {
+                path: 'create-wagon/',
+                name: 'create_wagon',
+                meta: {title: "Wagon Order",},
+                component: () => import("../views/pages/orders/createBeta.vue"),
             },
             {
                 path: 'update/:id',

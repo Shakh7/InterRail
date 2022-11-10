@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     async getOrders() {
-      let response = await fetch('http://178.62.91.121:5000/api/container_order/list/')
+      let response = await fetch('http://178.62.91.121:5000/container_order/list/')
       let data = await response.json()
       let results = data.results
       let orders = results.map(result => result.order)
@@ -95,9 +95,9 @@ export default {
           Create order
         </button>
         <div class="dropdown-menu dropdownmenu-success">
-          <router-link class="dropdown-item" to="/orders/create/?type=container">Container</router-link>
+          <router-link class="dropdown-item" :to="{name: 'create_container'}">Container</router-link>
           <div class="dropdown-divider"></div>
-          <router-link class="dropdown-item" to="/orders/create/?type=wagon">Wagon</router-link>
+          <router-link class="dropdown-item" :to="{name: 'create_wagon'}">Wagon</router-link>
           <div class="dropdown-divider"></div>
           <router-link class="dropdown-item" to="/orders/create/?type=empty_wagon">Empty wagon</router-link>
         </div>
