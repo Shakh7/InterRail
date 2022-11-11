@@ -1,5 +1,4 @@
 <template>
-
   <Transition name="slide-up">
 
     <div class="row vh-100 justify-content-center align-items-center" v-if="isLoading()">
@@ -126,14 +125,18 @@
                         <th class="text-center">#</th>
                         <th class="text-center">Container</th>
                         <th class="text-center">Agreed rate</th>
-                        <th class="text-center py-0 m-0"
-                            v-for="party in order.counterparties" :key="party.id">
+                        <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party.id"
+                            @click="updateCounterparty(party)">
                           <span class="badge bg-success">{{ party.category.name }}</span>
                           <span class="d-block">{{ party.counterparty.name }}</span>
                         </th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Profit</th>
-                        <th class="text-center font-weight-medium">Actions</th>
+                        <th class="text-center font-weight-medium">
+                          <button class="btn btn-success my-0 py-0" @click="createCounterparty">
+                            <i class="ri-add-fill"></i>
+                          </button>
+                        </th>
                       </tr>
                       </thead>
                       <tbody v-for="ctr_type in container_types" :key="ctr_type.id">
@@ -365,7 +368,7 @@
           </div>
           <div class="card">
             <div class="card-header"><h6 class="card-title fw-semibold mb-0">Files Attachment</h6></div>
-            <div class="card-body">
+            <div class="card-body"> data-bs-toggle="modal" data-bs-target="#staticBackdrop"
               <div class="d-flex align-items-center border border-dashed p-2 rounded">
                 <div class="flex-shrink-0 avatar-sm">
                   <div class="avatar-title bg-light rounded"><i class="ri-file-zip-line fs-20 text-primary"></i></div>
@@ -400,6 +403,7 @@
 <script>
 import {ref} from "vue";
 import Swal from "sweetalert2";
+import OrdersApi from "@/api/orders/orders_api";
 
 export default {
   name: "detail",
@@ -407,18 +411,23 @@ export default {
     const order = []
     let product = ref(null)
     let container_types = ref(null)
+    let updateCounterpartyInfo = ref(null)
+    let counterparty_list = ref([])
+    let category_list = ref([])
 
     return {
       order,
       product,
-      container_types
+      container_types,
+      updateCounterpartyInfo,
+      counterparty_list,
+      category_list
     }
   },
-  created() {
-    const fetchData = async () => {
+  methods: {
+    async fetchData () {
       let response = await fetch(`http://178.62.91.121:5000/container_order/list/${this.$route.params.id}/`)
       let data = await response.json()
-      console.log(data)
       if (data.length === 0) {
         let timerInterval
         Swal.fire({
@@ -441,18 +450,149 @@ export default {
       this.order = data[0]['order']
       this.product = data[0]['product']
       this.container_types = data[0]['container_types']
-    };
-
-    fetchData();
-  },
-  methods: {
+    },
     isLoading() {
       return this.order.order_number === null || this.order.order_number === undefined
     },
     loadData(data) {
       return this.isLoading() ? 'Loading...' : data
+    },
+    async getCounterpartyList() {
+      if (this.counterparty_list.length > 0) return
+      let orders = new OrdersApi()
+      this.counterparty_list = (await orders.getCounterpartyList()).results
+    },
+    async getCategoryList() {
+      if (this.category_list.length > 0) return;
+      let orders = new OrdersApi()
+      this.category_list = (await orders.getCategoryList()).results
+    },
+    async updateCounterparty(item) {
+      const { value: formValues } = await Swal.fire({
+        title: 'Update Counterparty',
+        html:
+          '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
+            `${this.category_list.map(c => {
+                return item.category.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+              })}`+
+          '</select>' +
+          '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
+            `${this.counterparty_list.map(c => {
+                return item.counterparty.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+              })}`+
+          '</select>',
+        focusConfirm: false,
+        confirmButtonText: 'Save',
+        confirmButtonColor: '#0AB39C',
+        preConfirm: () => {
+          return [
+            document.getElementById('counterpartyUpdate').value,
+            document.getElementById('categoryUpdate').value
+          ]
+        }
+      })
+
+      if (formValues) {
+        let headers = new Headers();
+        headers.append("Content-Type", `application/json`);
+
+        let requestGetOptions = {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify({
+              "category_id": formValues[1],
+              "counterparty_id": formValues[0]
+            }),
+        };
+
+        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/update/${item.id}/`, requestGetOptions)
+        if (response.status >= 200) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated'
+          })
+        }
+        await this.fetchData();
+      }
+    },
+    async createCounterparty() {
+      const { value: formValues } = await Swal.fire({
+        title: 'Create Counterparty',
+        html:
+          '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
+            `${this.category_list.map(c => {
+                return `<option value="${c.id}">${c.name}</option>`
+              })}`+
+          '</select>' +
+          '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
+            `${this.counterparty_list.map(c => {
+                return `<option value="${c.id}">${c.name}</option>`
+              })}`+
+          '</select>',
+        focusConfirm: false,
+        confirmButtonText: 'Save',
+        confirmButtonColor: '#0AB39C',
+        preConfirm: () => {
+          return [
+            document.getElementById('counterpartyUpdate').value,
+            document.getElementById('categoryUpdate').value
+          ]
+        }
+      })
+
+      if (formValues) {
+        let headers = new Headers();
+        headers.append("Content-Type", `application/json`);
+
+        let requestGetOptions = {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify({
+              "category_id": formValues[1],
+              "counterparty_id": formValues[0]
+            }),
+        };
+
+        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/create/`, requestGetOptions)
+        if (response.status >= 200) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated'
+          })
+        }
+        await this.fetchData();
+      }
     }
-  }
+  },
+  async mounted () {
+    await this.fetchData();
+    await this.getCategoryList()
+    await this.getCounterpartyList()
+  },
 }
 </script>
 
