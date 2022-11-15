@@ -143,14 +143,9 @@
                       <tr v-for="(container, i) in ctr_type.expanses" :key="i">
                         <th>{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-<!--                          <input class="form-control form-control-sm w-100 border-info"-->
-<!--                                 type="text" placeholder="Container" v-if="container.container"-->
-<!--                                 v-model="container.container">-->
-
-<!--                          <input class="form-control form-control-sm w-100 border-info"-->
-<!--                                 type="text" placeholder="Container" v-if="container.container !== null"-->
-<!--                                 v-model="container.container.name">-->
-                          {{container.container=== null}}
+                          <input class="form-control form-control-sm w-100 "
+                                 type="text" placeholder="Container">
+                          <span v-if="container.container === null"></span>
                         </td>
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"
@@ -220,11 +215,11 @@
                       <tr v-for="(container, i) in ctr_type.expanses" :key="container">
                         <th>{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-                          <span v-if="container.container === null"> {{ container.container }}</span>
+                          <span v-if="container.container === null">  </span>
                           <span v-if="container.container !== null"> {{ container.container.name }}</span>
                         </td>
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
-                        <td class="text-center" v-for="pre_cost in container.actual_costs"
+                          <td class="text-center" v-for="pre_cost in container.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
                           <input class="form-control form-control-sm w-75 m-auto" type="number"
                                  :value="pre_cost.actual_cost">

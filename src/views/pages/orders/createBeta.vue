@@ -38,12 +38,6 @@ export default {
           agreed_rate: '',
           quantity: '',
           container_type: '40',
-          container_preliminary_costs: [
-            {
-              category_id: [],
-              counterparty_id: null,
-            }
-          ]
         }
       ],
 
@@ -88,6 +82,7 @@ export default {
           order_number: 0,
           category_id: [],
           counterparty_id: 0,
+          container_type: '40'
         }
       ],
     }
@@ -612,7 +607,7 @@ export default {
                 </div>
                 <div class="card-body">
                   <div class="row g-3">
-                    <div class="col-6 pe-2 mb-0" v-for="counterparty in counterparties" :key="counterparty">
+                    <div class="col-6 pe-2 mb-0" v-for="counterparty in counterparties.filter(c => c.container_type === ctr_type.container_type)" :key="counterparty">
                       <b-list-group class="bg-light p-2 py-1" v-if="counterparty.category_id.length > 0">
                         <h6 class="my-0 p-2">{{ counterparty.counterparty_id.name }}</h6>
                         <b-list-group-item class="my-1 p-0 border-0" v-for="category in counterparty.category_id"

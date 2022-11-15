@@ -153,6 +153,25 @@ export default [
         ],
     },
 
+    {
+        path: "/invoices/",
+        name: "Invoices",
+        meta: {title: "Invoices List", authRequired: true, permissions: ['admin', 'staff', 'client']},
+        component: () => import("../layouts/layout.vue"),
+        children: [
+            {path: 'list/', name: 'invoices_list', component: () => import("../views/pages/invoices/index.vue"),},
+            {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),}
+        ],
+    },
+    {
+        path: "/counterparty/",
+        name: "Counterparty",
+        meta: {title: "Counterparty List", authRequired: true, permissions: ['admin', 'staff', 'client']},
+        component: () => import("../layouts/layout.vue"),
+        children: [
+            {path: 'list/', name: 'counterparty_list', component: () => import("../views/pages/counterparties/index.vue"),}
+        ],
+    },
 
     // ERRORS ERRORS ERRORS
 
