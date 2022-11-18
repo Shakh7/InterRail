@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from "./router";
 import AOS from 'aos'
@@ -19,8 +19,8 @@ import Maska from 'maska';
 
 import {
     VTooltip,
-  } from 'floating-vue'
-  
+} from 'floating-vue'
+
 
 import VueFeather from 'vue-feather';
 import Particles from "particles.vue3";
@@ -31,18 +31,34 @@ import 'floating-vue/dist/style.css'
 import '../src/assets/css/custom.css'
 
 /* import the fontawesome core */
-import { library } from '@fortawesome/fontawesome-svg-core'
+import {library} from '@fortawesome/fontawesome-svg-core'
 
 /* import font awesome icon component */
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faFileExcel, faTrash, faFileZipper, faFolder, faPrint, faTrain, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import {
+    faFileExcel,
+    faTrash,
+    faFileZipper,
+    faFolder,
+    faPrint,
+    faTrain,
+    faPenToSquare,
+    faAngleDown
+} from '@fortawesome/free-solid-svg-icons'
 
-// import { faPenToSquare } from '@fortawesome/free-regular-svg-icons'
 
-/* add icons to the library */
-library.add(faFileExcel, faPenToSquare, faTrash, faFileZipper, faFolder, faPrint, faTrain)
+library.add(
+    faFileExcel,
+    faPenToSquare,
+    faTrash,
+    faFileZipper,
+    faFolder,
+    faPrint,
+    faTrain,
+    faAngleDown
+)
 
 AOS.init({
     easing: 'ease-out-back',

@@ -118,10 +118,11 @@
               <!-- TAB CONTENT STARTS -->
               <div class="tab-content text-muted">
                 <div class="tab-pane active" id="actual_cost_tab" role="tabpanel">
+
                   <div class="table-responsive table-card">
                     <table class="table table-striped">
-                      <thead class="table-light">
-                      <tr>
+                      <thead>
+                      <tr class="bg-light">
                         <th class="text-center">#</th>
                         <th class="text-center">Container</th>
                         <th class="text-center">Agreed rate</th>
@@ -132,26 +133,38 @@
                         </th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Profit</th>
-                        <th class="text-center font-weight-medium">
+                      </tr>
+                      <tr class="bg-white fs-5">
+                        <th class="text-center">
                           <button class="btn btn-success my-0 py-0" @click="createCounterparty">
                             <i class="ri-add-fill"></i>
                           </button>
                         </th>
+                        <th class="text-center">
+                        </th>
+                        <th class="text-center">{{ sumAgreedCosts() }}</th>
+                        <th class="text-center m-0" v-for="party in order.counterparties" :key="party.id">
+                          {{ party.total_expanses }}
+                        </th>
+                        <th class="text-center">{{ sumProfit() }}</th>
+                        <th class="text-center">{{ sumAgreedCosts() - sumProfit() }}</th>
                       </tr>
                       </thead>
                       <tbody v-for="ctr_type in container_types" :key="ctr_type.id">
+                      <tr class="border-success">
+                        <th class="text-center my-1 bg-transparent text-success"
+                            :colspan="6 + order.counterparties.length">{{ ctr_type.container_type }}
+                        </th>
+                      </tr>
                       <tr v-for="(container, i) in ctr_type.expanses" :key="i">
-                        <th>{{ i + 1 }}</th>
+                        <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-                          <input class="form-control form-control-sm w-100 "
-                                 type="text" placeholder="Container">
-                          <span v-if="container.container === null"></span>
+                          <ContainerInput :container="container"/>
                         </td>
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
-                          <input class="form-control form-control-sm w-75 m-auto" type="number"
-                                 :value="pre_cost.actual_cost">
+                          <ActualCostInput :actualCost="pre_cost"/>
                         </td>
                         <td class="text-center">
                           ${{
@@ -162,31 +175,6 @@
                           ${{
                             ctr_type.agreed_rate - container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
                           }}
-                        </td>
-                        <td class="text-center font-weight-medium">
-                          <button type="button" class="btn py-0 fs-16 text-body" id="settingDropdown"
-                                  data-bs-toggle="dropdown" aria-expanded="false">
-                            <font-awesome-icon icon="fa-solid fa-pen-to-square"/>
-                          </button>
-                          <ul class="dropdown-menu dropdownmenu-secondary" aria-labelledby="settingDropdown" style="">
-                            <li>
-                              <a class="dropdown-item" href="#">
-                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i>View
-                              </a>
-                            </li>
-
-                            <li>
-                              <a class="dropdown-item" href="#">
-                                <i class="ri-share-forward-fill align-bottom me-2 text-muted"></i> Share with
-                              </a>
-                            </li>
-
-                            <li>
-                              <a class="dropdown-item text-danger" href="#">
-                                <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> Delete
-                              </a>
-                            </li>
-                          </ul>
                         </td>
                       </tr>
                       </tbody>
@@ -219,7 +207,7 @@
                           <span v-if="container.container !== null"> {{ container.container.name }}</span>
                         </td>
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
-                          <td class="text-center" v-for="pre_cost in container.actual_costs"
+                        <td class="text-center" v-for="pre_cost in container.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
                           <input class="form-control form-control-sm w-75 m-auto" type="number"
                                  :value="pre_cost.actual_cost">
@@ -349,15 +337,19 @@
                     <td class="fw-medium">Last Activity</td>
                     <td>14 min ago</td>
                   </tr>
-                  <tr>
-                    <td colspan="2">
-                      <div class="d-grid gap-2">
-                        <b-button variant="success">Save</b-button>
-                      </div>
-                    </td>
-                  </tr>
                   </tbody>
                 </table>
+
+                <button
+                    class="btn btn-soft-success fw-medium w-100"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight"
+                    aria-controls="offcanvasRight"
+                >See Actions
+                </button>
+
+
               </div>
             </div>
           </div>
@@ -393,12 +385,24 @@
     </div>
 
   </Transition>
+
+
+  <CounterpartyActions
+      v-if="!isLoading()"
+      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id }})"
+      :counterparties="order.counterparties"
+      :counterparty_list="counterparty_list"
+      :category_list="category_list"
+  />
 </template>
 
 <script>
 import {ref} from "vue";
 import Swal from "sweetalert2";
 import OrdersApi from "@/api/orders/orders_api";
+import ContainerInput from "@/views/pages/orders/components/ContainerInput";
+import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
+import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
 
 export default {
   name: "detail",
@@ -420,7 +424,7 @@ export default {
     }
   },
   methods: {
-    async fetchData () {
+    async fetchData() {
       let response = await fetch(`http://178.62.91.121:5000/container_order/list/${this.$route.params.id}/`)
       let data = await response.json()
       if (data.length === 0) {
@@ -463,19 +467,19 @@ export default {
       this.category_list = (await orders.getCategoryList()).results
     },
     async updateCounterparty(item) {
-      const { value: formValues } = await Swal.fire({
+      const {value: formValues} = await Swal.fire({
         title: 'Update Counterparty',
         html:
-          '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
+            '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
             `${this.category_list.map(c => {
-                return item.category.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
-              })}`+
-          '</select>' +
-          '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
+              return item.category.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>' +
+            '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
             `${this.counterparty_list.map(c => {
-                return item.counterparty.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
-              })}`+
-          '</select>',
+              return item.counterparty.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>',
         focusConfirm: false,
         confirmButtonText: 'Save',
         confirmButtonColor: '#0AB39C',
@@ -492,12 +496,12 @@ export default {
         headers.append("Content-Type", `application/json`);
 
         let requestGetOptions = {
-            method: 'PUT',
-            headers: headers,
-            body: JSON.stringify({
-              "category_id": formValues[1],
-              "counterparty_id": formValues[0]
-            }),
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify({
+            "category_id": formValues[1],
+            "counterparty_id": formValues[0]
+          }),
         };
 
         let response = await fetch(`http://178.62.91.121:5000/order/counterparty/update/${item.id}/`, requestGetOptions)
@@ -523,19 +527,19 @@ export default {
       }
     },
     async createCounterparty() {
-      const { value: formValues } = await Swal.fire({
+      const {value: formValues} = await Swal.fire({
         title: 'Create Counterparty',
         html:
-          '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
+            '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
             `${this.category_list.map(c => {
-                return `<option value="${c.id}">${c.name}</option>`
-              })}`+
-          '</select>' +
-          '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
+              return `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>' +
+            '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
             `${this.counterparty_list.map(c => {
-                return `<option value="${c.id}">${c.name}</option>`
-              })}`+
-          '</select>',
+              return `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>',
         focusConfirm: false,
         confirmButtonText: 'Save',
         confirmButtonColor: '#0AB39C',
@@ -552,12 +556,12 @@ export default {
         headers.append("Content-Type", `application/json`);
 
         let requestGetOptions = {
-            method: 'PUT',
-            headers: headers,
-            body: JSON.stringify({
-              "category_id": formValues[1],
-              "counterparty_id": formValues[0]
-            }),
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify({
+            "category_id": formValues[1],
+            "counterparty_id": formValues[0]
+          }),
         };
 
         let response = await fetch(`http://178.62.91.121:5000/order/counterparty/create/`, requestGetOptions)
@@ -581,12 +585,40 @@ export default {
         }
         await this.fetchData();
       }
+    },
+
+    sumAgreedCosts() {
+      let total = 0;
+
+      this.container_types.forEach(ctr_type => {
+        total += (parseInt(ctr_type.agreed_rate) * parseInt(ctr_type.quantity));
+      });
+
+      return total
+    },
+    sumProfit() {
+      let total = 0;
+
+      this.order.counterparties.map(c => c.total_expanses).forEach(exp => {
+        total += parseInt(exp);
+      });
+
+      return total
+    },
+
+    getContainerTypes() {
+      return [{name: "d"}]
     }
   },
-  async mounted () {
+  async mounted() {
     await this.fetchData();
     await this.getCategoryList()
     await this.getCounterpartyList()
+  },
+  components: {
+    ContainerInput,
+    ActualCostInput,
+    CounterpartyActions
   },
 }
 </script>

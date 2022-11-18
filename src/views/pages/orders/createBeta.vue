@@ -29,19 +29,10 @@ export default {
           data_target: "step4",
         },
       ],
+
       counterparty_list: [],
       category_list: [],
-      loading: false,
-      cntrs_types_options: ['20', '20HC', '40', '40HC', '45'],
-      container_types: [
-        {
-          agreed_rate: '',
-          quantity: '',
-          container_type: '40',
-        }
-      ],
-
-      container_type_ids: null,
+      container_type_options: ['20', '20HC', '40', '40HC', '45'],
 
       order: {
         order_number: 1,
@@ -62,8 +53,29 @@ export default {
         destination_country: "China",
         comment: "Hello world",
         manager: 1,
-        customer: 1
+        customer: 1,
+        counterparties: [
+          {
+            category_id: [],
+            counterparty_id: 1
+          }
+        ]
       },
+      sending_type: "single",
+      container_types: [
+        {
+          agreed_rate: "500.00",
+          quantity: 35,
+          container_type: "40HC",
+          container_preliminary_costs: [
+            {
+              category_id: [],
+              counterparty_id: 1,
+            }
+          ]
+        }
+      ],
+
       departure: {
         selected: null,
         options: []
@@ -77,14 +89,7 @@ export default {
         options: []
       },
 
-      counterparties: [
-        {
-          order_number: 0,
-          category_id: [],
-          counterparty_id: 0,
-          container_type: '40'
-        }
-      ],
+      loading: false,
     }
   },
   components: {
@@ -109,6 +114,7 @@ export default {
         }
       })
     },
+
     async getOptions(query, option_type) {
       if (query.length <= 2) return;
       let core_api = new CoreApi()
@@ -152,149 +158,167 @@ export default {
       option_type === 'departure' ? this.order.departure_id = id
           : option_type === 'destination' ? this.order.destination_id = id
               : option_type === 'products' ? this.product_id = id
-                  : option_type === 'categories' ? this.product_id = id
-                      : null
+                  : null
     },
+
     counterpartyService(action, id) {
       if (action === 'delete') {
-        this.counterparties = this.counterparties.filter(counterparty => counterparty.counterparty_id.id !== id)
+        this.order.counterparties = this.order.counterparties.filter(counterparty =>
+            counterparty.counterparty_id.id !== id || counterparty.counterparty_id === 1
+        )
       } else if (action === 'add') {
-        this.counterparties.push({
-          order_number: this.order.order_number,
-          category_id: [],
-          counterparty_id: 0
-        })
+        this.order.counterparties.push(
+            {
+              category_id: 1,
+              counterparty_id: 1
+            }
+        )
       }
     },
     onCounterPartyChange(counterparty, type, index) {
       let selected_counterparty = JSON.parse(JSON.stringify(counterparty))
       if (type === 'counterparty') {
-        this.counterparties[index].counterparty_id = selected_counterparty.selected
+        this.order.counterparties[index].counterparty_id = selected_counterparty.selected
       } else if (type === 'category') {
-        let one_category = selected_counterparty.data.map(o => {
-          return {value: o.value, label: o.label, pre_cost: '', id: null, container_type: null}
+        this.order.counterparties[index].category_id = selected_counterparty.data.map(c => {
+          return {
+            value: c.value,
+            label: c.label,
+            pre_cost: ''
+          }
         })
-        this.counterparties[index].category_id = one_category
       }
     },
-    async requestsManager(request_type) {
-      request_type === 'create_order_step2'
-          ? await this.createOrderStep2()
-          : request_type === 'create_order_step3'
-              ? await this.createOrderStep3() : null
+
+    addOrRemoveContainerType(type, action) {
+      if (action === "add") {
+        this.container_types.push(
+            {
+              agreed_rate: "500.00",
+              quantity: 10,
+              container_type: type,
+              container_preliminary_costs: this.order.counterparties.map(counterparty => {
+                return {
+                  category_id: counterparty.category_id.map(category => {
+                    return {
+                      value: category.value,
+                      label: category.label,
+                      pre_cost: ''
+                    }
+                  }),
+                  counterparty_id: counterparty.counterparty_id,
+                }
+              })
+            }
+        )
+      } else {
+        this.container_types = this.container_types.filter(container_type => container_type.container_type !== type)
+      }
     },
-    async createOrderStep2() {
-      await fetch('http://178.62.91.121:5000/container_order/create/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "order": this.order,
-          "sending_type": "single",
-          "product_id": this.products.selected.value,
+
+    isInContainerTypes(ctr_type) {
+      return this.container_types.map(o => o.container_type).includes(ctr_type)
+    },
+    async createContainerOrder() {
+      let counterparties = []
+      this.order.counterparties.forEach(counterparty => {
+        counterparty.category_id.forEach(category => {
+          counterparties.push({
+            category_id: category.value,
+            counterparty_id: counterparty.counterparty_id.id,
+          })
         })
       })
-    },
-    async createOrderStep3() {
-      this.counterparties.forEach(counterparty => {
-        counterparty.category_id.forEach(async item => {
-          await fetch('http://178.62.91.121:5000/order/counterparty/create/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              order_number: this.order.order_number,
-              category_id: item.value,
-              counterparty_id: counterparty.counterparty_id.id
+
+      let order = {
+        order_number: this.order.order_number,
+        lot_number: this.order.lot_number,
+        date: this.order.date,
+        position: this.order.position,
+        type: this.order.type,
+        shipment_status: this.order.shipment_status,
+        payment_status: this.order.payment_status,
+        shipper: this.order.shipper,
+        consignee: this.order.consignee,
+        departure_id: this.order.departure_id,
+        destination_id: this.order.destination_id,
+        border_crossing: this.order.border_crossing,
+        conditions_of_carriage: this.order.conditions_of_carriage,
+        rolling_stock: this.order.rolling_stock,
+        departure_country: this.order.departure_country,
+        destination_country: this.order.destination_country,
+        comment: this.order.comment,
+        manager: this.order.manager,
+        customer: this.order.customer,
+        counterparties: counterparties,
+      }
+
+      let ctr_types = []
+      this.container_types.forEach(container_type => {
+        let pre_costs = []
+
+        container_type.container_preliminary_costs.forEach(pre_cost => {
+          pre_cost.category_id.forEach(category => {
+            pre_costs.push({
+              category_id: category.value,
+              counterparty_id: pre_cost.counterparty_id.id,
+              preliminary_cost: category.pre_cost
             })
           })
-          // let result = await response.json()
-          //  {
-          //     "id": 7,
-          //     "order_number": 3,
-          //     "category_id": 1,
-          //     "counterparty_id": 2
-          //  }
-
-          // this.counterparties.forEach(counterparty => {
-          //   counterparty.category_id.filter(
-          //       c => c.value === result.category_id & counterparty.counterparty_id.id === result.counterparty_id)
-          //       .forEach(c => {
-          //         c.id = result.id
-          //       })
-          // })
-          // await this.createOrderPreliminaryCosts()
         })
-      })
-    },
-    async createOrderStep4() {
-      this.container_types.forEach(async container_type => {
-        let type_one = {
+
+        let ctr_typesa = {
           agreed_rate: container_type.agreed_rate,
           quantity: container_type.quantity,
           container_type: container_type.container_type,
-          order_number: this.order.order_number
+          container_preliminary_costs: pre_costs
         }
-        let response = await fetch('http://178.62.91.121:5000/api/container_order/container_type_create/',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(type_one)
-            })
-        let id = JSON.parse(JSON.stringify(await response.json()))
-        this.container_type_ids = id.id
+        ctr_types.push(ctr_typesa)
       })
-    },
-    async createOrderPreliminaryCosts() {
-      this.counterparties.forEach(async counterparty => {
-        counterparty.category_id.forEach(async category => {
-          // let response = await fetch('http://178.62.91.121:5000/api/container_order/container_preliminary_cost_create/', {
-          //   method: 'POST',
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body: JSON.stringify({
-          //     preliminary_cost: category.pre_cost,
-          //     counterparty_id: category.id,
-          //     container_type_id: this.container_type_id
-          //   })
-          // })
-          console.log({
-            preliminary_cost: category.pre_cost,
-            counterparty_id: category.id,
-            container_type_id: this.container_type_ids
-          })
+
+      console.log({
+        "order": order,
+        "product_id": this.products.selected.value,
+        "container_types": ctr_types,
+        "sending_type": this.sending_type,
+
+      })
+
+      let headers = new Headers();
+      headers.append("Content-Type", `application/json`);
+
+      let response = await fetch(`http://178.62.91.121:5000/container_order/create/`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          "order": order,
+          "product_id": this.products.selected.value,
+          "container_types": ctr_types,
+          "sending_type": this.sending_type,
+
         })
       })
-    },
-    async createContainerOrder() {
-      await this.createOrderStep2()
-      await this.createOrderStep3()
-      await this.createOrderStep4()
-    },
-    addOrRemoveContainerType(type, action) {
-      action === 'add'
-          ? this.container_types.push(
-              {
-                agreed_rate: '',
-                quantity: '',
-                container_type: type,
-                container_preliminary_costs: [
-                  {
-                    category_id: [],
-                    counterparty_id: null,
-                  }
-                ]
-              }
-          )
-          : action === 'remove'
-              ? this.container_types = this.container_types.filter(container_type => container_type.container_type !== type)
-              : null
-    },
+
+      console.log("response", response)
+      console.log("json", await response.json())
+    }
+  },
+  watch: {
+    order: {
+      handler: function (val) {
+        let updated_counterparties = (JSON.parse(JSON.stringify(val))).counterparties
+
+        this.container_types.forEach(type => {
+          type.container_preliminary_costs = updated_counterparties.map(counterparty => {
+            return {
+              category_id: counterparty.category_id,
+              counterparty_id: counterparty.counterparty_id,
+            }
+          })
+        })
+      },
+      deep: true
+    }
   },
   async mounted() {
     await this.getCounterpartyList()
@@ -553,7 +577,7 @@ export default {
         <template v-slot:content-step3-body>
           <div class="row gy-3">
             <counterpartySelect
-                v-for="(c,i) in counterparties" :key="c"
+                v-for="(c,i) in order.counterparties" :key="c"
                 :counterparties="counterparty_list"
                 :categories="category_list"
                 @onCounterpartySelect="onCounterPartyChange($event, 'counterparty', i)"
@@ -576,22 +600,37 @@ export default {
 
         <template v-slot:content-step4-body>
           <div class="row gx-3">
+            <!-- Container Types -->
             <div class="col-12 mb-3">
-              <div class="form-check form-check-inline" v-for="ctr_type in cntrs_types_options" :key="ctr_type">
-                <label :for="'ctr_type_' + ctr_type" class="form-check-label"
-                       :class="container_types.map(o => o.container_type).includes(ctr_type) ? '' : 'text-muted'"
-                >{{ ctr_type }}
-                </label>
-                <input :id="'ctr_type_' + ctr_type" class="form-check-input" type="checkbox"
-                       @click="addOrRemoveContainerType( ctr_type,`${ container_types.map(o => o.container_type).includes(ctr_type) ? 'remove' : 'add' }`)"
-                       :checked="container_types.map(o => o.container_type).includes(ctr_type)">
+              <div class="row w-100 m-auto">
+                <div class="col" v-for="ctr_type in container_type_options" :key="ctr_type">
+                  <div class="form-check form-check-secondary">
+                    <input class="form-check-input" type="checkbox" :id="'formCheck' + ctr_type"
+                           :checked="isInContainerTypes(ctr_type)"
+                           @click="addOrRemoveContainerType( ctr_type,`${ isInContainerTypes(ctr_type) ? 'remove' : 'add' }`)">
+                    <h6 class="form-check-label m-0" :for="'formCheck' + ctr_type"
+                        @click="addOrRemoveContainerType( ctr_type,`${ isInContainerTypes(ctr_type) ? 'remove' : 'add' }`)">
+                      <div class="btn-container">
+                        <Transition name="slide-up">
+                          <span class="ctr_animation text-dark" v-if="isInContainerTypes(ctr_type)">{{
+                              ctr_type
+                            }}</span>
+                          <span class="ctr_animation text-muted" v-else-if="!isInContainerTypes(ctr_type)">{{
+                              ctr_type
+                            }}</span>
+                        </Transition>
+                      </div>
+                    </h6>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div class="col-lg-6 px-1" v-for="ctr_type in container_types" :key="ctr_type">
               <div class="card border-1">
                 <div class="card-header">
                   <button type="button"
-                          @click="addOrRemoveContainerType( ctr_type.container_type,`${ container_types.map(o => o.container_type).includes(ctr_type.container_type) ? 'remove' : 'add' }`)"
+                          @click="addOrRemoveContainerType( ctr_type.container_type,`${ isInContainerTypes(ctr_type.container_type) ? 'remove' : 'add' }`)"
                           class="btn-close float-end fs-11" aria-label="Close"></button>
                   <h6 class="card-title mb-0">Order type: {{ ctr_type.container_type }}</h6>
                 </div>
@@ -607,28 +646,33 @@ export default {
                 </div>
                 <div class="card-body">
                   <div class="row g-3">
-                    <div class="col-6 pe-2 mb-0" v-for="counterparty in counterparties.filter(c => c.container_type === ctr_type.container_type)" :key="counterparty">
-                      <b-list-group class="bg-light p-2 py-1" v-if="counterparty.category_id.length > 0">
-                        <h6 class="my-0 p-2">{{ counterparty.counterparty_id.name }}</h6>
+                    <div class="col-6 pe-2 mb-0"
+                         v-for="counterparty in ctr_type.container_preliminary_costs"
+                         :key="counterparty"
+                    >
+                      <b-list-group class="bg-light p-2 py-1">
+                        <h6 class="my-0 p-2">{{
+                            counterparty.counterparty_id.name === undefined ? 'Cunterparty' : counterparty.counterparty_id.name
+                          }}</h6>
                         <b-list-group-item class="my-1 p-0 border-0" v-for="category in counterparty.category_id"
                                            :key="category">
-                          <input type="text" class="form-control border-0 w-100"
+                          <input type="number" class="form-control border-0 w-100"
                                  :placeholder="category.label" v-model="category.pre_cost">
                         </b-list-group-item>
                       </b-list-group>
-                      <b-list-group class="bg-light p-2 py-1" v-else>
-                        <h6 class="my-0 p-2">
-                          {{
-                            counterparty.counterparty_id.name === undefined ||
-                            counterparty.counterparty_id.name === null
-                                ? 'Counterparty name' : counterparty.counterparty_id.name
-                          }}
-                        </h6>
-                        <b-list-group-item class="my-1 border-0 p-0 ps-2 bg-transparent">
-                          <span class="text-primary px-2">-</span>
-                          <span class="text-muted">Please, select countery</span>
-                        </b-list-group-item>
-                      </b-list-group>
+                      <!--                      <b-list-group class="bg-light p-2 py-1" v-else>-->
+                      <!--                        <h6 class="my-0 p-2">-->
+                      <!--                          {{-->
+                      <!--                            counterparty.counterparty_id.name === undefined ||-->
+                      <!--                            counterparty.counterparty_id.name === null-->
+                      <!--                                ? 'Counterparty name' : counterparty.counterparty_id.name-->
+                      <!--                          }}-->
+                      <!--                        </h6>-->
+                      <!--                        <b-list-group-item class="my-1 border-0 p-0 ps-2 bg-transparent">-->
+                      <!--                          <span class="text-primary px-2">-</span>-->
+                      <!--                          <span class="text-muted">Please, select countery</span>-->
+                      <!--                        </b-list-group-item>-->
+                      <!--                      </b-list-group>-->
                     </div>
                   </div>
                 </div>
@@ -647,24 +691,33 @@ export default {
 
       </custom_wizard>
     </div>
-    <!--    <div class="col-xl-4">-->
-    <!--      <h6 v-for="key in Object.entries(order)" :key="key">-->
-    <!--        {{ key[0] }}: {{ key[1] }}-->
-    <!--      </h6>-->
-    <!--    </div>-->
     <div class="col-xl-4">
-      <h6 v-for="key in Object.entries(counterparties)" :key="key">
+      <h6 v-for="key in Object.entries(order)" :key="key">
         {{ key[0] }}: {{ key[1] }}
       </h6>
     </div>
-    <!--    <div class="col-xl-4">{{ container_types }}</div>-->
+    <div class="col-xl-4">
+      <h6 v-for="key in Object.entries(container_types)" :key="key">
+        {{ key[1] }}
+      </h6>
+    </div>
   </div>
 </template>
 
 <style>
+.btn-container {
+  display: inline-block;
+  position: relative;
+  height: 1em;
+}
+
+.ctr_animation {
+  position: absolute;
+}
+
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.25s ease-out;
 }
 
 .slide-up-enter-from {
