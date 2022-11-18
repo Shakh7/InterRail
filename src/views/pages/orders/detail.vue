@@ -389,10 +389,11 @@
 
   <CounterpartyActions
       v-if="!isLoading()"
-      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id }})"
+      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"
       :counterparties="order.counterparties"
       :counterparty_list="counterparty_list"
       :category_list="category_list"
+      @updateCounterparties="updatedCounterparties"
   />
 </template>
 
@@ -606,8 +607,10 @@ export default {
       return total
     },
 
-    getContainerTypes() {
-      return [{name: "d"}]
+    async updatedCounterparties() {
+      await this.fetchData();
+      await this.getCategoryList()
+      await this.getCounterpartyList()
     }
   },
   async mounted() {
