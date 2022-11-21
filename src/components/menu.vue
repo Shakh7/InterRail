@@ -219,11 +219,27 @@ export default {
         <li class="menu-title">
           <span data-key="t-orders-menu"> Orders </span>
         </li>
+
         <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/orders/">
+          <a class="nav-link menu-link" href="#sidebarOrders" data-bs-toggle="collapse" role="button"
+             aria-expanded="false" aria-controls="sidebarOrders">
             <i class="ri-honour-line  ri-list-ordered"></i>
             <span data-key="t-orders">Orders</span>
-          </router-link>
+          </a>
+          <div class="collapse menu-dropdown" id="sidebarOrders">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <router-link :to="{name: 'order_container_list'}" class="nav-link custom-abc" data-key="t-analytics">
+                  Container orders
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{name: 'order_wagon_list'}" class="nav-link custom-abc" data-key="t-analytics">
+                  Wagon orders
+                </router-link>
+              </li>
+            </ul>
+          </div>
         </li>
 
         <li class="nav-item">

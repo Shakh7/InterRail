@@ -86,10 +86,16 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {
-                path: '',
-                name: 'orders_list',
-                meta: {title: "Orders List",},
+                path: 'container/',
+                name: 'order_container_list',
+                meta: {title: "Container Orders List",},
                 component: () => import("../views/pages/orders/list.vue"),
+            },
+            {
+                path: 'wagon/',
+                name: 'order_wagon_list',
+                meta: {title: "Wagon Orders List",},
+                component: () => import("../views/pages/orders/wagon/list.vue"),
             },
             {
                 path: 'create-container/',
@@ -101,7 +107,7 @@ export default [
                 path: 'create-wagon/',
                 name: 'create_wagon',
                 meta: {title: "Wagon Order",},
-                component: () => import("../views/pages/orders/createBeta.vue"),
+                component: () => import("../views/pages/orders/wagon/create.vue"),
             },
             {
                 path: 'update/:id',
@@ -111,10 +117,9 @@ export default [
                 component: () => import("../views/pages/orders/update.vue"),
             },
             {
-                path: 'detail/:id',
-                name: 'orders_detail',
+                path: 'container/detail/:id',
+                name: 'orders_container_detail',
                 meta: {title: "Orders Detail",},
-                props: route => ({query: route.query.type}),
                 component: () => import("../views/pages/orders/detail.vue"),
             },
         ],

@@ -1,6 +1,6 @@
 class OrdersApi {
     constructor() {
-        this.base_url = 'http://178.62.91.121:5000'
+        this.base_url = process.env.VUE_APP_ORDER_URL;
     }
 
     async getCounterpartyList() {
@@ -23,6 +23,28 @@ class OrdersApi {
             console.log(error)
         }
         return data
+    }
+
+    async getContainerOrders () {
+        let data = []
+        try {
+            let response = await fetch(`${this.base_url}/container_order/list/`)
+            data = await response.json()
+        } catch (error) {
+            console.log(error)
+        }
+        return data
+    }
+
+    async createWagonOrder(data) {
+        let response = await fetch(`${this.base_url}/wagon_order/create/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        return response
     }
 
 }

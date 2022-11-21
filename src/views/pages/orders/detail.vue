@@ -386,13 +386,12 @@
 
   </Transition>
 
-
   <CounterpartyActions
       v-if="!isLoading()"
       :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"
       :counterparties="order.counterparties"
-      :counterparty_list="counterparty_list"
-      :category_list="category_list"
+      :counterparty_list="counterparty_list.value"
+      :category_list="category_list.value"
       @updateCounterparties="updatedCounterparties"
   />
 </template>
@@ -426,7 +425,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      let response = await fetch(`http://178.62.91.121:5000/container_order/list/${this.$route.params.id}/`)
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${this.$route.params.id}/`)
       let data = await response.json()
       if (data.length === 0) {
         let timerInterval

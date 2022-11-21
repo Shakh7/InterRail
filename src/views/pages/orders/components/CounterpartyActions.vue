@@ -226,9 +226,11 @@ import Swal from "sweetalert2";
 
 export default {
   name: "CounterpartyActions",
+  emits: ["updateCounterparties"],
   props: {
     counterparties: {
-      type: Object,
+      type: Array,
+      default: () => []
     },
     container_types: {
       type: Array,

@@ -1,6 +1,5 @@
 <script>
-import CustomTable from '../../../components/custom/table.vue'
-import OrderApi from '@/api/orders/orders_api.js'
+import CustomTable from '@/components/custom/table.vue'
 
 export default {
   data() {
@@ -65,9 +64,11 @@ export default {
   },
   methods: {
     async getOrders() {
-      let orderApi = new OrderApi();
-      let data = await orderApi.getContainerOrders();
-      this.orders = data.results.map(result => result.order)
+      let response = await fetch('http://178.62.91.121:5000/wagon_order/list/')
+      let data = await response.json()
+      let results = data.results
+      let orders = results.map(result => result.order)
+      this.orders = orders
     }
   },
   async mounted() {
@@ -105,7 +106,7 @@ export default {
 
     <template v-slot:order_number="slotProps">
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="'/orders/container/detail/' + slotProps.row.order_number ">
+        <router-link :to="'/orders/detail/' + slotProps.row.order_number ">
           {{ slotProps.row.order_number }}
         </router-link>
       </span>
