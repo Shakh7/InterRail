@@ -84,7 +84,7 @@ export default {
       name="ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders"
+      :rows="orders.filter(order => order.manager === $store.state.user.id)"
       :selectable="true"
       :searchable="true"
   >
