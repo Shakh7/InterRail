@@ -36,6 +36,17 @@ class OrdersApi {
         return data
     }
 
+    async getWagonOrders () {
+        let data = []
+        try {
+            let response = await fetch(`${this.base_url}/wagon_order/list/`)
+            data = await response.json()
+        } catch (error) {
+            console.log(error)
+        }
+        return data
+    }
+
     async createWagonOrder(data) {
         let response = await fetch(`${this.base_url}/wagon_order/create/`, {
             method: 'POST',

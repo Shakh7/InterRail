@@ -1,5 +1,6 @@
 <script>
 import CustomTable from '@/components/custom/table.vue'
+import OrderApi from '@/api/orders/orders_api.js'
 
 export default {
   data() {
@@ -64,11 +65,9 @@ export default {
   },
   methods: {
     async getOrders() {
-      let response = await fetch('http://178.62.91.121:5000/wagon_order/list/')
-      let data = await response.json()
-      let results = data.results
-      let orders = results.map(result => result.order)
-      this.orders = orders
+      let orderApi = new OrderApi();
+      let data = await orderApi.getWagonOrders()
+      this.orders = data.results.map(result => result.order)
     }
   },
   async mounted() {
