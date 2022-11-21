@@ -1,6 +1,6 @@
 class UsersAuthAPi {
     constructor(jwtToken) {
-        this.user_api_url = `${process.env.VUE_APP_BASE_API_URL}/user`
+        this.user_api_url = `${process.env.VUE_APP_USERS_URL}/user`
         this.jwtToken = jwtToken;
     }
 
