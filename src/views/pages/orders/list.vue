@@ -75,6 +75,11 @@ export default {
   },
   components: {
     CustomTable
+  },
+  computed: {
+    user () {
+      return this.$store.state.user
+    }
   }
 };
 </script>
@@ -105,7 +110,7 @@ export default {
 
     <template v-slot:order_number="slotProps">
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="'/orders/container/detail/' + slotProps.row.order_number ">
+        <router-link :to="{name: 'orders_container_detail', params: {id: slotProps.row.order_number}}">
           {{ slotProps.row.order_number }}
         </router-link>
       </span>
@@ -121,10 +126,10 @@ export default {
     <template v-slot:manager="slotProps">
       <div>
         <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-          {{ slotProps.row.manager[0] }}
+          {{ slotProps.row.manager === user.id ? user.full_name[0] : 'E' }}
         </span>
         <span>
-          {{ slotProps.row.manager }}
+          {{ slotProps.row.manager === user.id ? user.full_name : slotProps.row.manager }}
         </span>
       </div>
     </template>

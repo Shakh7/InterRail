@@ -247,7 +247,7 @@ export default {
   },
   methods: {
     async saveActualCost(counterparty_id, container_type_id, actual_cost) {
-      let response = await fetch('http://178.62.91.121:5000/container_order/expanse/actual_cost_to_all/', {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/actual_cost_to_all/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
@@ -286,7 +286,7 @@ export default {
       }
     },
     async createContainer(container_type_id, containers) {
-      let response = await fetch('http://178.62.91.121:5000/container_order/expanse/container_to_all/', {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/container_to_all/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

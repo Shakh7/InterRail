@@ -1,6 +1,6 @@
 class CoreApi {
     constructor() {
-        this.base_api = `http://178.62.91.121:5000/core`
+        this.base_api = process.env.VUE_APP_ORDER_URL + '/core';
     }
 
     async getCoreList(core_type, query, limit) {
@@ -28,7 +28,7 @@ class CoreApi {
     async getCategories() {
         let data = []
         try {
-            let response = await fetch(`http://178.62.91.121:5000/counterparty/categories/`)
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/categories/`)
             data = await response.json()
         } catch (error) {
             console.log(error)
@@ -39,7 +39,7 @@ class CoreApi {
     async getCounterparties(limit, offset) {
         let data = []
         try {
-            let response = await fetch(`http://178.62.91.121:5000/counterparty/counterparties/?limit=${limit}&offset=${offset}`)
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?limit=${limit}&offset=${offset}`)
             data = await response.json()
         } catch (error) {
             console.log(error)
@@ -50,7 +50,7 @@ class CoreApi {
     async getProducts(limit, offset) {
         let data = []
         try {
-            let response = await fetch(`http://178.62.91.121:5000/core/products/?limit=${limit}&offset=${offset}`)
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/core/products/?limit=${limit}&offset=${offset}`)
             data = await response.json()
         } catch (error) {
             console.log(error)

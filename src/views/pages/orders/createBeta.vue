@@ -52,7 +52,7 @@ export default {
         departure_country: "Uzbekistan",
         destination_country: "China",
         comment: "Hello world",
-        manager: 1,
+        manager: this.$store.state.user.id,
         customer: 1,
         counterparties: [
           {
@@ -287,7 +287,7 @@ export default {
       let headers = new Headers();
       headers.append("Content-Type", `application/json`);
 
-      let response = await fetch(`http://178.62.91.121:5000/container_order/create/`, {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/create/`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

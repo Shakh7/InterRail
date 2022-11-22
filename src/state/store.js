@@ -12,7 +12,8 @@ const store = createStore({
     token: null,
     user: {
       full_name: 'Shakhzodbek Sharipov',
-      role: 'admin',
+      role: 'staff',
+      id: 2
     }
   },
   mutations: {
