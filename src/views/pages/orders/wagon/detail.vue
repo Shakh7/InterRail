@@ -124,56 +124,42 @@
                       <thead>
                       <tr class="bg-light">
                         <th class="text-center">#</th>
-                        <th class="text-center">Container</th>
-                        <th class="text-center">Agreed rate</th>
+                        <th class="text-center">Wagon</th>
+                        <th class="text-center">Agreed rate per ton</th>
+                        <th class="text-center">Weight</th>
+                        <th class="text-center">Total rate</th>
                         <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party.id"
-                            @click="updateCounterparty(party)">
+                            @click="updateCounterparty(party)"
+                        >
                           <span class="badge bg-success">{{ party.category.name }}</span>
                           <span class="d-block">{{ party.counterparty.name }}</span>
                         </th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Profit</th>
                       </tr>
-                      <tr class="bg-white fs-5">
-                        <th class="text-center">
-                          <button class="btn btn-success my-0 py-0" @click="createCounterparty">
-                            <i class="ri-add-fill"></i>
-                          </button>
-                        </th>
-                        <th class="text-center">
-                        </th>
-                        <th class="text-center">{{ sumAgreedCosts() }}</th>
-                        <th class="text-center m-0" v-for="party in order.counterparties" :key="party.id">
-                          {{ party.total_expanses }}
-                        </th>
-                        <th class="text-center">{{ sumProfit() }}</th>
-                        <th class="text-center">{{ sumAgreedCosts() - sumProfit() }}</th>
-                      </tr>
                       </thead>
-                      <tbody v-for="ctr_type in container_types" :key="ctr_type.id">
-                      <tr class="border-success">
-                        <th class="text-center my-1 bg-transparent text-success"
-                            :colspan="6 + order.counterparties.length">{{ ctr_type.container_type }}
-                        </th>
-                      </tr>
-                      <tr v-for="(container, i) in ctr_type.expanses" :key="i">
+                      <tbody>
+                      <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-                          <ContainerInput :container="container"/>
+                          {{ wagon.wagon === null ? 'null' : 2 }}
                         </td>
-                        <td class="text-center">{{ ctr_type.agreed_rate }}</td>
-                        <td class="text-center" v-for="pre_cost in container.actual_costs"
+                        <td class="text-center">{{ agreed_rate_per_tonn }}</td>
+                        <td class="text-center">{{ wagon.actual_weight }}</td>
+                        <td class="text-center">{{ agreed_rate_per_tonn * wagon.actual_weight }}</td>
+                        <td class="text-center" v-for="pre_cost in wagon.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
-                          <ActualCostInput :actualCost="pre_cost"/>
+                          {{ pre_cost.actual_cost }}
+                          <!--                          <ActualCostInput :actualCost="pre_cost"/>-->
                         </td>
                         <td class="text-center">
                           ${{
-                            container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
+                            wagon.actual_costs.map(w => w.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
                           }}
                         </td>
                         <td class="text-center">
                           ${{
-                            ctr_type.agreed_rate - container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
+                            (agreed_rate_per_tonn * wagon.actual_weight) - wagon.actual_costs.map(w => w.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
                           }}
                         </td>
                       </tr>
@@ -183,73 +169,73 @@
                 </div>
                 <div class="tab-pane" id="preliminary_cost_tab" role="tabpanel">
                   <div class="table-responsive table-card">
-                    <table class="table table-striped">
-                      <thead class="table-light">
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Container</th>
-                        <th class="text-center">Agreed rate</th>
-                        <th class="text-center py-0 m-0"
-                            v-for="party in order.counterparties" :key="party.id">
-                          <span class="badge bg-success">{{ party.category.name }}</span>
-                          <span class="d-block">{{ party.counterparty.name }}</span>
-                        </th>
-                        <th class="text-center">Total</th>
-                        <th class="text-center">Profit</th>
-                        <th class="text-center font-weight-medium">Actions</th>
-                      </tr>
-                      </thead>
-                      <tbody v-for="ctr_type in container_types" :key="ctr_type">
-                      <tr v-for="(container, i) in ctr_type.expanses" :key="container">
-                        <th>{{ i + 1 }}</th>
-                        <td class="text-center" style="max-width: 75px">
-                          <span v-if="container.container === null">  </span>
-                          <span v-if="container.container !== null"> {{ container.container.name }}</span>
-                        </td>
-                        <td class="text-center">{{ ctr_type.agreed_rate }}</td>
-                        <td class="text-center" v-for="pre_cost in container.actual_costs"
-                            :key="pre_cost" style="max-width: 65px">
-                          <input class="form-control form-control-sm w-75 m-auto" type="number"
-                                 :value="pre_cost.actual_cost">
-                        </td>
-                        <td class="text-center">
-                          ${{
-                            container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
-                          }}
-                        </td>
-                        <td class="text-center">
-                          ${{
-                            ctr_type.agreed_rate - container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
-                          }}
-                        </td>
-                        <td class="text-center font-weight-medium">
-                          <button type="button" class="btn py-0 fs-16 text-body" id="settingDropdown"
-                                  data-bs-toggle="dropdown" aria-expanded="false">
-                            <font-awesome-icon icon="fa-solid fa-pen-to-square"/>
-                          </button>
-                          <ul class="dropdown-menu dropdownmenu-secondary" aria-labelledby="settingDropdown" style="">
-                            <li>
-                              <a class="dropdown-item" href="#">
-                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i>View
-                              </a>
-                            </li>
+                    <!--                    <table class="table table-striped">-->
+                    <!--                      <thead class="table-light">-->
+                    <!--                      <tr>-->
+                    <!--                        <th class="text-center">#</th>-->
+                    <!--                        <th class="text-center">Container</th>-->
+                    <!--                        <th class="text-center">Agreed rate</th>-->
+                    <!--                        <th class="text-center py-0 m-0"-->
+                    <!--                            v-for="party in order.counterparties" :key="party.id">-->
+                    <!--                          <span class="badge bg-success">{{ party.category.name }}</span>-->
+                    <!--                          <span class="d-block">{{ party.counterparty.name }}</span>-->
+                    <!--                        </th>-->
+                    <!--                        <th class="text-center">Total</th>-->
+                    <!--                        <th class="text-center">Profit</th>-->
+                    <!--                        <th class="text-center font-weight-medium">Actions</th>-->
+                    <!--                      </tr>-->
+                    <!--                      </thead>-->
+                    <!--                      <tbody v-for="ctr_type in container_types" :key="ctr_type">-->
+                    <!--                      <tr v-for="(container, i) in ctr_type.expanses" :key="container">-->
+                    <!--                        <th>{{ i + 1 }}</th>-->
+                    <!--                        <td class="text-center" style="max-width: 75px">-->
+                    <!--                          <span v-if="container.container === null">  </span>-->
+                    <!--                          <span v-if="container.container !== null"> {{ container.container.name }}</span>-->
+                    <!--                        </td>-->
+                    <!--                        <td class="text-center">{{ ctr_type.agreed_rate }}</td>-->
+                    <!--                        <td class="text-center" v-for="pre_cost in container.actual_costs"-->
+                    <!--                            :key="pre_cost" style="max-width: 65px">-->
+                    <!--                          <input class="form-control form-control-sm w-75 m-auto" type="number"-->
+                    <!--                                 :value="pre_cost.actual_cost">-->
+                    <!--                        </td>-->
+                    <!--                        <td class="text-center">-->
+                    <!--                          ${{-->
+                    <!--                            container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))-->
+                    <!--                          }}-->
+                    <!--                        </td>-->
+                    <!--                        <td class="text-center">-->
+                    <!--                          ${{-->
+                    <!--                            ctr_type.agreed_rate - container.actual_costs.map(ctr => ctr.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))-->
+                    <!--                          }}-->
+                    <!--                        </td>-->
+                    <!--                        <td class="text-center font-weight-medium">-->
+                    <!--                          <button type="button" class="btn py-0 fs-16 text-body" id="settingDropdown"-->
+                    <!--                                  data-bs-toggle="dropdown" aria-expanded="false">-->
+                    <!--                            <font-awesome-icon icon="fa-solid fa-pen-to-square"/>-->
+                    <!--                          </button>-->
+                    <!--                          <ul class="dropdown-menu dropdownmenu-secondary" aria-labelledby="settingDropdown" style="">-->
+                    <!--                            <li>-->
+                    <!--                              <a class="dropdown-item" href="#">-->
+                    <!--                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i>View-->
+                    <!--                              </a>-->
+                    <!--                            </li>-->
 
-                            <li>
-                              <a class="dropdown-item" href="#">
-                                <i class="ri-share-forward-fill align-bottom me-2 text-muted"></i> Share with
-                              </a>
-                            </li>
+                    <!--                            <li>-->
+                    <!--                              <a class="dropdown-item" href="#">-->
+                    <!--                                <i class="ri-share-forward-fill align-bottom me-2 text-muted"></i> Share with-->
+                    <!--                              </a>-->
+                    <!--                            </li>-->
 
-                            <li>
-                              <a class="dropdown-item text-danger" href="#">
-                                <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> Delete
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
+                    <!--                            <li>-->
+                    <!--                              <a class="dropdown-item text-danger" href="#">-->
+                    <!--                                <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> Delete-->
+                    <!--                              </a>-->
+                    <!--                            </li>-->
+                    <!--                          </ul>-->
+                    <!--                        </td>-->
+                    <!--                      </tr>-->
+                    <!--                      </tbody>-->
+                    <!--                    </table>-->
                   </div>
                 </div>
               </div>
@@ -292,6 +278,7 @@
                     <td> {{ loadData(order.destination.name + ' (' + order.destination.code) + ')' }}</td>
                   </tr>
                   <tr>
+                    <td class="fw-medium">Assigned To:</td>
                     <td class="fw-medium">Assigned To:</td>
                     <td>
                       <div class="avatar-group">
@@ -386,29 +373,32 @@
 
   </Transition>
 
-  <CounterpartyActions
-      v-if="!isLoading()"
-      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"
-      :counterparties="order.counterparties"
-      :counterparty_list="counterparty_list.value"
-      :category_list="category_list.value"
-      @updateCounterparties="updatedCounterparties"
-  />
+  <!--  <CounterpartyActions-->
+  <!--      v-if="!isLoading()"-->
+  <!--      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"-->
+  <!--      :counterparties="order.counterparties"-->
+  <!--      :counterparty_list="counterparty_list.value"-->
+  <!--      :category_list="category_list.value"-->
+  <!--      @updateCounterparties="updatedCounterparties"-->
+  <!--  />-->
 </template>
 
 <script>
 import {ref} from "vue";
 import Swal from "sweetalert2";
 import OrdersApi from "@/api/orders/orders_api";
-import ContainerInput from "@/views/pages/orders/components/ContainerInput";
-import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
-import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
+// import ContainerInput from "@/views/pages/orders/components/ContainerInput";
+// import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
+// import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
 
 export default {
   name: "detail",
   data() {
     const order = []
     let product = ref(null)
+    let wagon_preliminary_costs = ref([])
+    let expanses = ref([])
+    let agreed_rate_per_tonn = ref(null)
     let container_types = ref(null)
     let updateCounterpartyInfo = ref(null)
     let counterparty_list = ref([])
@@ -417,6 +407,9 @@ export default {
     return {
       order,
       product,
+      wagon_preliminary_costs,
+      expanses,
+      agreed_rate_per_tonn,
       container_types,
       updateCounterpartyInfo,
       counterparty_list,
@@ -425,7 +418,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${this.$route.params.id}/`)
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/list/${this.$route.params.id}/`)
       let data = await response.json()
       if (data.length === 0) {
         let timerInterval
@@ -446,9 +439,12 @@ export default {
           }
         })
       }
+      console.log(data)
       this.order = data[0]['order']
       this.product = data[0]['product']
-      this.container_types = data[0]['container_types']
+      this.expanses = data[0]['expanses']
+      this.agreed_rate_per_tonn = data[0]['agreed_rate_per_tonn']
+      this.wagon_preliminary_costs = data[0]['wagon_preliminary_costs']
     },
     isLoading() {
       return this.order.order_number === null || this.order.order_number === undefined
@@ -614,13 +610,13 @@ export default {
   },
   async mounted() {
     await this.fetchData();
-    await this.getCategoryList()
-    await this.getCounterpartyList()
+    // await this.getCategoryList()
+    // await this.getCounterpartyList()
   },
   components: {
-    ContainerInput,
-    ActualCostInput,
-    CounterpartyActions
+    // ContainerInput,
+    // ActualCostInput,
+    // CounterpartyActions
   },
 }
 </script>

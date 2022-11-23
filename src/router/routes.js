@@ -125,7 +125,7 @@ export default [
                 path: 'wagon/view/:id',
                 name: 'orders_wagon_detail',
                 meta: {title: "Wagon Order Detail",},
-                component: () => import("../views/pages/orders/detail.vue"),
+                component: () => import("../views/pages/orders/wagon/detail.vue"),
             },
         ],
     },

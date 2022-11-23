@@ -138,7 +138,7 @@ export default {
               Swal.fire({
                 position: 'center',
                 icon: 'warning',
-                title: `Too Many Tries...\nPlease, talk to IT department to fix the proplem`,
+                title: `Too Many Tries...\nPlease, talk to IT department to fix the problem`,
                 showConfirmButton: false,
                 timer: 10000,
                 willClose: () => {

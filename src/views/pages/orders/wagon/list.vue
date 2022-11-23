@@ -105,7 +105,7 @@ export default {
 
     <template v-slot:order_number="slotProps">
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="'/orders/detail/' + slotProps.row.order_number ">
+        <router-link :to="{name: 'orders_wagon_detail', params: {id: slotProps.row.order_number}}">
           {{ slotProps.row.order_number }}
         </router-link>
       </span>
