@@ -17,8 +17,8 @@ export default {
   },
   data() {
     return {
-      email: "user@example.com",
-      password: "string",
+      email: "admin@gmail.com",
+      password: "admin",
       submitted: false,
       authError: null,
       tryingToLogIn: false,

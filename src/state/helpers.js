@@ -35,4 +35,7 @@ export const todoComputed = {
     todos: (state) => state.todos
   })
 }
+
 export const todoMethods = mapActions('todo', ['fetchTodos'])
+
+export const ordersMehtods = mapActions('orders', ['setCurrentlyUpdating', 'updateCurrentUpdating'])

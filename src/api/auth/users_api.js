@@ -34,7 +34,7 @@ class UsersAuthAPi {
             redirect: 'follow'
         };
 
-        let response = await fetch(`${this.user_api_url}/login/test-token`, authOptions)
+        let response = await fetch(`https://user.interrail.uz/api/v1/user/login/test-token`, authOptions)
         let user = await response.json()
         return user
     }

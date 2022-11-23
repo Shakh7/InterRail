@@ -1,6 +1,7 @@
 <script>
 import CustomTable from '../../../components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
+import {ordersMehtods} from "@/state/helpers";
 
 export default {
   data() {
@@ -64,10 +65,15 @@ export default {
     };
   },
   methods: {
+    ...ordersMehtods,
     async getOrders() {
       let orderApi = new OrderApi();
       let data = await orderApi.getContainerOrders();
       this.orders = data.results.map(result => result.order)
+    },
+    setToUpdateOrder(order) {
+      this.setCurrentlyUpdating(order)
+      this.$router.push({name: 'orders_container_update', params: {id: order.id}})
     }
   },
   async mounted() {
@@ -77,14 +83,15 @@ export default {
     CustomTable
   },
   computed: {
-    user () {
+    user() {
       return this.$store.state.user
-    }
+    },
   }
 };
 </script>
 
 <template>
+
   <CustomTable
       name="ORDERS TABLE"
       id="orders_table"
@@ -117,9 +124,10 @@ export default {
     </template>
 
     <template v-slot:actions="slotProps">
-      <router-link class="pe-auto text-dark mx-2" :to="'/orders/update/' + slotProps.row.id + '/?type=container' ">
-        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="c_icon mx-2 c_icon_hoverable"/>
-      </router-link>
+
+      <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square"
+                         class="c_icon mx-2 c_icon_hoverable"/>
+
       <font-awesome-icon icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"/>
     </template>
 

@@ -221,6 +221,7 @@ export default {
     },
     async createContainerOrder() {
       let counterparties = []
+
       this.order.counterparties.forEach(counterparty => {
         counterparty.category_id.forEach(category => {
           counterparties.push({
@@ -229,29 +230,10 @@ export default {
           })
         })
       })
-
       let order = {
-        order_number: this.order.order_number,
-        lot_number: this.order.lot_number,
-        date: this.order.date,
-        position: this.order.position,
-        type: this.order.type,
-        shipment_status: this.order.shipment_status,
-        payment_status: this.order.payment_status,
-        shipper: this.order.shipper,
-        consignee: this.order.consignee,
-        departure_id: this.order.departure_id,
-        destination_id: this.order.destination_id,
-        border_crossing: this.order.border_crossing,
-        conditions_of_carriage: this.order.conditions_of_carriage,
-        rolling_stock: this.order.rolling_stock,
-        departure_country: this.order.departure_country,
-        destination_country: this.order.destination_country,
-        comment: this.order.comment,
-        manager: this.order.manager,
-        customer: this.order.customer,
-        counterparties: counterparties,
+        ...this.order,
       }
+      order.counterparties = counterparties
 
       let ctr_types = []
       this.container_types.forEach(container_type => {
@@ -274,14 +256,6 @@ export default {
           container_preliminary_costs: pre_costs
         }
         ctr_types.push(ctr_typesa)
-      })
-
-      console.log({
-        "order": order,
-        "product_id": this.products.selected.value,
-        "container_types": ctr_types,
-        "sending_type": this.sending_type,
-
       })
 
       let headers = new Headers();
