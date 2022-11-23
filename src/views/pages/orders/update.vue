@@ -5,10 +5,12 @@ import custom_wizard from "@/views/pages/orders/components/custom_wizard";
 import Multiselect from "@vueform/multiselect";
 import CoreApi from "@/api/core/core_api";
 import {ordersMehtods} from "@/state/helpers";
+import Swal from "sweetalert2";
 
 export default {
   data() {
     return {
+      hasData: false,
       steps: [
         {
           title: "Order Info",
@@ -122,6 +124,8 @@ export default {
                   : null
     },
     setStationOptions(data) {
+
+      this.hasData = true
       let departure = data.departure
       let destination = data.destination
 
@@ -151,7 +155,15 @@ export default {
     },
 
     async updateContainerOrder() {
-      await this.updateCurrentUpdating(this.$store.state.orders.currentlyUpdating)
+      let response = await this.updateCurrentUpdating((JSON.parse(JSON.stringify(this.$store.state.orders.currentlyUpdating))))
+      await Swal.fire({
+        position: "center",
+        icon: response.ok ? "success" : "error",
+        title: response.ok ? "Order updated successfully" : "Order update failed",
+        showConfirmButton: false,
+        timer: 5000,
+      });
+      await this.$router.push({name: "order_container_list"})
     }
   },
   computed: {
@@ -160,16 +172,18 @@ export default {
     },
   },
   mounted() {
-    this.setStationOptions(this.$store.state.orders.currentlyUpdating)
-  }
+    let data = this.$store.state.orders.currentlyUpdating
+    data.length === 0
+        ? this.$router.push({name: 'order_container_list'})
+        : this.setStationOptions(data)
+  },
 }
 ;
 </script>
 
 <template>
-  {{ currentOrder }}
 
-  <custom_wizard wizard_header="Update order" :steps="steps">
+  <custom_wizard wizard_header="Update order" :steps="steps" v-if="hasData">
     <template v-slot:content-step1-body>
       <div class="row g-3">
 

@@ -21,36 +21,62 @@ export const actions = {
         commit('setUpdatingOrder', order)
     },
     async updateCurrentUpdating({commit}, order) {
+        let order_payment_status = order.payment_status === 'Issued' ? 'issued'
+            : order.payment_status === 'Reserved' ? 'reserved'
+                : order.payment_status === 'Received' ? 'received'
+                    : 'reserved'; // default
+
+        let order_position = order.position === 'Block train' ? 'block_train'
+            : order.position === 'Rail forwarder' ? 'rail_forwarder'
+                : order.position === 'Multi modal' ? 'multi_modal'
+                    : 'block_train'; // default
+
+        let order_shipment_status = order.shipment_status === 'In process' ? 'in_process'
+            : order.shipment_status === 'Delivered' ? 'delivered'
+                : order.shipment_status === 'Completed' ? 'completed'
+                    : 'in_process'; // default
+
+        let order_type = order.type === 'Import' ? 'import'
+            : order.type === 'Export' ? 'export'
+                : order.type === 'Transit' ? 'transit'
+                    : 'import'; // default
+
         let thisorder = {
             order_number: order.order_number,
             lot_number: order.lot_number,
             date: order.date,
-            position: order.position,
-            type: order.type,
-            shipment_status: order.shipment_status,
-            payment_status: order.payment_status,
+            position: order_position,
+            type: order_type,
+            shipment_status: order_shipment_status,
+            payment_status: order_payment_status,
             shipper: order.shipper,
-            consignee: "FE MEDEX",
+            consignee: order.consignee,
             departure_id: order.departure.id,
             destination_id: order.destination.id,
-            border_crossing: "Келес эксп - Сарыагач эксп",
-            conditions_of_carriage: "FOB-FOR",
-            rolling_stock: "СПС контейнер",
-            departure_country: "Uzbekistan",
-            destination_country: "China",
+            border_crossing: order.border_crossing,
+            conditions_of_carriage: order.conditions_of_carriage,
+            rolling_stock: order.rolling_stock,
+            departure_country: order.departure_country,
+            destination_country: order.destination_country,
             comment: order.comment,
-            manager: 1,
+            manager: order.manager,
             customer: 1
         }
 
-        await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/edit/`, {
+
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/edit/`, {
             method: "PUT",
             body: JSON.stringify({
                 order: thisorder,
                 sending_type: "single",
                 product_id: 3333
-            })
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            }
         });
+
         commit('setUpdatingOrder', order)
+        return response
     },
 };
