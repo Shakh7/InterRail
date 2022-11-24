@@ -141,15 +141,20 @@
                       <tbody>
                       <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
-                        <td class="text-center" style="max-width: 75px">
-                          {{ wagon.wagon === null ? 'null' : 2 }}
+                        <td class="text-center" style="max-width: 100px">
+                          <WagonInput :wagon="wagon.wagon"/>
                         </td>
-                        <td class="text-center">{{ agreed_rate_per_tonn }}</td>
+                        <td class="text-center" style="max-width: 100px">
+                          <AgreedRate :agreedRate="wagon.agreed_rate_per_tonn"/>
+                        </td>
                         <td class="text-center">{{ wagon.actual_weight }}</td>
-                        <td class="text-center">{{ agreed_rate_per_tonn * wagon.actual_weight }}</td>
+                        <td class="text-center">{{
+                            wagon.agreed_rate_per_tonn === null ? wagon.actual_weight : (agreed_rate_per_tonn * wagon.actual_weight)
+                          }}
+                        </td>
                         <td class="text-center" v-for="pre_cost in wagon.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
-                          {{ pre_cost.actual_cost }}
+                          <ActualCostInput :actualCost="pre_cost"/>
                           <!--                          <ActualCostInput :actualCost="pre_cost"/>-->
                         </td>
                         <td class="text-center">
@@ -159,7 +164,7 @@
                         </td>
                         <td class="text-center">
                           ${{
-                            (agreed_rate_per_tonn * wagon.actual_weight) - wagon.actual_costs.map(w => w.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
+                            ((wagon.agreed_rate_per_tonn === null ? 1 : wagon.agreed_rate_per_tonn) * wagon.actual_weight) - wagon.actual_costs.map(w => w.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b))
                           }}
                         </td>
                       </tr>
@@ -387,7 +392,9 @@
 import {ref} from "vue";
 import Swal from "sweetalert2";
 import OrdersApi from "@/api/orders/orders_api";
-// import ContainerInput from "@/views/pages/orders/components/ContainerInput";
+import WagonInput from "@/views/pages/orders/wagon/components/WagonInput.vue";
+import ActualCostInput from "@/views/pages/orders/wagon/components/ActualCostInput.vue";
+import AgreedRate from "@/views/pages/orders/wagon/components/AgreedRate.vue";
 // import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
 // import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
 
@@ -398,7 +405,6 @@ export default {
     let product = ref(null)
     let wagon_preliminary_costs = ref([])
     let expanses = ref([])
-    let agreed_rate_per_tonn = ref(null)
     let container_types = ref(null)
     let updateCounterpartyInfo = ref(null)
     let counterparty_list = ref([])
@@ -409,7 +415,6 @@ export default {
       product,
       wagon_preliminary_costs,
       expanses,
-      agreed_rate_per_tonn,
       container_types,
       updateCounterpartyInfo,
       counterparty_list,
@@ -443,7 +448,6 @@ export default {
       this.order = data[0]['order']
       this.product = data[0]['product']
       this.expanses = data[0]['expanses']
-      this.agreed_rate_per_tonn = data[0]['agreed_rate_per_tonn']
       this.wagon_preliminary_costs = data[0]['wagon_preliminary_costs']
     },
     isLoading() {
@@ -617,6 +621,9 @@ export default {
     // ContainerInput,
     // ActualCostInput,
     // CounterpartyActions
+    WagonInput,
+    ActualCostInput,
+    AgreedRate
   },
 }
 </script>
