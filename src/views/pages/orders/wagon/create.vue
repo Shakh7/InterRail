@@ -51,8 +51,8 @@ export default {
         departure_country: "Uzbekistan",
         destination_country: "China",
         comment: "Hello world",
-        manager: 2,
-        customer: 2,
+        manager: this.$store.state.user.id,
+        customer: null,
         counterparties: [
           {
             category_id: [],
@@ -492,6 +492,9 @@ export default {
               <label for="payment_status" class="form-label">Customer</label>
               <select class="form-select" id="payment_status" v-model="order.customer">
                 <option selected disabled>Select payment status</option>
+                <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client"
+                        :value="client.id">{{ client.full_name }}
+                </option>
               </select>
             </div>
 

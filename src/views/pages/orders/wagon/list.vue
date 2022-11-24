@@ -2,6 +2,7 @@
 import CustomTable from '@/components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import Swal from "sweetalert2";
+import store from '@/state/store.js'
 
 export default {
   data() {
@@ -146,6 +147,10 @@ export default {
         })
         console.log(error)
       })
+    },
+
+    getAccount(account) {
+      return store.state.users_list.find(user => user.id === account) || {full_name: 'Unknown'}
     }
   },
   async mounted() {
@@ -195,13 +200,24 @@ export default {
                          @click="deleteOrderConfirmation(slotProps.row)"/>
     </template>
 
+    <template v-slot:customer="slotProps">
+      <div>
+        <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
+          {{ getAccount(slotProps.row.customer)['full_name'][0].toUpperCase() }}
+        </span>
+        <span>
+          {{ getAccount(slotProps.row.customer)['full_name'] }}
+        </span>
+      </div>
+    </template>
+
     <template v-slot:manager="slotProps">
       <div>
         <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-          {{ slotProps.row.manager[0] }}
+          {{ getAccount(slotProps.row.manager)['full_name'][0].toUpperCase() }}
         </span>
         <span>
-          {{ slotProps.row.manager }}
+          {{ getAccount(slotProps.row.manager)['full_name'] }}
         </span>
       </div>
     </template>

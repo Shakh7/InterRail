@@ -82,7 +82,7 @@ export default [
     {
         path: "/orders/",
         name: "orders",
-        meta: {title: "Orders", authRequired: false, permissions: ['admin', 'staff', 'client']},
+        meta: {title: "Orders", authRequired: true, permissions: ['admin', 'staff', 'client']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {

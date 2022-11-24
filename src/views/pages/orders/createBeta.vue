@@ -527,6 +527,9 @@ export default {
               <label for="payment_status" class="form-label">Customer</label>
               <select class="form-select" id="payment_status" v-model="order.customer">
                 <option selected disabled>Select payment status</option>
+                <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client"
+                        :value="client.id">{{ client.full_name }}
+                </option>
               </select>
             </div>
 

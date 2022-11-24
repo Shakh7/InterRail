@@ -60,7 +60,7 @@ export const actions = {
             destination_country: order.destination_country,
             comment: order.comment,
             manager: order.manager,
-            customer: 1
+            customer: order.customer
         }
 
 

@@ -4,6 +4,7 @@ import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import store from "@/state/store.js";
 
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
@@ -12,9 +13,9 @@ import animationData1 from "@/components/widgets/gsqxdxog.json";
 import CreautUserModal from './modals/create_user.vue'
 import deleteUserButton from './components/delete_user_button.vue'
 import editUserButton from './components/edit_user_button.vue'
-
-import UserApi from '../../../api/users/users_api.js'
-import Swal from "sweetalert2";
+//
+// import UserApi from '../../../api/users/users_api.js'
+// import Swal from "sweetalert2";
 
 export default {
   name: 'users_list',
@@ -24,10 +25,7 @@ export default {
   data() {
     return {
       title: "Invoice List",
-      usersList: {
-        original: [],
-        searched: []
-      },
+      usersList: [],
       config: {
         mode: "range",
         wrap: true, // set wrap to true only when using 'input-group'
@@ -62,17 +60,17 @@ export default {
   },
   methods: {
     async getUsersList() {
-      let users = new UserApi(localStorage.getItem("jwt"))
-      let usersList = await users.getUsers(100)
-      if (usersList.ok === true) {
-        this.usersList.original = await usersList.json()
-        this.usersList.searched = this.usersList.original
-      } else {
-        await Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: 'Something Went Wrong Here...'
-        })
+      await store.dispatch('getUsers')
+      this.usersList = store.state.users_list
+    }
+  },
+  computed: {
+    allUsers: {
+      get() {
+        return this.usersList
+      },
+      set() {
+        console.log('ss')
       }
     }
   },
@@ -100,7 +98,7 @@ export default {
 </script>
 
 <template>
-
+  {{ $store.state.users_list }}
   <div class="row">
     <div class="col-lg-12">
       <div class="card" id="invoiceList">
@@ -127,7 +125,8 @@ export default {
               <!--end col-->
               <div class="col-xxl-3 col-sm-4">
                 <flat-pickr v-model="date" :config="config" class="form-control bg-light border-light"
-                            placeholder="Select date"></flat-pickr>
+                            placeholder="Select date">
+                </flat-pickr>
               </div>
               <!--end col-->
               <div class="col-xxl-3 col-sm-4">
@@ -175,7 +174,7 @@ export default {
                 </tr>
                 </thead>
                 <tbody class="list form-check-all">
-                <tr v-for="tr in usersList.searched" :key="tr">
+                <tr v-for="tr in allUsers" :key="tr">
                   <td>
                     <input class="form-check-input" type="checkbox">
                   </td>
@@ -185,9 +184,6 @@ export default {
                   <td>
                     <span>{{ tr.email }}</span>
                   </td>
-                  <!-- <td v-if="tr.is_active">
-                        <span>Active</span>
-                      </td> -->
                   <td>
                       <span class="badge text-uppercase" :class="{
                       'bg-success': tr.is_active == true,
@@ -208,42 +204,11 @@ export default {
                 </tr>
                 </tbody>
               </table>
-              <!-- <div class="noresult" style="display: none" :class="{'d-block': resultQuery.length == 0}">
-                  <div class="text-center">
-                    <lottie class="avatar-xl" colors="primary:#121331,secondary:#08a88a" :options="defaultOptions"
-                      :height="75" :width="75" />
-                    <h5 class="mt-2">Sorry! No Result Found</h5>
-                    <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
-                      orders for you search.</p>
-                  </div>
-                </div> -->
             </div>
-            <!-- <div class="d-flex justify-content-end mt-3">
-                <div class="pagination-wrap hstack gap-2">
-                  <a class="page-item pagination-prev disabled" href="#" v-if="page != 1" @click="page--">
-                    Previous
-                  </a>
-                  <ul class="pagination listjs-pagination mb-0">
-                    <li :class="{
-                              active: pageNumber == page,
-                              disabled: pageNumber == '...',
-                            }" v-for="(pageNumber, index) in pages.slice(page-1, page+5)" :key="index"
-                      @click="page = pageNumber">
-                      <a class="page" href="#">{{pageNumber}}</a>
-                    </li>
-                  </ul>
-                  <a class="page-item pagination-next" href="#" @click="page++" v-if="page < pages.length">
-                    Next
-                  </a>
-                </div>
-              </div> -->
           </div>
-
         </div>
       </div>
-
     </div>
-    <!--end col-->
   </div>
 
   <CreautUserModal @onUserCreated="this.getUsersList"/>

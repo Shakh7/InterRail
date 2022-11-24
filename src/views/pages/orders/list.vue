@@ -3,6 +3,7 @@ import CustomTable from '../../../components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
+import store from "@/state/store";
 
 export default {
   data() {
@@ -154,6 +155,10 @@ export default {
         console.log(error)
       })
     },
+
+    getAccount(account) {
+      return store.state.users_list.find(user => user.id === account) || {full_name: 'Unknown'}
+    }
   },
   async mounted() {
     await this.getOrders()
@@ -161,11 +166,6 @@ export default {
   components: {
     CustomTable
   },
-  computed: {
-    user() {
-      return this.$store.state.user
-    },
-  }
 };
 </script>
 
@@ -175,7 +175,7 @@ export default {
       name="ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders.filter(order => order.manager === $store.state.user.id)"
+      :rows="orders"
       :selectable="true"
       :searchable="true"
   >
@@ -211,13 +211,24 @@ export default {
                          icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"/>
     </template>
 
+    <template v-slot:customer="slotProps">
+      <div>
+        <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
+          {{ getAccount(slotProps.row.customer)['full_name'][0].toUpperCase() }}
+        </span>
+        <span>
+          {{ getAccount(slotProps.row.customer)['full_name'] }}
+        </span>
+      </div>
+    </template>
+
     <template v-slot:manager="slotProps">
       <div>
         <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-          {{ slotProps.row.manager === user.id ? user.full_name[0] : 'E' }}
+          {{ getAccount(slotProps.row.manager)['full_name'][0].toUpperCase() }}
         </span>
         <span>
-          {{ slotProps.row.manager === user.id ? user.full_name : slotProps.row.manager }}
+          {{ getAccount(slotProps.row.manager)['full_name'] }}
         </span>
       </div>
     </template>
