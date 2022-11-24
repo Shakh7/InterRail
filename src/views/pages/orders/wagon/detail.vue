@@ -141,20 +141,22 @@
                       <tbody>
                       <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
-                        <td class="text-center" style="max-width: 100px">
-                          <WagonInput :wagon="wagon.wagon"/>
+                        <td class="text-center">
+                          <wagon_rate_weight @update="this.fetchData()" trackBy="Wagon" :id="wagon.id" :wagonName="wagon.wagon"/>
                         </td>
-                        <td class="text-center" style="max-width: 100px">
-                          <AgreedRate :agreedRate="wagon.agreed_rate_per_tonn"/>
+                        <td class="text-center">
+                          <wagon_rate_weight @update="this.fetchData()" trackBy="Rate" :id="wagon.id" :rate="wagon.agreed_rate_per_tonn"/>
                         </td>
-                        <td class="text-center">{{ wagon.actual_weight }}</td>
+                        <td class="text-center">
+                          <wagon_rate_weight @update="this.fetchData()" trackBy="Weight" :id="wagon.id" :actual_weight="wagon.actual_weight"/>
+                        </td>
                         <td class="text-center">{{
-                            wagon.agreed_rate_per_tonn === null ? wagon.actual_weight : (agreed_rate_per_tonn * wagon.actual_weight)
+                            wagon.agreed_rate_per_tonn === null ? wagon.actual_weight : (wagon.agreed_rate_per_tonn * wagon.actual_weight)
                           }}
                         </td>
                         <td class="text-center" v-for="pre_cost in wagon.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
-                          <ActualCostInput :actualCost="pre_cost"/>
+                          <ActualCostInput @update="this.fetchData()" :actualCost="pre_cost"/>
                           <!--                          <ActualCostInput :actualCost="pre_cost"/>-->
                         </td>
                         <td class="text-center">
@@ -392,9 +394,8 @@
 import {ref} from "vue";
 import Swal from "sweetalert2";
 import OrdersApi from "@/api/orders/orders_api";
-import WagonInput from "@/views/pages/orders/wagon/components/WagonInput.vue";
 import ActualCostInput from "@/views/pages/orders/wagon/components/ActualCostInput.vue";
-import AgreedRate from "@/views/pages/orders/wagon/components/AgreedRate.vue";
+import wagon_rate_weight from "@/views/pages/orders/wagon/components/wagon_rate_weight";
 // import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
 // import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
 
@@ -444,7 +445,6 @@ export default {
           }
         })
       }
-      console.log(data)
       this.order = data[0]['order']
       this.product = data[0]['product']
       this.expanses = data[0]['expanses']
@@ -621,9 +621,8 @@ export default {
     // ContainerInput,
     // ActualCostInput,
     // CounterpartyActions
-    WagonInput,
     ActualCostInput,
-    AgreedRate
+    wagon_rate_weight
   },
 }
 </script>
