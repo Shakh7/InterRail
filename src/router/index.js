@@ -31,25 +31,25 @@ router.beforeEach(async (routeTo, routeFrom, next) => {
 
     if (!authRequired) return next()
 
-    next()
+    // next()
 
-    // try {
-    //     let user = new UsersAuthAPi(localStorage.getItem('jwt'))
-    //     let userResponse = await user.testToken()
-    //     if (userResponse.detail === undefined) {
-    //         store.commit('setUser', userResponse)
-    //         if (routeTo.meta.permissions.includes(store.state.user.role)) {
-    //             next()
-    //         } else {
-    //             next({name: 'forbidden'})
-    //         }
-    //     } else {
-    //         next({name: 'login', query: {redirectFrom: routeTo.fullPath}})
-    //     }
-    //
-    // } catch {
-    //     next({name: 'offline'})
-    // }
+    try {
+        let user = new UsersAuthAPi(localStorage.getItem('jwt'))
+        let userResponse = await user.testToken()
+        if (userResponse.detail === undefined) {
+            store.commit('setUser', userResponse)
+            if (routeTo.meta.permissions.includes(store.state.user.role)) {
+                next()
+            } else {
+                next({name: 'forbidden'})
+            }
+        } else {
+            next({name: 'login', query: {redirectFrom: routeTo.fullPath}})
+        }
+
+    } catch {
+        next({name: 'offline'})
+    }
 })
 
 router.beforeResolve(async (routeTo, routeFrom, next) => {
