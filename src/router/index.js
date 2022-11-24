@@ -2,8 +2,8 @@ import {createWebHistory, createRouter} from "vue-router";
 // import axios from 'axios';
 import routes from './routes'
 import appConfig from "../../app.config";
-// import store from '../state/store.js'
-// import UsersAuthAPi from "../api/auth/users_api.js";
+import store from '../state/store.js'
+import UsersAuthAPi from "../api/auth/users_api.js";
 
 const router = createRouter({
     history: createWebHistory(),
