@@ -345,8 +345,6 @@
 
   </Transition>
 
-  {{ counterparty_list }}
-
     <CounterpartyActions
         v-if="!isLoading()"
         :counterparties="order.counterparties"

@@ -71,7 +71,12 @@ export default {
     async getOrders() {
       let orderApi = new OrderApi();
       let data = await orderApi.getWagonOrders()
-      this.orders = data.results.map(result => result.order)
+      let orders = []
+      data.results.forEach(order => {
+        order.order.product = order.product
+        orders.push(order.order)
+      })
+      this.orders = orders
     },
     deleteOrderConfirmation(order) {
       Swal.fire({
@@ -203,7 +208,8 @@ export default {
     </template>
 
     <template v-slot:actions="slotProps">
-      <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square" class="c_icon mx-2 c_icon_hoverable"/>
+      <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square"
+                         class="c_icon mx-2 c_icon_hoverable"/>
       <font-awesome-icon icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"
                          @click="deleteOrderConfirmation(slotProps.row)"/>
     </template>

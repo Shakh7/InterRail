@@ -128,6 +128,7 @@ export default {
       this.hasData = true
       let departure = data.departure
       let destination = data.destination
+      let product = data.product
 
       this.departure.options = [{
         value: parseInt(departure.id),
@@ -151,6 +152,20 @@ export default {
         value: parseInt(destination.id),
         label: destination.name,
         code: destination.code
+      }
+
+      this.products.options = [{
+        value: parseInt(product.id),
+        label: product.name,
+        hc_code: product['hc_code'],
+        etcng: product['etcng_code'],
+      }]
+
+      this.products.selected = {
+        value: parseInt(product.id),
+        label: product.name,
+        hc_code: product['hc_code'],
+        etcng: product['etcng_code'],
       }
     },
 
