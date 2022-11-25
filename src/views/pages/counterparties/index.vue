@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     async getCounterparties() {
-      let response = await fetch('http://178.62.91.121:5000/order/counterparty/list/')
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/list/`)
       let data = await response.json()
 
       const groupByMake = (arr = []) => {

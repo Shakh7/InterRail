@@ -72,7 +72,12 @@ export default {
     async getOrders() {
       let orderApi = new OrderApi();
       let data = await orderApi.getContainerOrders();
-      this.orders = data.results.map(result => result.order)
+      let orders = []
+      data.results.forEach(order => {
+        order.order.product = order.product
+        orders.push(order.order)
+      })
+      this.orders = orders
     },
     setToUpdateOrder(order) {
       this.setCurrentlyUpdating(order)
@@ -157,7 +162,7 @@ export default {
     },
 
     getAccount(account) {
-      return store.state.users_list.find(user => user.id === account) || {full_name: 'Unknown'}
+      return store.state.users_list.filter(user => user.id === account)[0] || {full_name: 'Unknown'}
     }
   },
   async mounted() {
@@ -175,7 +180,7 @@ export default {
       name="ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders"
+      :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
   >

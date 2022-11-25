@@ -246,16 +246,17 @@ export default {
         quantity: this.quantity,
         weight: this.weight,
         product_id: this.product_id,
-        agreet_rate_per_ton: this.agreed_rate_per_ton,
+        agreed_rate_per_tonn: this.agreed_rate_per_ton,
       })
 
       await Swal.fire({
         position: "center",
-        icon: response.ok ? 'success' : 'error',
-        title: response.ok ? 'Wagon order has been created successfully' : 'Something went wrong',
+        icon: response.ok ? "success" : "error",
+        title: response.ok ? "Order created successfully" : "Order create failed",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 3000,
       });
+      await this.$router.push({name: "order_wagon_list"})
     }
   },
   async mounted() {
@@ -289,7 +290,7 @@ export default {
               <label for="position" class="form-label">Position</label>
               <select class="form-select" aria-label="order position" v-model="order.position">
                 <option selected disabled>Select position</option>
-                <option value="block_forwarder">Rail forwarder</option>
+                <option value="rail_forwarder">Rail forwarder</option>
                 <option value="block_train">Block train</option>
                 <option value="multi_modal">Multi modal</option>
               </select>

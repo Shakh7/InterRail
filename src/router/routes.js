@@ -70,12 +70,14 @@ export default [
     },
 
     {
-        path: "/users/",
+        path: "/account/",
         name: "Users",
         meta: {title: "Dashboard", authRequired: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
         children: [
-            {path: 'list/', name: 'users list', component: () => import("../views/pages/users/list.vue"),}
+            {path: 'users/', name: 'users_list', component: () => import("../views/pages/users/UsersList.vue"),},
+            {path: 'managers/', name: 'managers_list', component: () => import("../views/pages/users/ManagersList.vue"),},
+            {path: 'clients/', name: 'clients_list', component: () => import("../views/pages/users/ClientsList.vue"),}
         ],
     },
 
@@ -115,6 +117,13 @@ export default [
                 meta: {title: "Container Orders Update",},
                 component: () => import("../views/pages/orders/update.vue"),
             },
+
+            {
+                path: 'wagon/update/:id',
+                name: 'orders_wagon_update',
+                meta: {title: "Wagon Orders Update",},
+                component: () => import("../views/pages/orders/wagon/update.vue"),
+            },
             {
                 path: 'container/view/:id',
                 name: 'orders_container_detail',
@@ -147,9 +156,21 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: 'products/', name: 'products_list', component: () => import("../views/pages/products/index.vue"),},
-            {path: 'stations/', name: 'stations_list', component: () => import("../views/pages/general/stations/index.vue"),},
-            {path: 'categories/', name: 'categories_list', component: () => import("../views/pages/general/categories/index.vue"),},
-            {path: 'counterparties/', name: 'counterparties_list', component: () => import("../views/pages/general/counterparties/index.vue"),},
+            {
+                path: 'stations/',
+                name: 'stations_list',
+                component: () => import("../views/pages/general/stations/index.vue"),
+            },
+            {
+                path: 'categories/',
+                name: 'categories_list',
+                component: () => import("../views/pages/general/categories/index.vue"),
+            },
+            {
+                path: 'counterparties/',
+                name: 'counterparties_list',
+                component: () => import("../views/pages/general/counterparties/index.vue"),
+            },
         ],
     },
 
@@ -179,7 +200,11 @@ export default [
         meta: {title: "Counterparty List", authRequired: true, permissions: ['admin', 'staff', 'client']},
         component: () => import("../layouts/layout.vue"),
         children: [
-            {path: 'list/', name: 'counterparty_list', component: () => import("../views/pages/counterparties/index.vue"),}
+            {
+                path: 'list/',
+                name: 'counterparty_list',
+                component: () => import("../views/pages/counterparties/index.vue"),
+            }
         ],
     },
 

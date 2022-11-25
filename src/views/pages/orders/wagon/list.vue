@@ -3,6 +3,7 @@ import CustomTable from '@/components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import Swal from "sweetalert2";
 import store from '@/state/store.js'
+import {ordersMehtods} from "@/state/helpers";
 
 export default {
   data() {
@@ -66,6 +67,7 @@ export default {
     };
   },
   methods: {
+    ...ordersMehtods,
     async getOrders() {
       let orderApi = new OrderApi();
       let data = await orderApi.getWagonOrders()
@@ -149,6 +151,12 @@ export default {
       })
     },
 
+
+    setToUpdateOrder(order) {
+      this.setCurrentlyUpdating(order, 'wagon')
+      this.$router.push({name: 'orders_wagon_update', params: {id: order.id}})
+    },
+
     getAccount(account) {
       return store.state.users_list.find(user => user.id === account) || {full_name: 'Unknown'}
     }
@@ -167,7 +175,7 @@ export default {
       name="ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders"
+      :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
   >
@@ -195,7 +203,7 @@ export default {
     </template>
 
     <template v-slot:actions="slotProps">
-      <font-awesome-icon icon="fa-solid fa-pen-to-square" class="c_icon mx-2 c_icon_hoverable"/>
+      <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square" class="c_icon mx-2 c_icon_hoverable"/>
       <font-awesome-icon icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"
                          @click="deleteOrderConfirmation(slotProps.row)"/>
     </template>

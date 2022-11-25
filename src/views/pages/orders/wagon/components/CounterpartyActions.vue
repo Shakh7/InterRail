@@ -27,7 +27,7 @@
             <div class="row align-items-center w-100 m-auto">
               <div class="col-11 px-0 mx-0">
                 <p class="card-title mb-0 py-2">
-                  Create container
+                  Create wagon
                 </p>
               </div>
               <div class="col-1 text-center px-0 mx-0">
@@ -39,40 +39,11 @@
             <b-collapse class="collapse border-bottom shadow-none" id="containerCreate">
 
               <div class="p-3">
-
-                <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified mb-3" role="tablist">
-                  <li class="nav-item" v-for="(container_type, tab_index) in container_types" :key="container_type">
-                    <a class="nav-link" :class="tab_index === 0 ? 'active' : ''"
-                       data-bs-toggle="tab" :href="'#container_type_create_' + tab_index + 10" role="tab">
-                      {{ container_type.type }}
-                    </a>
-                  </li>
-                </ul>
-                <div class="tab-content text-start">
-                  <div v-for="(container_type, tab_index) in container_types" :key="container_type"
-                       class="tab-pane" :class="tab_index === 0 ? 'active' : ''"
-                       :id="'container_type_create_' + tab_index + 10" role="tabpanel">
-
-                    <div class="row w-100 m-auto">
-                      <div class="col-12 px-0 mb-3">
-                        <label for="exampleFormControlTextarea5" class="form-label">
-                          Containers List
-                        </label>
-                        <textarea v-model="container_type.containers" class="form-control" :placeholder="'Container list for ' + container_type.type"
-                                  id="exampleFormControlTextarea5"
-                                  :rows="container_type.quantity >= 20 ? container_type.quantity / 2 : container_type.quantity"
-                        ></textarea>
-                        <div id="exampleFormControlTextarea5" class="form-text"> One container for each line</div>
-                      </div>
-                      <div class="col-12 text-end px-0">
-                        <b-button @click="createContainer(container_type.id, container_type.containers)"
-                                  variant="success" class="btn-icon waves-effect waves-light w-100">
-                          Start uploading
-                        </b-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <textarea
+                    class="form-control"
+                    rows="10"
+                    placeholder="Wagon number"
+                    ></textarea>
               </div>
 
             </b-collapse>
@@ -151,7 +122,6 @@
         <div class="card shadow-none my-0">
           <div class="card-header bg-light py-1"></div>
         </div>
-
         <div v-for="(counterparty, i) in counterparties_with_actual_cost"
              :key="counterparty.id" class="card mb-0 shadow-none">
           <div class="card-header py-2" type="button" data-bs-toggle="collapse" :href="'#counterpartyCollapse' + i + 1">

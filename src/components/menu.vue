@@ -153,28 +153,21 @@ export default {
             <span data-key="t-users-management"> {{ $t("t-users-management") }} </span>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link menu-link" to="/users/list/">
+            <router-link class="nav-link menu-link" :to="{name: 'users_list'}">
               <i class="ri-group-line"></i>
               <span data-key="t-users">{{ $t("t-users") }}</span>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link menu-link" to="/users/list/">
+            <router-link class="nav-link menu-link" :to="{name: 'managers_list'}">
               <i class="ri-home-line ri-user-3-line"></i>
               <span data-key="t-users">{{ $t("t-managers") }}</span>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link menu-link" to="/users/list/">
-              <i class="ri-home-line ri-user-3-line"></i>
-              <span data-key="t-users">{{ $t("t-agents") }}</span>
-            </router-link>
-          </li>
-
-          <li class="nav-item">
-            <router-link class="nav-link menu-link" to="/users/list/">
+            <router-link class="nav-link menu-link" :to="{name: 'clients_list'}">
               <i class="ri-home-line ri-user-3-line"></i>
               <span data-key="t-users">{{ $t("t-clients") }}</span>
             </router-link>
@@ -242,12 +235,12 @@ export default {
           </div>
         </li>
 
-        <li class="nav-item">
-          <router-link class="nav-link menu-link" :to="{name: 'invoices_list'}">
-            <i class="ri-file-paper-line"></i>
-            <span data-key="t-orders">Invoices</span>
-          </router-link>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <router-link class="nav-link menu-link" :to="{name: 'invoices_list'}">-->
+<!--            <i class="ri-file-paper-line"></i>-->
+<!--            <span data-key="t-orders">Invoices</span>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
         <li class="nav-item">
           <router-link class="nav-link menu-link" :to="{name: 'counterparty_list'}">
@@ -299,38 +292,31 @@ export default {
           <span data-key="t-orders-menu"> Terminal </span>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/terminal/">
+          <a class="nav-link menu-link" href="https://terminal.interrail.uz/container_status/list/">
             <font-awesome-icon icon="fa-solid fa-train"/>
             <span data-key="t-orders">Terminal</span>
-          </router-link>
+          </a>
         </li>
 
         <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/trains/">
+          <a class="nav-link menu-link" href="https://terminal.interrail.uz/trains/train_list/">
             <font-awesome-icon icon="fa-solid fa-train"/>
             <span data-key="t-orders">Trains</span>
-          </router-link>
+          </a>
         </li>
 
         <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/trains/">
+          <a class="nav-link menu-link" href="https://terminal.interrail.uz/container_in_terminal/in_terminal/list/">
             <font-awesome-icon icon="fa-solid fa-train"/>
             <span data-key="t-orders">Containers</span>
-          </router-link>
+          </a>
         </li>
 
         <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/trains/">
-            <font-awesome-icon icon="fa-solid fa-train"/>
-            <span data-key="t-orders">Wagons</span>
-          </router-link>
-        </li>
-
-        <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/trains/">
+          <a class="nav-link menu-link" href="https://code.interrail.uz/">
             <i class="ri-file-list-3-line"></i>
             <span data-key="t-orders">Codes</span>
-          </router-link>
+          </a>
         </li>
 
         <li class="menu-title">

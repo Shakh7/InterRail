@@ -116,7 +116,7 @@ export default {
 
     async getCategories() {
       if (this.categories.length === 0) {
-        let response = await fetch('http://178.62.91.121:5000/api/counterparty/categories/')
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/counterparty/categories/`)
         let categories = await response.json()
         categories.results.forEach(category => {
           this.categories.push({
@@ -128,7 +128,7 @@ export default {
     },
     async getCounterparties() {
       if (this.counterparties.length === 0) {
-        let response = await fetch('http://178.62.91.121:5000/api/counterparty/counterparties/')
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/counterparty/counterparties/`)
         let counterparties = await response.json()
         this.counterparties = counterparties.results
       }
@@ -137,7 +137,7 @@ export default {
     async getOptions(query, option_type) {
       if (query.length <= 2) return;
       if (option_type === 'departure') {
-        let response = await fetch(`http://178.62.91.121:5000/api/core/stations/?search=${query}`)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/core/stations/?search=${query}`)
         let results = await response.json()
         let stations = results.results.slice(0, 7)
 
@@ -153,7 +153,7 @@ export default {
         })
 
       } else if (option_type === 'destination') {
-        let response = await fetch(`http://178.62.91.121:5000/api/core/stations/?search=${query}`)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/core/stations/?search=${query}`)
         let results = await response.json()
         let stations = results.results.slice(0, 7)
 
@@ -169,7 +169,7 @@ export default {
         })
 
       } else if (option_type === 'products') {
-        let response = await fetch(`http://178.62.91.121:5000/api/core/products/?search=${query}`)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/core/products/?search=${query}`)
         let results = await response.json()
         let products = results.results.slice(0, 7)
 
@@ -285,7 +285,7 @@ export default {
         preliminary_costs.push(one_preliminary_cost)
       })
 
-      let response = await fetch('http://178.62.91.121:5000/api/order/create/', {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/api/order/create/`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

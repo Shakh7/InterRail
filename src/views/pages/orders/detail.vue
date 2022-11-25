@@ -164,7 +164,7 @@
                         <td class="text-center">{{ ctr_type.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
-                          <ActualCostInput :actualCost="pre_cost"/>
+                          <ActualCostInput @update="fetchData()" :actualCost="pre_cost"/>
                         </td>
                         <td class="text-center">
                           ${{
@@ -292,40 +292,6 @@
                     <td> {{ loadData(order.destination.name + ' (' + order.destination.code) + ')' }}</td>
                   </tr>
                   <tr>
-                    <td class="fw-medium">Assigned To:</td>
-                    <td>
-                      <div class="avatar-group">
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-trigger="hover" data-bs-placement="top" data-bs-original-title="Add Members">
-                          <div class="avatar-xs">
-                            <div class="avatar-title fs-16 rounded-circle bg-light border-dashed border text-primary">
-                              +
-                            </div>
-                          </div>
-                        </a></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fw-medium">Priority</td>
-                    <td><span class="badge bg-danger">High</span></td>
-                  </tr>
-                  <tr>
                     <td class="fw-medium">Create Date</td>
                     <td>{{ loadData(order.date) }}</td>
                   </tr>
@@ -355,7 +321,7 @@
           </div>
           <div class="card">
             <div class="card-header"><h6 class="card-title fw-semibold mb-0">Files Attachment</h6></div>
-            <div class="card-body"> data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+            <div class="card-body">
               <div class="d-flex align-items-center border border-dashed p-2 rounded">
                 <div class="flex-shrink-0 avatar-sm">
                   <div class="avatar-title bg-light rounded"><i class="ri-file-zip-line fs-20 text-primary"></i></div>
@@ -504,7 +470,7 @@ export default {
           }),
         };
 
-        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/update/${item.id}/`, requestGetOptions)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/update/${item.id}/`, requestGetOptions)
         if (response.status >= 200) {
           const Toast = Swal.mixin({
             toast: true,
@@ -564,7 +530,7 @@ export default {
           }),
         };
 
-        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/create/`, requestGetOptions)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/create/`, requestGetOptions)
         if (response.status >= 200) {
           const Toast = Swal.mixin({
             toast: true,

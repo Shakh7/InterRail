@@ -20,7 +20,11 @@ export const actions = {
     setCurrentlyUpdating({commit}, order) {
         commit('setUpdatingOrder', order)
     },
-    async updateCurrentUpdating({commit}, order) {
+    async updateCurrentUpdating({commit}, order_data) {
+        let order = order_data['order']
+        let order_typee = order_data['type']
+        let product = order_data['product']
+
         let order_payment_status = order.payment_status === 'Issued' ? 'issued'
             : order.payment_status === 'Reserved' ? 'reserved'
                 : order.payment_status === 'Received' ? 'received'
@@ -42,7 +46,6 @@ export const actions = {
                     : 'import'; // default
 
         let thisorder = {
-            order_number: order.order_number,
             lot_number: order.lot_number,
             date: order.date,
             position: order_position,
@@ -63,20 +66,38 @@ export const actions = {
             customer: order.customer
         }
 
+        let return_response = ''
 
-        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/edit/`, {
-            method: "PUT",
-            body: JSON.stringify({
-                order: thisorder,
-                sending_type: "single",
-                product_id: 3333
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
+        console.log("order.product", product)
+        if (order_typee === 'wagon') {
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/update/${order.order_number}/`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    order: thisorder,
+                    sending_type: "single",
+                    product_id: product.value
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            return_response = response
+        } else if (order_typee === 'container') {
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/edit/`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    order: thisorder,
+                    sending_type: "single",
+                    product_id: product.value
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            return_response = response
+        }
 
         commit('setUpdatingOrder', order)
-        return response
+        return return_response
     },
 };

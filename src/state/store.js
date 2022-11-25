@@ -46,6 +46,7 @@ const store = createStore({
             let authOptions = {
                 method: 'GET',
                 headers: auth,
+                redirect: 'follow'
             };
 
             let response = await fetch(`${process.env.VUE_APP_USERS_URL}/user/`, authOptions)

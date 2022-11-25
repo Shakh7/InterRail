@@ -18,7 +18,7 @@ import editUserButton from './components/edit_user_button.vue'
 // import Swal from "sweetalert2";
 
 export default {
-  name: 'users_list',
+  name: 'managers_list',
   emits: {
     updatedSuccess: null,
   },
@@ -67,7 +67,7 @@ export default {
   computed: {
     allUsers: {
       get() {
-        return this.usersList
+        return this.usersList.filter(user => user.role === 'staff')
       },
       set() {
         console.log('ss')
@@ -98,7 +98,6 @@ export default {
 </script>
 
 <template>
-  {{ $store.state.users_list }}
   <div class="row">
     <div class="col-lg-12">
       <div class="card" id="invoiceList">

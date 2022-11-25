@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 
 export default {
   name: "ActualCostInput",
+  emits: ["update"],
   data() {
     return {
       inputClass: ""
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     async showPrice(id) {
-      let response = await fetch(`http://178.62.91.121:5000/container_order/expanse/actual_cost/update/${id}/`, {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/actual_cost/update/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -45,6 +46,7 @@ export default {
         }
       })
 
+      this.$emit('update')
       if (response.ok) {
         this.inputClass = 'border-success'
         await Toast.fire({

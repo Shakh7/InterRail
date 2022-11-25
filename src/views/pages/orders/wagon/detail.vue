@@ -285,41 +285,6 @@
                     <td> {{ loadData(order.destination.name + ' (' + order.destination.code) + ')' }}</td>
                   </tr>
                   <tr>
-                    <td class="fw-medium">Assigned To:</td>
-                    <td class="fw-medium">Assigned To:</td>
-                    <td>
-                      <div class="avatar-group">
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript:void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-trigger="hover" data-bs-original-title="James Price"><img
-                            src="/img/avatar-3.c5c13ab6.jpg" alt="" class="rounded-circle avatar-xs"></a>
-
-                        <a
-                            href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip"
-                            data-bs-trigger="hover" data-bs-placement="top" data-bs-original-title="Add Members">
-                          <div class="avatar-xs">
-                            <div class="avatar-title fs-16 rounded-circle bg-light border-dashed border text-primary">
-                              +
-                            </div>
-                          </div>
-                        </a></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fw-medium">Priority</td>
-                    <td><span class="badge bg-danger">High</span></td>
-                  </tr>
-                  <tr>
                     <td class="fw-medium">Create Date</td>
                     <td>{{ loadData(order.date) }}</td>
                   </tr>
@@ -349,7 +314,7 @@
           </div>
           <div class="card">
             <div class="card-header"><h6 class="card-title fw-semibold mb-0">Files Attachment</h6></div>
-            <div class="card-body"> data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+            <div class="card-body">
               <div class="d-flex align-items-center border border-dashed p-2 rounded">
                 <div class="flex-shrink-0 avatar-sm">
                   <div class="avatar-title bg-light rounded"><i class="ri-file-zip-line fs-20 text-primary"></i></div>
@@ -380,14 +345,15 @@
 
   </Transition>
 
-  <!--  <CounterpartyActions-->
-  <!--      v-if="!isLoading()"-->
-  <!--      :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"-->
-  <!--      :counterparties="order.counterparties"-->
-  <!--      :counterparty_list="counterparty_list.value"-->
-  <!--      :category_list="category_list.value"-->
-  <!--      @updateCounterparties="updatedCounterparties"-->
-  <!--  />-->
+  {{ counterparty_list }}
+
+    <CounterpartyActions
+        v-if="!isLoading()"
+        :counterparties="order.counterparties"
+        :counterparty_list="counterparty_list.value"
+        :category_list="category_list.value"
+        @updateCounterparties="updatedCounterparties"
+    />
 </template>
 
 <script>
@@ -397,7 +363,7 @@ import OrdersApi from "@/api/orders/orders_api";
 import ActualCostInput from "@/views/pages/orders/wagon/components/ActualCostInput.vue";
 import wagon_rate_weight from "@/views/pages/orders/wagon/components/wagon_rate_weight";
 // import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
-// import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
+import CounterpartyActions from "@/views/pages/orders/wagon/components/CounterpartyActions";
 
 export default {
   name: "detail",
@@ -504,7 +470,7 @@ export default {
           }),
         };
 
-        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/update/${item.id}/`, requestGetOptions)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/update/${item.id}/`, requestGetOptions)
         if (response.status >= 200) {
           const Toast = Swal.mixin({
             toast: true,
@@ -518,7 +484,7 @@ export default {
             }
           })
 
-          Toast.fire({
+          await Toast.fire({
             icon: 'success',
             title: 'Successfully updated'
           })
@@ -564,7 +530,7 @@ export default {
           }),
         };
 
-        let response = await fetch(`http://178.62.91.121:5000/order/counterparty/create/`, requestGetOptions)
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/create/`, requestGetOptions)
         if (response.status >= 200) {
           const Toast = Swal.mixin({
             toast: true,
@@ -614,15 +580,16 @@ export default {
   },
   async mounted() {
     await this.fetchData();
-    // await this.getCategoryList()
-    // await this.getCounterpartyList()
+    await this.getCategoryList()
+    await this.getCounterpartyList()
   },
   components: {
     // ContainerInput,
     // ActualCostInput,
     // CounterpartyActions
     ActualCostInput,
-    wagon_rate_weight
+    wagon_rate_weight,
+    CounterpartyActions
   },
 }
 </script>

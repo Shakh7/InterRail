@@ -31,28 +31,25 @@ export default {
           id: 1,
           icon: "ri-money-dollar-circle-fill",
           label: "Rail Forwarder",
-          counter: "2390.68",
+          counter: 2390.68,
           badge: "ri-arrow-up-s-fill",
           badgeColor: "success",
-          percentage: "6.24",
         },
         {
           id: 2,
           icon: "ri-arrow-up-circle-fill",
           label: "Train Operator",
-          counter: "19523.25",
+          counter: 19523.25,
           badge: "ri-arrow-up-s-fill",
           badgeColor: "success",
-          percentage: "3.67",
         },
         {
           id: 3,
           icon: "ri-arrow-down-circle-fill",
           label: "Multi Modal",
-          counter: "14799.44",
+          counter: 14799.44,
           badge: "ri-arrow-down-s-fill",
           badgeColor: "danger",
-          percentage: "4.80",
         },
       ],
     };
@@ -138,13 +135,6 @@ export default {
                               $<count-to :startVal='0' :endVal='item.counter' :duration='1500'></count-to>
                             </span>
                           </h4>
-                        </div>
-                        <div class="flex-shrink-0 align-self-end">
-                          <span :class="`badge badge-soft-${item.badgeColor}`">
-                            <i :class="`${item.badge} align-middle me-1`"></i>
-                            {{ item.percentage }} %
-                            <span></span>
-                          </span>
                         </div>
                       </div>
                     </div>

@@ -128,7 +128,6 @@ export default {
       this.hasData = true
       let departure = data.departure
       let destination = data.destination
-      let product = data.product
 
       this.departure.options = [{
         value: parseInt(departure.id),
@@ -153,29 +152,10 @@ export default {
         label: destination.name,
         code: destination.code
       }
-
-      this.products.options = [{
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }]
-
-      this.products.selected = {
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }
     },
 
     async updateContainerOrder() {
-      let order = this.$store.state.orders.currentlyUpdating;
-      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
-        order: order,
-        type: 'container',
-        product: this.products.selected
-      })))
+      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({order: this.$store.state.orders.currentlyUpdating, type: 'wagon'})))
       await Swal.fire({
         position: "center",
         icon: response.ok ? "success" : "error",
@@ -183,6 +163,7 @@ export default {
         showConfirmButton: false,
         timer: 5000,
       });
+      console.log(await response.json())
       await this.$router.push({name: "order_container_list"})
     }
   },
@@ -210,7 +191,7 @@ export default {
         <div class="col-md-4">
           <label class="form-label">Order number</label>
           <input :value="currentOrder.order_number" type="number" class="form-control"
-                 placeholder="Order number may not be updated !" disabled>
+                 placeholder="Order number may not be updated">
         </div>
 
         <div class="col-md-4">
@@ -426,9 +407,7 @@ export default {
           <label for="payment_status" class="form-label">Customer</label>
           <select class="form-select" id="payment_status" v-model="currentOrder.customer">
             <option selected disabled>Select user</option>
-            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client"
-                    :value="client.id">{{ client.full_name }}
-            </option>
+            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client" :value="client.id">{{ client.full_name }}</option>
           </select>
         </div>
 

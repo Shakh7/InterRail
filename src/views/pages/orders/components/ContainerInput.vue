@@ -41,7 +41,7 @@ export default {
       }
     },
     async sendRequest(id, value) {
-      let response = await fetch(`http://178.62.91.121:5000/container_order/expanse/update/${id}/`, {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/update/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

@@ -5,6 +5,7 @@ import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import OrdersApi from "@/api/orders/orders_api";
 import CoreApi from "@/api/core/core_api";
+import Swal from "sweetalert2";
 
 export default {
   data() {
@@ -272,8 +273,14 @@ export default {
         })
       })
 
-      console.log("response", response)
-      console.log("json", await response.json())
+      await Swal.fire({
+        position: "center",
+        icon: response.ok ? "success" : "error",
+        title: response.ok ? "Order created successfully" : "Order create failed",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      await this.$router.push({name: "order_container_list"})
     }
   },
   watch: {
@@ -324,7 +331,7 @@ export default {
               <label for="position" class="form-label">Position</label>
               <select class="form-select" aria-label="order position" v-model="order.position">
                 <option selected disabled>Select position</option>
-                <option value="block_forwarder">Rail forwarder</option>
+                <option value="rail_forwarder">Rail forwarder</option>
                 <option value="block_train">Block train</option>
                 <option value="multi_modal">Multi modal</option>
               </select>
