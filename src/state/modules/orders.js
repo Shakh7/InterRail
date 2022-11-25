@@ -68,7 +68,6 @@ export const actions = {
 
         let return_response = ''
 
-        console.log("order.product", product)
         if (order_typee === 'wagon') {
             let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/update/${order.order_number}/`, {
                 method: "PUT",

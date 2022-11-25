@@ -170,7 +170,12 @@ export default {
     },
 
     async updateContainerOrder() {
-      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({order: this.$store.state.orders.currentlyUpdating, type: 'wagon'})))
+      let order = this.$store.state.orders.currentlyUpdating;
+      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
+        order: order,
+        type: 'wagon',
+        product: this.products.selected
+      })))
       await Swal.fire({
         position: "center",
         icon: response.ok ? "success" : "error",
@@ -179,7 +184,7 @@ export default {
         timer: 5000,
       });
       console.log(await response.json())
-      await this.$router.push({name: "order_container_list"})
+      await this.$router.push({name: "order_wagon_list"})
     }
   },
   computed: {
