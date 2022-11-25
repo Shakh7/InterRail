@@ -61,16 +61,16 @@ export default {
         ]
       },
       sending_type: "single",
-      product_id: 7215,
+      product_id: null,
       quantity: 1,
-      weight: 60,
-      agreed_rate_per_ton: 14.25,
+      weight: null,
+      agreed_rate_per_ton: null,
 
       wagon_preliminary_costs: [
         {
           category_id: 1,
           counterparty_id: 1,
-          preliminary_cost: "15.00"
+          preliminary_cost: ''
         }
       ],
 
@@ -592,20 +592,6 @@ export default {
         </template>
 
       </custom_wizard>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xl-4">
-      <h6 v-for="key in Object.entries(order)" :key="key">
-        {{ key[0] }}: {{ key[1] }}
-      </h6>
-    </div>
-
-    <div class="col-xl-4">
-      <h6 v-for="key in Object.entries(wagon_preliminary_costs)" :key="key">
-        {{ key[0] }}: {{ key[1] }}
-      </h6>
     </div>
   </div>
 </template>

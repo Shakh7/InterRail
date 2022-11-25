@@ -65,8 +65,8 @@ export default {
       sending_type: "single",
       container_types: [
         {
-          agreed_rate: "500.00",
-          quantity: 35,
+          agreed_rate: '',
+          quantity: 1,
           container_type: "40HC",
           container_preliminary_costs: [
             {
@@ -195,8 +195,8 @@ export default {
       if (action === "add") {
         this.container_types.push(
             {
-              agreed_rate: "500.00",
-              quantity: 10,
+              agreed_rate: '',
+              quantity: 1,
               container_type: type,
               container_preliminary_costs: this.order.counterparties.map(counterparty => {
                 return {
@@ -673,16 +673,6 @@ export default {
         </template>
 
       </custom_wizard>
-    </div>
-    <div class="col-xl-4">
-      <h6 v-for="key in Object.entries(order)" :key="key">
-        {{ key[0] }}: {{ key[1] }}
-      </h6>
-    </div>
-    <div class="col-xl-4">
-      <h6 v-for="key in Object.entries(container_types)" :key="key">
-        {{ key[1] }}
-      </h6>
     </div>
   </div>
 </template>
