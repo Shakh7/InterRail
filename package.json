@@ -1,11 +1,11 @@
 {
-  "name": "velzon",
+  "name": "InterRail",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "preview": "vue-cli-service preview"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^32.0.0",

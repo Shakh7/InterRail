@@ -72,7 +72,7 @@ export default [
     {
         path: "/account/",
         name: "Users",
-        meta: {title: "Dashboard", authRequired: true, permissions: ['admin']},
+        meta: {title: "Users List", authRequired: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: 'users/', name: 'users_list', component: () => import("../views/pages/users/UsersList.vue"),},

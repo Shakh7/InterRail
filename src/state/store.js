@@ -54,7 +54,8 @@ const store = createStore({
             commit('setUsers', data)
         }
     },
-    getters: {},
+    getters: {
+    },
 })
 
 export default store
