@@ -7,7 +7,7 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <div class="search-box">
-                  <input type="text" class="form-control search" placeholder="Search for categories...">
+                  <input v-model="search" type="text" class="form-control search" placeholder="Search for categories...">
                   <i class="ri-search-line search-icon"></i>
                 </div>
               </div>
@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="row row-cols-xxl-5 row-cols-lg-3 row-cols-md-2 row-cols-1 gy-3 pb-3">
-          <div class="col" v-for="category in categories" :key="category.id">
+          <div class="col" v-for="category in categoryComputed" :key="category.id">
             <div class="collapse show">
               <div class="card mb-1">
                 <div class="card-body">
@@ -71,6 +71,7 @@
             </div>
           </div>
         </div>
+        <h6>Showing {{ categoryComputed.length }} out of {{ categories.length }} categories</h6>
       </div>
     </div>
   </div>
@@ -85,6 +86,7 @@ export default {
   data() {
     return {
       categories: [],
+      search: ''
     }
   },
   methods: {
@@ -211,6 +213,13 @@ export default {
   async mounted() {
     await this.getCategories(100, 0)
   },
+  computed: {
+    categoryComputed() {
+      return this.search.trim() === ''
+          ? this.categories
+          : this.categories.filter(category => category.name.trim().toLowerCase().includes(this.search.trim().toLowerCase()))
+    }
+  }
 }
 </script>
 
