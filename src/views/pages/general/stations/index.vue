@@ -361,6 +361,12 @@ export default {
       fetch(`${process.env.VUE_APP_ORDER_URL}/core/stations/${id}/`, {method: 'DELETE'})
           .then(response => {
             this.getStations()
+            this.preview = {
+              id: 0,
+              name: "",
+              code: "",
+              railway_name: "",
+            }
             const Toast = Swal.mixin({
               toast: true,
               position: 'bottom',
