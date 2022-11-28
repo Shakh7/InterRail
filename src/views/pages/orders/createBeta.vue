@@ -280,7 +280,8 @@ export default {
         showConfirmButton: false,
         timer: 3000,
       });
-      await this.$router.push({name: "order_container_list"})
+
+      if (response.ok) await this.$router.push({name: "order_container_list"})
     }
   },
   watch: {

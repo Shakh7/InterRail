@@ -91,7 +91,9 @@
                 <div class="d-md-flex bg-light mb-4">
                   <div class="p-3 mb-0 bg-light">
                     <h5><code>Name</code></h5>
-                    <span class="fs-5">{{ preview.name }}</span>
+                    <input v-model="preview.name" class="form-control w-100 fs-5 p-0 py-1 bg-transparent"
+                           :class="preview.isInEditMode ? 'border ps-2' : 'border-0'"
+                           style="outline: none">
                   </div>
                 </div>
                 <div class="table-responsive table-card">
@@ -99,20 +101,38 @@
                     <tbody>
                     <tr>
                       <td class="fw-medium">CODE</td>
-                      <td>
-                        <span class="text-dark">{{ preview.code }}</span>
+                      <td style="max-width: 100px">
+                        <input v-model="preview.code"
+                               class="form-control w-100 fs-6 text-end p-0 pe-2 bg-transparent"
+                               :class="preview.isInEditMode ? 'border ps-2' : 'border-0'"
+                               style="outline: none"
+                        >
                       </td>
                     </tr>
                     <tr>
                       <td class="fw-medium">RAILWAY NAME</td>
-                      <td>
-                        <span class="text-dark">{{ preview.railway_name }}</span>
+                      <td class="text-end pe-3">
+                        <span class="text-dark pe-2">{{ preview.railway_name }}</span>
                       </td>
                     </tr>
                     <tr>
-                      <td colspan="2">
-                        <div class="d-grid gap-2">
-                          <b-button variant="soft-info">Edit</b-button>
+                      <td>
+                        <div class="d-grid">
+                          <b-button v-if="preview.isInEditMode" variant="info" class="w-100"
+                                    @click="saveStation"
+                                    :disabled="preview.name.trim().length === 0 || preview.code.trim().length === 0">
+                            Save
+                          </b-button>
+                          <b-button v-else-if="!preview.isInEditMode" variant="soft-info"
+                                    class="w-100"
+                                    @click="preview.isInEditMode = true">
+                            Edit
+                          </b-button>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-grid">
+                          <b-button variant="soft-danger" class="w-100">Delete</b-button>
                         </div>
                       </td>
                     </tr>
@@ -139,6 +159,7 @@
 
 <script>
 import CoreApi from "@/api/core/core_api.js";
+import Swal from "sweetalert2";
 // import Swal from "sweetalert2";
 
 export default {
@@ -156,6 +177,7 @@ export default {
         name: "",
         code: "",
         railway_name: "",
+        isInEditMode: false,
       }
     }
   },
@@ -215,6 +237,40 @@ export default {
         this.preview.railway_name = station.railway_name
       }
     },
+
+    async saveStation() {
+      if (this.preview.name.trim().length === 0 || this.preview.code.trim().length === 0) return alert('Please, fill all fields')
+      this.preview.isInEditMode = false
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/core/stations/${this.preview.id}/`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: this.preview.name,
+          code: this.preview.code,
+        })
+      })
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      let error = (await response.json())['non_field_errors']
+
+      await Toast.fire({
+        icon: error === undefined ? 'success' : 'error',
+        title: error === undefined ? 'Station updated successfully' : error[0]
+      })
+    }
   },
   async mounted() {
     await this.setPage(this.$route.query.page)

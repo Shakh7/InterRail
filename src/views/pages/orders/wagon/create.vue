@@ -256,7 +256,8 @@ export default {
         showConfirmButton: false,
         timer: 3000,
       });
-      await this.$router.push({name: "order_wagon_list"})
+
+      if (response.ok) await this.$router.push({name: "order_wagon_list"})
     }
   },
   async mounted() {
