@@ -152,7 +152,7 @@ export default [
     {
         path: "/general/",
         name: "General",
-        meta: {title: "General", authRequired: true, permissions: ['admin', 'staff']},
+        meta: {title: "General", authRequired: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: 'products/', name: 'products_list', component: () => import("../views/pages/products/index.vue"),},

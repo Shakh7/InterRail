@@ -13,7 +13,9 @@
               </div>
               <div class="col-md-auto ms-auto">
                 <div class="d-grid gap-2">
-                  <b-button variant="soft-info" class="w-lg waves-effect waves-light">Create</b-button>
+                  <b-button variant="soft-info" class="w-lg waves-effect waves-light"
+                            @click="createCounterparty()">Create
+                  </b-button>
                 </div>
               </div>
             </div>
@@ -40,7 +42,7 @@
 
                     <div class="flex-grow-1 ms-3">
                       <h6 class="fs-14 mb-1">{{ category.name }}</h6>
-                      <p class="text-muted mb-0">ID: {{ category.id }}</p>
+                      <p class="text-muted mb-0">name</p>
                     </div>
 
                   </a>
@@ -53,9 +55,15 @@
                     <input class="form-control text-muted" type="text" v-model="category.name">
                   </div>
                   <div class="card-footer hstack gap-2">
-                    <button class="btn btn-soft-info btn-sm w-100">
-                      <i class="ri-question-answer-line align-bottom me-1"></i>
-                      Update
+                    <button class="btn btn-soft-info btn-sm w-50 fs-6"
+                            @click="updateCounterparty(category.id, category.name)">
+                      <font-awesome-icon icon="fa-solid fa-pen-to-square"/>
+                      Save
+                    </button>
+                    <button class="btn btn-soft-danger btn-sm w-50 fs-6"
+                            @click="deleteCounterpartyConfirmation(category)">
+                      <font-awesome-icon icon="fa-solid fa-trash"/>
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -70,6 +78,7 @@
 
 <script>
 import CoreApi from "@/api/core/core_api.js";
+import Swal from "sweetalert2";
 // import Swal from "sweetalert2";
 
 export default {
@@ -85,6 +94,120 @@ export default {
       let response = await categoriesApi.getCounterparties(limit, offset)
       this.categories = response.results
     },
+    async createCounterparty() {
+      const {value: formValues} = await Swal.fire({
+        title: 'Create a Counterparty',
+        html:
+            '<input id="create_counterparty_name" class="form-control w-75 m-auto mt-2" placeholder="Name">',
+        focusConfirm: false,
+        confirmButtonText: 'Create',
+        confirmButtonColor: '#0AB39C',
+        preConfirm: () => {
+          return [
+            document.getElementById('create_counterparty_name').value,
+          ]
+        }
+      })
+
+      if (formValues) {
+
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "name": formValues[0],
+          }),
+        });
+
+        let error = (await response.json())['non_field_errors']
+
+        await this.getCategories()
+        await this.showResponse(error, 'Counterparty created successfully')
+      }
+    },
+    async deleteCounterpartyConfirmation(counterparty) {
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `You are about to delete ${(counterparty.name).toString()}`,
+        text: 'Deleting this counterparty will remove all of its information from our database',
+        showDenyButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Yes, Delete It',
+        denyButtonText: 'Cancel',
+        cancelButtonColor: 'transparent',
+        focusConfirm: false,
+        inputLabel: `Please type ${(counterparty.name).toString()} to confirm`,
+        input: 'email',
+        inputPlaceholder: `${(counterparty.name).toString()}`,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value === (counterparty.name).toString()) {
+              resolve(this.deleteCounterparty(counterparty.id))
+            } else {
+              resolve('Counterparty name did not match :)')
+            }
+          })
+        }
+      });
+    },
+    deleteCounterparty(id) {
+      fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/${id}/`, {method: 'DELETE'})
+          .then(response => {
+            this.getCategories()
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'bottom',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+
+            Toast.fire({
+              icon: response.ok ? 'success' : 'error',
+              title: response.ok ? 'Counterparty deleted' : 'Counterparty delete failed',
+            })
+          });
+    },
+    async updateCounterparty(id, name) {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/${id}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "name": name,
+        }),
+      });
+      let error = (await response.json())['non_field_errors']
+
+      await this.getCategories()
+      await this.showResponse(error, 'Counterparty updated successfully')
+    },
+    async showResponse(response, successMessage) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      await Toast.fire({
+        icon: response === undefined ? 'success' : 'error',
+        title: response === undefined ? successMessage : response[0]
+      })
+    }
   },
   async mounted() {
     await this.getCategories(100, 0)
