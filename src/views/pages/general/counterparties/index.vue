@@ -22,46 +22,46 @@
           </div>
         </div>
         <div class="row row-cols-xxl-5 row-cols-lg-3 row-cols-md-2 row-cols-1 gy-3 pb-3">
-          <div class="col" v-for="category in categories" :key="category.id">
+          <div class="col" v-for="counterparty in counterparties" :key="counterparty.id">
             <div class="collapse show">
               <div class="card mb-1">
                 <div class="card-body">
 
                   <a class="d-flex align-items-center" data-bs-toggle="collapse"
-                     :href="'#category_' + category.id" role="button" aria-expanded="false"
-                     :aria-controls="'category_' + category.id"
+                     :href="'#counterparty_' + counterparty.id" role="button" aria-expanded="false"
+                     :aria-controls="'counterparty_' + counterparty.id"
                   >
 
                     <div class="flex-shrink-0">
                       <b-button variant="light" class="position-relative p-0 avatar-xs rounded-circle">
                         <span class="avatar-title bg-transparent text-reset">
-                            {{ category.name[0] }}
+                            {{ counterparty.name[0] }}
                         </span>
                       </b-button>
                     </div>
 
                     <div class="flex-grow-1 ms-3">
-                      <h6 class="fs-14 mb-1">{{ category.name }}</h6>
+                      <h6 class="fs-14 mb-1">{{ counterparty.name }}</h6>
                       <p class="text-muted mb-0">name</p>
                     </div>
 
                   </a>
                 </div>
-                <div class="collapse border-top border-top-dashed" :id="'category_' + category.id">
+                <div class="collapse border-top border-top-dashed" :id="'counterparty_' + counterparty.id">
                   <div class="card-body">
                     <h6 class="fs-14 mb-1">
                       Name:
                     </h6>
-                    <input class="form-control text-muted" type="text" v-model="category.name">
+                    <input class="form-control text-muted" type="text" v-model="counterparty.name">
                   </div>
                   <div class="card-footer hstack gap-2">
                     <button class="btn btn-soft-info btn-sm w-50 fs-6"
-                            @click="updateCounterparty(category.id, category.name)">
+                            @click="updateCounterparty(counterparty.id, counterparty.name)">
                       <font-awesome-icon icon="fa-solid fa-pen-to-square"/>
                       Save
                     </button>
                     <button class="btn btn-soft-danger btn-sm w-50 fs-6"
-                            @click="deleteCounterpartyConfirmation(category)">
+                            @click="deleteCounterpartyConfirmation(counterparty)">
                       <font-awesome-icon icon="fa-solid fa-trash"/>
                       Delete
                     </button>
@@ -79,20 +79,19 @@
 <script>
 import CoreApi from "@/api/core/core_api.js";
 import Swal from "sweetalert2";
-// import Swal from "sweetalert2";
 
 export default {
   name: "StationsList",
   data() {
     return {
-      categories: [],
+      counterparties: [],
     }
   },
   methods: {
     async getCategories(limit, offset) {
       let categoriesApi = new CoreApi()
       let response = await categoriesApi.getCounterparties(limit, offset)
-      this.categories = response.results
+      this.counterparties = response.results
     },
     async createCounterparty() {
       const {value: formValues} = await Swal.fire({
