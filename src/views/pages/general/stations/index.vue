@@ -7,13 +7,13 @@
             <div class="row gy-3">
               <div class="col-md-4">
                 <div class="search-box">
-                  <input type="text" class="form-control search" placeholder="Search for stations...">
+                  <input v-model="search" type="text" class="form-control search" placeholder="Search for stations...">
                   <i class="ri-search-line search-icon"></i>
                 </div>
               </div>
               <div class="col-md-auto ms-auto">
                 <div class="d-grid gap-2">
-                  <b-button variant="soft-info">Create</b-button>
+                  <b-button variant="soft-info" @click="createStation">Create</b-button>
                 </div>
               </div>
             </div>
@@ -50,33 +50,33 @@
                   </tbody>
                 </table>
               </div>
-              <div class="d-flex justify-content-end mt-4">
-                <div class="pagination-wrap hstack gap-2">
-                  <a v-if="currentPage.page > 1" class="page-item pagination-next" @click="changePage(true, false)">
-                    Previous
-                  </a>
-                  <ul class="pagination listjs-pagination mb-0">
-                    <li :class="currentPage.page === '1' ? 'active' : ''">
-                      <router-link class="page" to="/stations/?page=1">1</router-link>
-                    </li>
-                    <li :class="currentPage.page === '2' ? 'active' : ''">
-                      <router-link class="page" to="/stations/?page=2">2</router-link>
-                    </li>
-                    <li :class="currentPage.page === '3' ? 'active' : ''">
-                      <router-link class="page" to="/stations/?page=3">3</router-link>
-                    </li>
-                    <li class="">
-                      <router-link class="page" to="/stations/?page=635">635</router-link>
-                    </li>
-                    <li class="">
-                      <router-link class="page" to="/stations/?page=636">636</router-link>
-                    </li>
-                  </ul>
-                  <a class="page-item pagination-next" @click="changePage(false, true)">
-                    Next
-                  </a>
-                </div>
-              </div>
+              <!--              <div class="d-flex justify-content-end mt-4">-->
+              <!--                <div class="pagination-wrap hstack gap-2">-->
+              <!--                  <a v-if="currentPage.page > 1" class="page-item pagination-next" @click="changePage(true, false)">-->
+              <!--                    Previous-->
+              <!--                  </a>-->
+              <!--                  <ul class="pagination listjs-pagination mb-0">-->
+              <!--                    <li :class="currentPage.page === '1' ? 'active' : ''">-->
+              <!--                      <router-link class="page" to="/stations/?page=1">1</router-link>-->
+              <!--                    </li>-->
+              <!--                    <li :class="currentPage.page === '2' ? 'active' : ''">-->
+              <!--                      <router-link class="page" to="/stations/?page=2">2</router-link>-->
+              <!--                    </li>-->
+              <!--                    <li :class="currentPage.page === '3' ? 'active' : ''">-->
+              <!--                      <router-link class="page" to="/stations/?page=3">3</router-link>-->
+              <!--                    </li>-->
+              <!--                    <li class="">-->
+              <!--                      <router-link class="page" to="/stations/?page=635">635</router-link>-->
+              <!--                    </li>-->
+              <!--                    <li class="">-->
+              <!--                      <router-link class="page" to="/stations/?page=636">636</router-link>-->
+              <!--                    </li>-->
+              <!--                  </ul>-->
+              <!--                  <a class="page-item pagination-next" @click="changePage(false, true)">-->
+              <!--                    Next-->
+              <!--                  </a>-->
+              <!--                </div>-->
+              <!--              </div>-->
             </div>
           </div>
         </div>
@@ -132,7 +132,9 @@
                       </td>
                       <td>
                         <div class="d-grid">
-                          <b-button variant="soft-danger" class="w-100">Delete</b-button>
+                          <b-button variant="soft-danger" class="w-100"
+                                    @click="deleteStationConfirmation(preview)">Delete
+                          </b-button>
                         </div>
                       </td>
                     </tr>
@@ -178,7 +180,8 @@ export default {
         code: "",
         railway_name: "",
         isInEditMode: false,
-      }
+      },
+      search: ''
     }
   },
   methods: {
@@ -270,6 +273,111 @@ export default {
         icon: error === undefined ? 'success' : 'error',
         title: error === undefined ? 'Station updated successfully' : error[0]
       })
+    },
+    async createStation() {
+      const {value: formValues} = await Swal.fire({
+        title: 'Create a Counterparty',
+        html:
+            '<input id="create_station_name" class="form-control w-75 m-auto mt-2" placeholder="Station name">' +
+            '<input id="create_station_code" class="form-control w-75 m-auto mt-2" placeholder="Station code">',
+        focusConfirm: false,
+        confirmButtonText: 'Create',
+        confirmButtonColor: '#0AB39C',
+        preConfirm: () => {
+          return [
+            document.getElementById('create_station_name').value,
+            document.getElementById('create_station_code').value,
+          ]
+        }
+      })
+
+      if (formValues) {
+
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/core/stations/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "name": formValues[0],
+            "code": formValues[1],
+          }),
+        });
+
+        let error = (await response.json())['non_field_errors']
+
+        await this.getStations()
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        await Toast.fire({
+          icon: error === undefined ? 'success' : 'error',
+          title: error === undefined ? 'Station created successfully' : error[0]
+        })
+      }
+    },
+    searchStations(query) {
+      fetch(`${process.env.VUE_APP_ORDER_URL}/core/stations/?limit=25&search=${query}`)
+          .then(response => response.json()).then(data => {
+        this.stations = data.results
+      })
+    },
+    async deleteStationConfirmation(station) {
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `You are about to delete ${(station.name).toString()}`,
+        text: 'Deleting this station will remove all of its information from our database',
+        showDenyButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Yes, Delete It',
+        denyButtonText: 'Cancel',
+        cancelButtonColor: 'transparent',
+        focusConfirm: false,
+        inputLabel: `Please type ${(station.name).toString()} to confirm`,
+        input: 'email',
+        inputPlaceholder: `${(station.name).toString()}`,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value === (station.name).toString()) {
+              resolve(this.deleteStation(station.id))
+            } else {
+              resolve('Counterparty name did not match :)')
+            }
+          })
+        }
+      });
+    },
+    deleteStation(id) {
+      fetch(`${process.env.VUE_APP_ORDER_URL}/core/stations/${id}/`, {method: 'DELETE'})
+          .then(response => {
+            this.getStations()
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'bottom',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+
+            Toast.fire({
+              icon: response.ok ? 'success' : 'error',
+              title: response.ok ? 'Station deleted successfully' : 'Station delete failed'
+            })
+          })
     }
   },
   async mounted() {
@@ -278,8 +386,11 @@ export default {
   watch: {
     '$route.query.page': async function (page) {
       await this.setPage(page)
+    },
+    search: async function (newVal) {
+      await this.searchStations(newVal)
     }
-  }
+  },
 }
 </script>
 
