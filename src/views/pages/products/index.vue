@@ -213,30 +213,6 @@ export default {
     }
   },
   methods: {
-    async setPage(page) {
-      let page_case = Number.isInteger(Number(page))
-          ? page < 1 ? 0 : page
-          : page === undefined ? "default_page" : "NaN";
-
-      switch (page_case) {
-        case 0:
-          await this.$router.push({path: "/products", query: {page: 1}});
-          this.currentPage.page = 1
-          await this.getProducts(this.currentPage.per_page, 0);
-          break
-        case 'default_page':
-          this.currentPage.page = 1
-          await this.getProducts(this.currentPage.per_page, 0)
-          break
-        case 'NaN':
-          alert("NOT A NUMBER")
-          break
-        default:
-          this.currentPage.page = page
-          await this.getProducts(this.currentPage.per_page, (this.currentPage.page - 1) * this.currentPage.per_page)
-          break
-      }
-    },
     async changePage(previous, next) {
       let page = parseInt(this.currentPage.page)
       if (previous) {
@@ -261,6 +237,31 @@ export default {
       this.currentPage.all = response.count
       this.products = response.results
     },
+    async setPage(page) {
+      let page_case = Number.isInteger(Number(page))
+          ? page < 1 ? 0 : page
+          : page === undefined ? "default_page" : "NaN";
+
+      switch (page_case) {
+        case 0:
+          await this.$router.push({path: "/products", query: {page: 1}});
+          this.currentPage.page = 1
+          await this.getProducts(this.currentPage.per_page, 0);
+          break
+        case 'default_page':
+          this.currentPage.page = 1
+          await this.getProducts(this.currentPage.per_page, 0)
+          break
+        case 'NaN':
+          alert("NOT A NUMBER")
+          break
+        default:
+          this.currentPage.page = page
+          await this.getProducts(this.currentPage.per_page, (this.currentPage.page - 1) * this.currentPage.per_page)
+          break
+      }
+    },
+
     async createProduct() {
       const {value: formValues} = await Swal.fire({
         title: 'Create a Counterparty',

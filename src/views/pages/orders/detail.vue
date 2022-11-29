@@ -161,7 +161,7 @@
                         <td class="text-center" style="max-width: 75px">
                           <ContainerInput :container="container"/>
                         </td>
-                        <td class="text-center">{{ ctr_type.agreed_rate }}</td>
+                        <td class="text-center">{{ container.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"
                             :key="pre_cost" style="max-width: 65px">
                           <ActualCostInput @update="fetchData()" :actualCost="pre_cost"/>
