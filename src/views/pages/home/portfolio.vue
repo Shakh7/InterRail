@@ -140,7 +140,7 @@ export default {
       </apexchart>
 
       <h6>ORDERS STATISTICS BY USERS</h6>
-      <ul class="list-group list-group-flush border-dashed mb-0">
+      <ul class="list-group list-group-flush border-dashed mb-0" v-if="user_orders.length > 0">
 
         <li class="list-group-item px-0"
             v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
