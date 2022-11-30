@@ -162,6 +162,91 @@ export default {
           ],
         },
       },
+      mixedLineChart: {
+        series: [
+          {
+            name: 'Orders',
+            type: 'column',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            total: 0
+          }, {
+            name: 'Agreed Rates',
+            type: 'line',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            total: 0
+          }
+        ],
+        chartOptions: {
+          chart: {
+            height: 350,
+            type: 'line',
+            toolbar: {
+              show: false,
+            }
+          },
+          stroke: {
+            width: [0, 4]
+          },
+          dataLabels: {
+            enabled: true,
+            enabledOnSeries: [1]
+          },
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          xaxis: {
+            type: 'month'
+          },
+          yaxis: [
+            {
+              title: {
+                text: 'Orders',
+                style: {
+                  fontWeight: 600,
+                },
+              },
+
+            },
+            {
+              opposite: true,
+              title: {
+                text: 'Agreed Rates',
+                style: {
+                  fontWeight: 600,
+                },
+              }
+            }
+          ],
+          colors: getChartColorsArray('["--vz-primary", "--vz-success"]'),
+          tooltip: {
+            shared: true,
+            y: [
+              {
+                formatter: function (y) {
+                  if (typeof y !== "undefined") {
+                    return y.toFixed(0);
+                  }
+                  return y;
+                },
+              },
+              {
+                formatter: function (y) {
+                  if (typeof y !== "undefined") {
+                    return "$" + y.toFixed(2) + "k";
+                  }
+                  return y;
+                },
+              },
+              {
+                formatter: function (y) {
+                  if (typeof y !== "undefined") {
+                    return y.toFixed(0) + " Sales";
+                  }
+                  return y;
+                },
+              },
+            ],
+          },
+        }
+      },
     };
   },
   methods: {
@@ -173,13 +258,13 @@ export default {
       let monthly_rates = data['monthly_agreed_rate']
 
       monthly_orders.forEach(item => {
-        this.series[0].total += item.total
-        this.series[0].data[item.month] = item.total
+        this.mixedLineChart.series[0].total += item.total
+        this.mixedLineChart.series[0].data[item.month] = item.total
       })
 
       monthly_rates.forEach(item => {
-        this.series[1].total += (item['total_agreed_rate'])
-        this.series[1].data[item.month] = (item['total_agreed_rate'])/1000
+        this.mixedLineChart.series[1].total += (item['total_agreed_rate'])
+        this.mixedLineChart.series[1].data[item.month] = (item['total_agreed_rate']) / 1000
       })
 
     }
@@ -214,7 +299,7 @@ export default {
         <div class="col-12 col-sm-6">
           <div class="p-3 border border-dashed border-start-0">
             <h5 class="mb-1">
-              <count-to :startVal="0" :endVal="series[0].total" :duration="3000"></count-to>
+              <count-to :startVal="0" :endVal="mixedLineChart.series[0].total" :duration="3000"></count-to>
             </h5>
             <p class="text-muted mb-0">Orders</p>
           </div>
@@ -224,31 +309,31 @@ export default {
           <div class="p-3 border border-dashed border-start-0">
             <h5 class="mb-1">
               $
-              <count-to :startVal="0" :endVal="series[1].total" :duration="3000"></count-to>
-              k
+              <count-to :startVal="0" :endVal="mixedLineChart.series[1].total" :duration="3000"></count-to>
+              {{ mixedLineChart.series[1].total >= 1000000 ? 'M' : mixedLineChart.series[1].total >= 1000 ? 'K' : '' }}
             </h5>
-            <p class="text-muted mb-0">Earnings</p>
+            <p class="text-muted mb-0">Sales</p>
           </div>
         </div>
         <!--end col-->
-<!--        <div class="col-6 col-sm-3">-->
-<!--          <div class="p-3 border border-dashed border-start-0">-->
-<!--            <h5 class="mb-1">-->
-<!--              <count-to :startVal="0" :endVal="367" :duration="4000"></count-to>-->
-<!--            </h5>-->
-<!--            <p class="text-muted mb-0">Refunds</p>-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="col-6 col-sm-3">-->
+        <!--          <div class="p-3 border border-dashed border-start-0">-->
+        <!--            <h5 class="mb-1">-->
+        <!--              <count-to :startVal="0" :endVal="367" :duration="4000"></count-to>-->
+        <!--            </h5>-->
+        <!--            <p class="text-muted mb-0">Refunds</p>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <!--end col-->
-<!--        <div class="col-6 col-sm-3">-->
-<!--          <div class="p-3 border border-dashed border-start-0 border-end-0">-->
-<!--            <h5 class="mb-1 text-primary">-->
-<!--              <count-to :startVal="0" :endVal="18" :duration="4000"></count-to>-->
-<!--              %-->
-<!--            </h5>-->
-<!--            <p class="text-muted mb-0">Conversation Ratio</p>-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="col-6 col-sm-3">-->
+        <!--          <div class="p-3 border border-dashed border-start-0 border-end-0">-->
+        <!--            <h5 class="mb-1 text-primary">-->
+        <!--              <count-to :startVal="0" :endVal="18" :duration="4000"></count-to>-->
+        <!--              %-->
+        <!--            </h5>-->
+        <!--            <p class="text-muted mb-0">Conversation Ratio</p>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <!--end col-->
       </div>
     </div>
@@ -256,8 +341,14 @@ export default {
 
     <div class="card-body p-0 pb-2">
       <div class="w-100">
-        <apexchart class="apex-charts" height="380" type="line" dir="ltr" :series="series" :options="chartOptions">
-        </apexchart>
+        <apexchart
+            class="apex-charts bg-white"
+            height="350"
+            dir="ltr"
+            :series="mixedLineChart.series"
+            :options="mixedLineChart.chartOptions"
+        ></apexchart>
+
         <!-- <div
           id="customer_impression_charts"
           data-colors='["--vz-primary", "--vz-success", "--vz-danger"]'

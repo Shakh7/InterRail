@@ -22,6 +22,8 @@ function getChartColorsArray(colors) {
   });
 }
 
+import store from "@/state/store.js";
+
 export default {
   setup() {
     return {
@@ -92,15 +94,10 @@ export default {
           lineCap: "round",
           width: 2,
         },
-        colors: getChartColorsArray('["--vz-primary", "--vz-info", "--vz-warning", "--vz-success"]'),
+        colors: getChartColorsArray('["--vz-warning", "--vz-info", "--vz-primary", "--vz-success"]'),
       },
+      user_orders: []
     };
-  },
-  methods: {
-    getStatistic(position_name) {
-      let data = this.statisticsComputed.filter(s => s.label === position_name)[0];
-      return [data.counter, data.containers_count];
-    }
   },
   props: {
     statistic: {
@@ -108,10 +105,24 @@ export default {
       default: () => [],
     },
   },
+  methods: {
+    async getOrderStatisticsByUsers() {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/statistic/users`)
+      let data = await (await response.json())['user_orders']
+      this.user_orders = data
+    },
+    getManagerInfo(user_id) {
+      let result = store.state.users_list.filter(user => user.id === user_id)
+      return result[0]
+    }
+  },
   computed: {
     statisticsComputed() {
       return this.statistic
     },
+  },
+  async mounted() {
+    await this.getOrderStatisticsByUsers()
   }
 };
 </script>
@@ -120,43 +131,32 @@ export default {
   <div class="card card-height-100">
     <div class="card-header border-0 align-items-center d-flex">
       <h4 class="card-title mb-0 flex-grow-1">
-        <router-link to="/orders/list/">ORDERS STATISTICS</router-link>
+        <h6>ORDERS STATISTICS</h6>
       </h4>
-      <!--      <div>-->
-      <!--        <div class="dropdown">-->
-      <!--          <button class="btn btn-soft-primary btn-sm" data-bs-toggle="dropdown" aria-haspopup="true"-->
-      <!--                  aria-expanded="false">-->
-      <!--            <span class="text-uppercase">USD<i class="mdi mdi-chevron-down align-middle ms-1"></i></span>-->
-      <!--          </button>-->
-      <!--          <div class="dropdown-menu dropdown-menu-end">-->
-      <!--            <a class="dropdown-item" href="#">USD</a>-->
-      <!--            <a class="dropdown-item" href="#">Euro</a>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
-    <!-- end cardheader -->
-    <div class="card-body">
-      <apexchart class="apex-charts" height="224" dir="ltr" :series="statisticsComputed.map(s => s.counter)"
+    <div class="card-body pt-0">
+      <apexchart class="apex-charts mb-4" height="224" dir="ltr" :series="statisticsComputed.map(s => s.counter)"
                  :options="chartOptions">
       </apexchart>
 
-      <ul class="list-group list-group-flush border-dashed mb-0 mt-3 pt-2">
+      <h6>ORDERS STATISTICS BY USERS</h6>
+      <ul class="list-group list-group-flush border-dashed mb-0">
+
         <li class="list-group-item px-0"
-            v-for="forwarder in statisticsComputed.map(i => { return {forwarder: i.label, color: i.badgeColor, rate: i.counter, ctr_count: i.containers_count} })"
-            :key="forwarder">
+            v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
+
           <div class="d-flex">
-            <div class="flex-grow-1 ms-2">
+            <div class="flex-grow-1">
               <h6 class="mb-1">
-                {{ forwarder.forwarder }}</h6>
+                {{ getManagerInfo(user.manager)['full_name'] }}
+              </h6>
               <p class="fs-12 mb-0 text-muted">
-                <i class="mdi mdi-circle fs-10 align-middle me-1" :class="'text-' + forwarder.color"></i><small>Containers
-                count</small>
+                <i class="mdi mdi-circle fs-10 align-middle me-1 text-success"></i>
+                <small>Orders created</small>
               </p>
             </div>
-            <div class="flex-shrink-0 text-end">
-              <h6 class="mb-1">{{ forwarder.rate }}</h6>
-              <p class="my-0">{{ forwarder.ctr_count }}</p>
+            <div class="flex-shrink-0 text-end align-self-center">
+              <span class="badge badge-gradient-info fs-6">{{ user.count }}</span>
             </div>
           </div>
         </li>
