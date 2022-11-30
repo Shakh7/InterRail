@@ -2,6 +2,7 @@
 import {
   CountTo
 } from "vue3-count-to";
+import store from "@/state/store.js";
 
 function getChartColorsArray(colors) {
   colors = JSON.parse(colors);
@@ -247,6 +248,8 @@ export default {
           },
         }
       },
+      totalOrdersList: [],
+      search: ''
     };
   },
   methods: {
@@ -267,10 +270,35 @@ export default {
         this.mixedLineChart.series[1].data[item.month] = (item['total_agreed_rate']) / 1000
       })
 
+    },
+    async getTotalOrders() {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      let data = await response.json();
+
+      this.totalOrdersList = data['results']
+    },
+    getAccount(user_id) {
+      let result = store.state.users_list.filter(item => item.id === user_id)
+      return [result[0]['full_name'][0], result[0]['full_name']]
     }
   },
   async mounted() {
     await this.getMonthlyStatistics()
+    await this.getTotalOrders()
+  },
+  computed: {
+    totalOrdersListComputed() {
+      if (this.search.trim().length === 0) {
+        return this.totalOrdersList
+      } else {
+        return this.totalOrdersList.filter(item => {
+          return item['order_number'].toString().toLowerCase().includes(this.search.toLowerCase())
+              || item['position'].toString().toLowerCase().includes(this.search.toLowerCase())
+              || item['payment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
+              || item['shipment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
+        })
+      }
+    }
   }
 };
 </script>
@@ -292,7 +320,6 @@ export default {
         <button type="button" class="btn btn-soft-primary btn-sm">1Y</button>
       </div>
     </div>
-    <!-- end card header -->
 
     <div class="card-header p-0 border-0 bg-soft-light">
       <div class="row g-0 text-center">
@@ -315,29 +342,8 @@ export default {
             <p class="text-muted mb-0">Sales</p>
           </div>
         </div>
-        <!--end col-->
-        <!--        <div class="col-6 col-sm-3">-->
-        <!--          <div class="p-3 border border-dashed border-start-0">-->
-        <!--            <h5 class="mb-1">-->
-        <!--              <count-to :startVal="0" :endVal="367" :duration="4000"></count-to>-->
-        <!--            </h5>-->
-        <!--            <p class="text-muted mb-0">Refunds</p>-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <!--end col-->
-        <!--        <div class="col-6 col-sm-3">-->
-        <!--          <div class="p-3 border border-dashed border-start-0 border-end-0">-->
-        <!--            <h5 class="mb-1 text-primary">-->
-        <!--              <count-to :startVal="0" :endVal="18" :duration="4000"></count-to>-->
-        <!--              %-->
-        <!--            </h5>-->
-        <!--            <p class="text-muted mb-0">Conversation Ratio</p>-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <!--end col-->
       </div>
     </div>
-    <!-- end card header -->
 
     <div class="card-body p-0 pb-2">
       <div class="w-100">
@@ -348,16 +354,74 @@ export default {
             :series="mixedLineChart.series"
             :options="mixedLineChart.chartOptions"
         ></apexchart>
-
-        <!-- <div
-          id="customer_impression_charts"
-          data-colors='["--vz-primary", "--vz-success", "--vz-danger"]'
-          class="apex-charts"
-          dir="ltr"
-        ></div> -->
       </div>
     </div>
     <!-- end card body -->
   </div>
-  <!-- end card -->
+
+
+  <div class="card">
+    <div class="card-header border-dashed border-start-0 border-top-0 border-end-0 align-items-center d-flex">
+      <h4 class="card-title mb-0 flex-grow-1">Total Orders</h4>
+      <div>
+        <input v-model="search" type="text" class="form-control ms-auto w-75" placeholder="Search for orders..">
+      </div>
+    </div>
+
+    <div class="card-body p-0 pb-2 w-100">
+      <div class="table-responsive table-card w-100 m-auto">
+        <table class="table table-nowrap table-striped-columns text-center mb-0">
+          <thead class="table-light">
+          <tr>
+            <th scope="col">Order Number</th>
+            <th scope="col">Position</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Manager</th>
+            <th scope="col">Payment Status</th>
+            <th scope="col">Shipment Status</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="order in totalOrdersListComputed.sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
+              :key="order">
+            <td><a href="#" class="fw-semibold">{{ order.order_number }}</a></td>
+            <td class="text-capitalize">{{ order.position.split('_').join(' ') }}
+            </td>
+            <td>
+              <span v-for="(user, index) in getAccount(order.customer)" :key="user"
+                    :class="index === 0 ? 'rounded-circle bg-soft-secondary text-secondary mx-1 px-2' : ''">
+                {{ user }}
+              </span>
+            </td>
+            <td>
+              <span v-for="(user, index) in getAccount(order.manager)" :key="user"
+                    :class="index === 0 ? 'rounded-circle bg-soft-secondary text-secondary mx-1 px-2' : ''">
+                {{ user }}
+              </span>
+            </td>
+            <td class="text-capitalize">
+              <span v-if="order.payment_status === 'issued'"
+                    class="badge badge-gradient-warning">{{ order.payment_status }}</span>
+              <span v-else-if="order.payment_status === 'received'"
+                    class="badge badge-gradient-primary">{{ order.payment_status }}</span>
+              <span v-else-if="order.payment_status === 'reserved'"
+                    class="badge badge-gradient-secondary">{{ order.payment_status }}</span>
+              <span v-else class="badge badge-gradient-dark">{{ order.payment_status }}</span>
+            </td>
+            <td class="text-capitalize">
+              <span v-if="order.shipment_status === 'in_process'"
+                    class="badge badge-gradient-warning">{{ order.shipment_status.split('_').join(' ') }}</span>
+              <span v-else-if="order.shipment_status === 'completed'"
+                    class="badge badge-gradient-primary">{{ order.shipment_status }}</span>
+              <span v-else-if="order.shipment_status === 'delivered'"
+                    class="badge badge-gradient-secondary">{{ order.shipment_status }}</span>
+              <span v-else class="badge badge-gradient-dark">{{ order.shipment_status }}</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </template>

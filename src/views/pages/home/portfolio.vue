@@ -128,7 +128,7 @@ export default {
 </script>
 
 <template>
-  <div class="card card-height-100">
+  <div class="card">
     <div class="card-header border-0 align-items-center d-flex">
       <h4 class="card-title mb-0 flex-grow-1">
         <h6>ORDERS STATISTICS</h6>
