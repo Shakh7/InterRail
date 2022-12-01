@@ -76,7 +76,11 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: 'users/', name: 'users_list', component: () => import("../views/pages/users/UsersList.vue"),},
-            {path: 'managers/', name: 'managers_list', component: () => import("../views/pages/users/ManagersList.vue"),},
+            {
+                path: 'managers/',
+                name: 'managers_list',
+                component: () => import("../views/pages/users/ManagersList.vue"),
+            },
             {path: 'clients/', name: 'clients_list', component: () => import("../views/pages/users/ClientsList.vue"),}
         ],
     },
@@ -100,6 +104,12 @@ export default [
                 component: () => import("../views/pages/orders/wagon/list.vue"),
             },
             {
+                path: 'empty-wagon/',
+                name: 'order_empty_wagon_list',
+                meta: {title: "Empty Wagon Orders List",},
+                component: () => import("../views/pages/orders/empty_wagon/list.vue"),
+            },
+            {
                 path: 'create-container/',
                 name: 'create_container',
                 meta: {title: "Container Order",},
@@ -112,16 +122,27 @@ export default [
                 component: () => import("../views/pages/orders/wagon/create.vue"),
             },
             {
+                path: 'create-empty-wagon/',
+                name: 'create_empty_wagon',
+                meta: {title: "Empty Wagon Order",},
+                component: () => import("../views/pages/orders/empty_wagon/create.vue"),
+            },
+            {
                 path: 'container/update/:id',
                 name: 'orders_container_update',
                 meta: {title: "Container Orders Update",},
                 component: () => import("../views/pages/orders/update.vue"),
             },
-
             {
                 path: 'wagon/update/:id',
                 name: 'orders_wagon_update',
                 meta: {title: "Wagon Orders Update",},
+                component: () => import("../views/pages/orders/wagon/update.vue"),
+            },
+            {
+                path: 'empty-wagon/update/:id',
+                name: 'orders_empty-wagon_update',
+                meta: {title: "Empty Wagon Orders Update",},
                 component: () => import("../views/pages/orders/wagon/update.vue"),
             },
             {
@@ -135,6 +156,12 @@ export default [
                 name: 'orders_wagon_detail',
                 meta: {title: "Wagon Order Detail",},
                 component: () => import("../views/pages/orders/wagon/detail.vue"),
+            },
+            {
+                path: 'empty-wagon/view/:id',
+                name: 'orders_empty_wagon_detail',
+                meta: {title: "Empty Wagon Order Detail",},
+                component: () => import("../views/pages/orders/empty_wagon/detail.vue"),
             },
         ],
     },

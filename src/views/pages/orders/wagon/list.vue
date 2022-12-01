@@ -194,7 +194,7 @@ export default {
           <div class="dropdown-divider"></div>
           <router-link class="dropdown-item" :to="{name: 'create_wagon'}">Wagon</router-link>
           <div class="dropdown-divider"></div>
-          <router-link class="dropdown-item" to="/orders/create/?type=empty_wagon">Empty wagon</router-link>
+          <router-link class="dropdown-item" :to="{name: 'create_empty_wagon'}">Empty wagon</router-link>
         </div>
       </div>
     </template>

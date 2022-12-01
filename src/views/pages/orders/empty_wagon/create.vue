@@ -36,9 +36,9 @@ export default {
       order: {
         order_number: 1,
         lot_number: "1111",
-        date: "2022-10-14",
+        date: "2022-11-14",
         position: "block_train",
-        type: "import",
+        type: "export",
         shipment_status: "delivered",
         payment_status: "issued",
         shipper: "LLC \"Gallaorol kaliy fosfat\"",
@@ -60,10 +60,7 @@ export default {
           }
         ]
       },
-      sending_type: "single",
-      product_id: null,
       quantity: 1,
-      weight: null,
       agreed_rate_per_ton: null,
 
       wagon_preliminary_costs: [
@@ -82,11 +79,6 @@ export default {
         selected: null,
         options: []
       },
-      products: {
-        selected: null,
-        options: []
-      },
-
     }
   },
   components: {
@@ -137,26 +129,13 @@ export default {
             code: station.code
           }
         })
-
-      } else if (option_type === 'products') {
-        let products = (await core_api.getCoreList('products', query, 7)).results
-        this.products.selected = null
-        this.products.options = products.map((product) => {
-          return {
-            value: product.id,
-            label: product.name,
-            hc_code: product['hc_code'],
-            etcng: product['etcng_code'],
-          }
-        })
       }
     },
     onOptionSelect(option, option_type) {
       let id = option.value
       option_type === 'departure' ? this.order.departure_id = id
           : option_type === 'destination' ? this.order.destination_id = id
-              : option_type === 'products' ? this.product_id = id
-                  : null
+              : null
     },
     counterpartyService(action, id) {
       if (action === 'delete') {
@@ -236,17 +215,14 @@ export default {
       }
     },
 
-    async createWagonOrder() {
+    async createEmptyWagonOrder() {
       let data = this.formatOrderDetails()
       let orders_api = new OrdersApi()
-      let response = await orders_api.createWagonOrder({
+      let response = await orders_api.createEmptyWagonOrder({
         order: data.order,
-        wagon_preliminary_costs: data.wagon_preliminary_costs,
-        sending_type: this.sending_type,
+        wagon_empty_preliminary_costs: data.wagon_preliminary_costs,
         quantity: this.quantity,
-        weight: this.weight,
-        product_id: this.product_id,
-        agreed_rate_per_tonn: this.agreed_rate_per_ton,
+        agreed_rate: this.agreed_rate_per_ton,
       })
 
       await Swal.fire({
@@ -257,7 +233,7 @@ export default {
         timer: 3000,
       });
 
-      if (response.ok) await this.$router.push({name: "order_wagon_list"})
+      if (response.ok) await this.$router.push({name: "order_empty_wagon_list"})
     }
   },
   async mounted() {
@@ -283,7 +259,7 @@ export default {
 
             <div class="col-md-4">
               <label for="lotNumber" class="form-label">Lot number</label>
-              <input type="text" class="form-control" v-model="order.lot_number"
+              <input type="number" class="form-control" v-model="order.lot_number"
                      id="lotNumber" placeholder="Enter lot number">
             </div>
 
@@ -432,53 +408,6 @@ export default {
             </div>
 
             <div class="col-md-4">
-              <label class="form-label">Product</label>
-              <Multiselect
-                  class="form-control"
-                  v-model="products.selected"
-                  :searchable="true"
-                  :hideSelected="true"
-                  :options="products.options"
-                  placeholder="Choose product.."
-                  @search-change="getOptions($event, 'products')"
-                  :object="true"
-                  @select="onOptionSelect($event, 'products')"
-              />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Hc code</label>
-              <Multiselect
-                  class="form-control"
-                  v-model="products.selected"
-                  :searchable="true"
-                  :hideSelected="true"
-                  :options="products.options"
-                  placeholder="Choose hc code.."
-                  @search-change="getOptions($event, 'products')"
-                  :object="true"
-                  label="hc_code"
-                  @select="onOptionSelect($event, 'products')"
-              />
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Etcng</label>
-              <Multiselect
-                  class="form-control"
-                  v-model="products.selected"
-                  :searchable="true"
-                  :hideSelected="true"
-                  :options="products.options"
-                  placeholder="Choose destination.."
-                  @search-change="getOptions($event, 'products')"
-                  :object="true"
-                  label="etcng"
-                  @select="onOptionSelect($event, 'products')"
-              />
-            </div>
-
-            <div class="col-md-4">
               <label class="form-label">Departure country</label>
               <input type="text" class="form-control" v-model="order.departure_country"
                      placeholder="Departure country">
@@ -552,13 +481,10 @@ export default {
                 </div>
                 <div class="card-footer border-bottom">
                   <div class="row mb-0">
-                    <div class="col-4 pe-2 mb-0">
+                    <div class="col-6 pe-2 mb-0">
                       <input type="text" placeholder="Quantuty" class="form-control" v-model="quantity">
                     </div>
-                    <div class="col-4 ps-2 mb-0">
-                      <input type="text" placeholder="Weight" class="form-control" v-model="weight">
-                    </div>
-                    <div class="col-4 ps-2 mb-0">
+                    <div class="col-6 ps-2 mb-0">
                       <input type="text" placeholder="Agreed rate per ton" class="form-control"
                              v-model="agreed_rate_per_ton">
                     </div>
@@ -586,7 +512,7 @@ export default {
         </template>
 
         <template v-slot:next-tab-step4>
-          <button @click="createWagonOrder()" type="button" class="btn btn-success btn-label right ms-auto">
+          <button @click="createEmptyWagonOrder()" type="button" class="btn btn-success btn-label right ms-auto">
             <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
             Create
           </button>

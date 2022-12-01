@@ -231,6 +231,11 @@ export default {
                   Wagon orders
                 </router-link>
               </li>
+              <li class="nav-item">
+                <router-link :to="{name: 'order_empty_wagon_list'}" class="nav-link custom-abc" data-key="t-analytics">
+                  Empty wagon orders
+                </router-link>
+              </li>
             </ul>
           </div>
         </li>

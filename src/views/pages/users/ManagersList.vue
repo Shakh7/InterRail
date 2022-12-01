@@ -178,7 +178,7 @@ export default {
                     <input class="form-check-input" type="checkbox">
                   </td>
                   <td class="country">
-                    <span>{{ tr.full_name }}</span>
+                    <span>{{tr.id}} {{ tr.full_name }}</span>
                   </td>
                   <td>
                     <span>{{ tr.email }}</span>

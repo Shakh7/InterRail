@@ -215,7 +215,7 @@ export default {
 
         <div class="col-md-4">
           <label for="lotNumber" class="form-label">Lot number</label>
-          <input type="number" class="form-control" v-model="currentOrder.lot_number"
+          <input type="text" class="form-control" v-model="currentOrder.lot_number"
                  id="lotNumber" placeholder="Enter lot number">
         </div>
 

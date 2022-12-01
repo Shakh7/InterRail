@@ -1,5 +1,5 @@
 <script>
-import CustomTable from '../../../components/custom/table.vue'
+import CustomTable from '@/components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
@@ -71,7 +71,7 @@ export default {
     ...ordersMehtods,
     async getOrders() {
       let orderApi = new OrderApi();
-      let data = await orderApi.getContainerOrders();
+      let data = await orderApi.getEmptyWagonOrders();
       let orders = []
       data.results.forEach(order => {
         order.order.product = order.product
@@ -79,10 +79,12 @@ export default {
       })
       this.orders = orders
     },
+
     setToUpdateOrder(order) {
       this.setCurrentlyUpdating(order)
       this.$router.push({name: 'orders_container_update', params: {id: order.id}})
     },
+
     deleteOrderConfirmation(order) {
       Swal.fire({
         position: "center",
@@ -111,53 +113,62 @@ export default {
     },
 
     deleteOrder(order) {
-      fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/delete/`, {
-        method: 'DELETE',
-      }).then(response => {
-        if (response.ok) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Order has been deleted successfully',
-            showConfirmButton: false,
-            timer: 3000
-          })
-          this.getOrders()
-        } else {
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            title: 'An error occurred while deleting order',
-            showConfirmButton: false,
-          })
-        }
-      }).catch(error => {
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: `ERROR \n ${error}`,
-          showConfirmButton: true,
-          confirmButtonText: 'Try Again',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            if (this.numberOfErrors >= 2) {
-              Swal.fire({
-                position: 'center',
-                icon: 'warning',
-                title: `Too Many Tries...\nPlease, talk to IT department to fix the problem`,
-                showConfirmButton: false,
-                timer: 10000,
-                willClose: () => {
-                  window.location.reload()
-                }
-              })
-            } else {
-              this.numberOfErrors += 1
-              this.deleteOrderConfirmation(order)
-            }
-          }
-        })
+
+      Swal.fire({
+        position: 'center',
+        icon: 'warning',
+        title: 'Order delete is not yet implemented',
+        showConfirmButton: false,
+        timer: 4000 + order.order_number
       })
+
+      // fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/delete/`, {
+      //   method: 'DELETE',
+      // }).then(response => {
+      //   if (response.ok) {
+      //     Swal.fire({
+      //       position: 'center',
+      //       icon: 'success',
+      //       title: 'Order has been deleted successfully',
+      //       showConfirmButton: false,
+      //       timer: 3000
+      //     })
+      //     this.getOrders()
+      //   } else {
+      //     Swal.fire({
+      //       position: 'center',
+      //       icon: 'error',
+      //       title: 'An error occurred while deleting order',
+      //       showConfirmButton: false,
+      //     })
+      //   }
+      // }).catch(error => {
+      //   Swal.fire({
+      //     position: 'center',
+      //     icon: 'error',
+      //     title: `ERROR \n ${error}`,
+      //     showConfirmButton: true,
+      //     confirmButtonText: 'Try Again',
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       if (this.numberOfErrors >= 2) {
+      //         Swal.fire({
+      //           position: 'center',
+      //           icon: 'warning',
+      //           title: `Too Many Tries...\nPlease, talk to IT department to fix the problem`,
+      //           showConfirmButton: false,
+      //           timer: 10000,
+      //           willClose: () => {
+      //             window.location.reload()
+      //           }
+      //         })
+      //       } else {
+      //         this.numberOfErrors += 1
+      //         this.deleteOrderConfirmation(order)
+      //       }
+      //     }
+      //   })
+      // })
     },
 
     getAccount(account) {
@@ -200,7 +211,7 @@ export default {
 
     <template v-slot:order_number="slotProps">
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="{name: 'orders_container_detail', params: {id: slotProps.row.order_number}}">
+        <router-link :to="{name: 'orders_empty_wagon_detail', params: {id: slotProps.row.order_number}}">
           {{ slotProps.row.order_number }}
         </router-link>
       </span>
