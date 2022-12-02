@@ -2,6 +2,7 @@
 import {
   CountTo
 } from "vue3-count-to";
+
 import store from "@/state/store.js";
 import revenue from "@/views/pages/home/data.js";
 
@@ -12,6 +13,7 @@ export default {
   data() {
     return {
       search: '',
+      selected_manager: '0',
       revenue_apex: {
         data: revenue.series,
         options: revenue.chartOptions,
@@ -57,8 +59,12 @@ export default {
   },
   computed: {
     totalOrdersListComputed() {
-      if (this.search.trim().length === 0) {
+      if (this.search.trim().length === 0 && parseInt(this.selected_manager) === 0) {
         return this.totalOrdersList
+      } else if (this.search.trim().length === 0 && parseInt(this.selected_manager) !== 0) {
+        return this.totalOrdersList.filter(item => {
+          return item['manager'].toString().toLowerCase().includes(this.selected_manager.toString())
+        })
       } else {
         return this.totalOrdersList.filter(item => {
           return item['order_number'].toString().toLowerCase().includes(this.search.toLowerCase())
@@ -133,8 +139,21 @@ export default {
   <div class="card">
     <div class="card-header border-dashed border-start-0 border-top-0 border-end-0 align-items-center d-flex">
       <h4 class="card-title mb-0 flex-grow-1">Total Orders</h4>
-      <div>
-        <input v-model="search" type="text" class="form-control ms-auto w-75" placeholder="Search for orders..">
+      <div class="row align-items-center justify-content-end">
+        <div class="col px-0">
+
+          <select class="form-select" v-model="selected_manager">
+            <option value="0">All managers</option>
+            <option v-for="user in totalOrdersList.map(i => {
+              return i['manager']
+            }).filter((v, i, a) => a.indexOf(v) === i)" :value="user" :key="user">
+              {{ getAccount(user)[1] }}
+            </option>
+          </select>
+        </div>
+        <div class="col pe-0">
+          <input v-model="search" type="text" class="form-control ms-auto" placeholder="Search for orders..">
+        </div>
       </div>
     </div>
 
