@@ -65,6 +65,7 @@ export default {
               || item['position'].toString().toLowerCase().includes(this.search.toLowerCase())
               || item['payment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
               || item['shipment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
+              || item['date'].toString().toLowerCase().includes(this.search.toLowerCase())
         })
       }
     }
@@ -148,6 +149,7 @@ export default {
             <th scope="col">Manager</th>
             <th scope="col">Payment Status</th>
             <th scope="col">Shipment Status</th>
+            <th scope="col">Date Created</th>
           </tr>
           </thead>
           <tbody>
@@ -185,6 +187,9 @@ export default {
               <span v-else-if="order.shipment_status === 'delivered'"
                     class="badge badge-outline-secondary">{{ order.shipment_status }}</span>
               <span v-else class="badge badge-outline-dark">{{ order.shipment_status }}</span>
+            </td>
+            <td>
+              {{ order.date }}
             </td>
           </tr>
           </tbody>
