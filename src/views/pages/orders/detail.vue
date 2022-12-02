@@ -159,7 +159,7 @@
                       <tr v-for="(container, i) in ctr_type.expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 75px">
-                          <ContainerInput :container="container"/>
+                          <ContainerInput :container_type_id="ctr_type.id" :container="container"/>
                         </td>
                         <td class="text-center">{{ container.agreed_rate }}</td>
                         <td class="text-center" v-for="pre_cost in container.actual_costs"

@@ -26,6 +26,8 @@ export default {
 
       let monthly_orders = data['monthly_orders']
       let monthly_rates = data['monthly_agreed_rate']
+      this.revenue_apex.data[0].total = 0
+      this.revenue_apex.data[1].total = 0
 
       monthly_rates.forEach(item => {
         this.revenue_apex.data[0].total += (item['total_agreed_rate'])

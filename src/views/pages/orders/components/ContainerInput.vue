@@ -29,6 +29,9 @@ export default {
     container: {
       type: Object,
     },
+    container_type_id: {
+      type: Number,
+    },
   },
   methods: {
     async saveContainer(id, type) {
@@ -47,7 +50,8 @@ export default {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "container_name": value
+          "container_name": value,
+          "container_type_id": this.container_type_id
         })
       })
       return response

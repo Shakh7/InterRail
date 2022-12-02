@@ -17,7 +17,16 @@ let revenue = {
             height: 350,
             type: 'line',
             toolbar: {
-                show: false,
+                show: true,
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true
+                }
             }
         },
         stroke: {
