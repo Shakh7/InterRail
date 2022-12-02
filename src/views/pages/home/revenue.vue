@@ -31,12 +31,12 @@ export default {
 
       monthly_rates.forEach(item => {
         this.revenue_apex.data[0].total += (item['total_agreed_rate'])
-        this.revenue_apex.data[0].data[item.month] = (item['total_agreed_rate'])
+        this.revenue_apex.data[0].data[item.month - 1] = (item['total_agreed_rate'])
       })
 
       monthly_orders.forEach(item => {
         this.revenue_apex.data[1].total += item.total
-        this.revenue_apex.data[1].data[item.month] = item.total
+        this.revenue_apex.data[1].data[item.month - 1] = item.total
       })
 
     },
