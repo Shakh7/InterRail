@@ -40,11 +40,14 @@
 
               <div class="p-3">
                 <textarea
-                    class="form-control"
+                    class="form-control mb-3"
                     rows="10"
-                    placeholder="Wagon number"
-                    ></textarea>
+                    placeholder="Wagon numbers"
+                    v-model="wagons"
+                ></textarea>
+                <b-button variant="success" class="w-100" @click="createWagons">Save</b-button>
               </div>
+
 
             </b-collapse>
           </div>
@@ -141,34 +144,16 @@
             <b-collapse class="collapse border-bottom shadow-none" :id="'counterpartyCollapse' + i + 1">
 
               <div class="p-3">
-
-                <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified mb-3" role="tablist">
-                  <li class="nav-item" v-for="(container_type, tab_index) in container_types" :key="container_type">
-                    <a class="nav-link" :class="tab_index === 0 ? 'active' : ''"
-                       data-bs-toggle="tab" :href="'#container_type_' + tab_index + '_' + i" role="tab">
-                      {{ container_type.type }}
-                    </a>
-                  </li>
-                </ul>
-
-                <div class="tab-content text-start">
-                  <div v-for="(container_type, tab_index) in container_types" :key="container_type"
-                       class="tab-pane" :class="tab_index === 0 ? 'active' : ''"
-                       :id="'container_type_' + tab_index + '_' + i" role="tabpanel">
-
-                    <div class="row w-100 m-auto">
-                      <div class="col-10 ps-0">
-                        <input v-model="counterparty.actual_cost" class="form-control" type="number"
-                               :placeholder="'Actual cost ' + container_type.id">
-                      </div>
-                      <div class="col-2 text-end px-0">
-                        <b-button variant="success" class="btn-icon waves-effect waves-light w-100"
-                                  v-on:keyup.enter="saveActualCost(counterparty.id, container_type.id, counterparty.actual_cost)"
-                                  @click="saveActualCost(counterparty.id, container_type.id, counterparty.actual_cost)">
-                          <i class="ri-check-double-line"></i>
-                        </b-button>
-                      </div>
-                    </div>
+                <div class="row w-100 m-auto">
+                  <div class="col-10 ps-0">
+                    <input class="form-control" type="number" placeholder="Actual cost"
+                           v-model="counterparty.actual_cost" v-on:keyup.enter="saveActualCost(counterparty.id, counterparty.actual_cost)">
+                  </div>
+                  <div class="col-2 text-end px-0">
+                    <b-button variant="success" class="btn-icon waves-effect waves-light w-100"
+                              @click="saveActualCost(counterparty.id, counterparty.actual_cost)">
+                      <i class="ri-check-double-line"></i>
+                    </b-button>
                   </div>
                 </div>
               </div>
@@ -197,14 +182,16 @@ import Swal from "sweetalert2";
 export default {
   name: "CounterpartyActions",
   emits: ["updateCounterparties"],
+  data() {
+    return {
+      wagons: ''
+    }
+  },
   props: {
+    order_number: Number,
     counterparties: {
       type: Array,
       default: () => []
-    },
-    container_types: {
-      type: Array,
-      default: () => [],
     },
     counterparty_list: {
       type: Array,
@@ -216,56 +203,18 @@ export default {
     },
   },
   methods: {
-    async saveActualCost(counterparty_id, container_type_id, actual_cost) {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/actual_cost_to_all/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({
-          "container_type_id": container_type_id,
-          "counterparty_id": counterparty_id,
-          "actual_cost": actual_cost
-        })
-      });
-
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      })
-
-      if (response.ok) {
-        this.$emit('updateCounterparties')
-        await Toast.fire({
-          icon: 'success',
-          title: 'Actual cost for all containers has been updated'
-        })
-      } else {
-        this.$emit('updateCounterparties')
-        await Toast.fire({
-          icon: 'error',
-          title: 'Something went wrong'
-        })
-      }
-    },
-    async createContainer(container_type_id, containers) {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/container_to_all/`, {
+    async saveActualCost(counterparty_id, actual_cost) {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/expanse/actual_cost_to_all/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "container_type_id": container_type_id,
-          "containers": containers.split('\n')
+          "order_number": this.order_number,
+          "counterparty_id": counterparty_id,
+          "actual_cost": actual_cost
         })
-      });
+      })
 
       const Toast = Swal.mixin({
         toast: true,
@@ -281,19 +230,53 @@ export default {
 
       this.$emit('updateCounterparties')
       if (response.ok) {
-        this.$emit('updateCounterparties')
         await Toast.fire({
           icon: 'success',
-          title: 'Container has been uploaded'
+          title: 'Actual cost has been uploaded'
         })
       } else {
-        this.$emit('updateCounterparties')
         await Toast.fire({
           icon: 'error',
           title: 'Something went wrong'
         })
       }
+    },
+    async createWagons() {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/expanse/wagon_add/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "order_number": this.order_number,
+          "wagon": this.wagons.split('\n')
+        })
+      })
 
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      this.$emit('updateCounterparties')
+      if (response.ok) {
+        await Toast.fire({
+          icon: 'success',
+          title: 'Wagons has been uploaded'
+        })
+      } else {
+        await Toast.fire({
+          icon: 'error',
+          title: 'Something went wrong'
+        })
+      }
     }
   },
   computed: {
@@ -304,7 +287,7 @@ export default {
             id: counterparty.id,
             counterparty: counterparty.counterparty.name,
             category: counterparty.category.name,
-            actual_cost: 0
+            actual_cost: 0,
           }
         })
       }

@@ -134,12 +134,11 @@
                           <wagonInput :id="wagon.id" :wagon="wagon.wagon"/>
                         </td>
                         <td class="text-center">
-                          <agreedRate @update="this.fetchData()" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
+                          <agreedRate @update="fetchData()" :agreed_rate="wagon"/>
                         </td>
-                        <td class="text-center" v-for="actual_cost in wagon.actual_costs" :key="actual_cost"
+                        <td class="text-center" v-for="cost in wagon['actual_costs']" :key="cost.id"
                             style="max-width: 150px">
-                          <actualCost @update="this.fetchData()" :id="actual_cost.id"
-                                      :actual_cost="actual_cost.actual_cost"/>
+                          <actualCost @update="fetchData()" :actual_cost="cost"/>
                         </td>
                         <td class="text-center">
                           {{
@@ -165,7 +164,8 @@
                         <th class="text-center">Wagon</th>
                         <th class="text-center">Agreed rate <br>${{
                             (expanses.filter(a => a.agreed_rate !== null).map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
-                          }}</th>
+                          }}
+                        </th>
                         <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party">
                           <span class="badge bg-success">{{ party.category.name }}</span>
                           <span class="d-block">{{ party.counterparty.name }}</span>
@@ -181,7 +181,7 @@
                           <wagonInput :id="wagon.id" :wagon="wagon.wagon"/>
                         </td>
                         <td class="text-center">
-                          <agreedRate @update="this.fetchData()" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
+                          <agreedRate @update="fetchData()" :agreed_rate="wagon"/>
                         </td>
                         <td class="text-center" v-for="pre_cost in wagon_empty_preliminary_costs" :key="pre_cost"
                             style="max-width: 150px">
@@ -301,10 +301,10 @@
 
 <script>
 
-import wagonInput from "@/views/pages/orders/empty_wagon/components/wagonInput.vue";
-import agreedRate from "@/views/pages/orders/empty_wagon/components/agreedRate.vue";
-import actualCost from "@/views/pages/orders/empty_wagon/components/actualCost.vue";
-import store from "@/state/store.js";
+import wagonInput from "./components/wagonInput.vue";
+import agreedRate from "./components/agreedRate.vue";
+import actualCost from "./components/actualCost.vue";
+import store from "../../../../state/store.js";
 import {ref} from "vue";
 
 export default {

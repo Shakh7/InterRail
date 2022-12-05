@@ -74,7 +74,7 @@ export default {
       let multi_modal_rate = 0
       let multi_modal_rate_ctr_count = 0
 
-      data.forEach(item => {
+      data.filter(a => a.type === 'ContainerOrder').forEach(item => {
 
         let rail_rate = item.stat.filter(s => s['order__position'] === 'rail_forwarder')[0]
         let block_rate = item.stat.filter(s => s['order__position'] === 'block_train')[0]

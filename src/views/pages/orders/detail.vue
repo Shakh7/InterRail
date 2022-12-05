@@ -365,7 +365,7 @@
 <script>
 import {ref} from "vue";
 import Swal from "sweetalert2";
-import OrdersApi from '@/api/orders/orders_api';
+import OrdersApi from '../../../api/orders/orders_api.js';
 import ContainerInput from "../../pages/orders/components/ContainerInput.vue";
 import ActualCostInput from "../../pages/orders/components/ActualCostInput";
 import CounterpartyActions from "../../pages/orders/components/CounterpartyActions";

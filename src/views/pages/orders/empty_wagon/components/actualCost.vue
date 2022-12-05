@@ -1,5 +1,6 @@
 <template>
-  <input v-on:keyup.enter="updateActualCost" :value="actual_cost" :class="response_status"
+  <input v-on:keyup.enter="updateActualCost(cost.id, cost.actual_cost)" v-model="cost.actual_cost"
+         :class="response_status"
          class="form-control form-control-sm w-75 m-auto" type="text"
          placeholder="Agreed rate">
 </template>
@@ -9,29 +10,33 @@ import Swal from "sweetalert2";
 
 export default {
   emits: ['update'],
-  name: "agreedRate",
+  name: "EmptyActualCost",
   data() {
     return {
       response_status: '',
     }
   },
   props: {
-    id: {
-      type: Number,
-    },
     actual_cost: {
-      type: String,
+      type: Object,
     },
   },
+  computed: {
+    cost: {
+      get() {
+        return this.actual_cost
+      }
+    }
+  },
   methods: {
-    async updateActualCost(event) {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/expanse/actual_cost/update/${this.id}/`, {
+    async updateActualCost(id, cost) {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/expanse/actual_cost/update/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          actual_cost: event.target.value
+          actual_cost: cost
         })
       })
 
@@ -46,6 +51,8 @@ export default {
           toast.addEventListener('mouseleave', Swal.resumeTimer)
         }
       })
+
+      this.$emit('update')
 
       if (response.ok) {
         this.response_status = 'border-success'
@@ -69,7 +76,6 @@ export default {
         })
       }
 
-      this.$emit('update')
     }
   }
 }

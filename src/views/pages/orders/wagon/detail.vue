@@ -347,6 +347,7 @@
 
     <CounterpartyActions
         v-if="!isLoading()"
+        :order_number="order.order_number"
         :counterparties="order.counterparties"
         :counterparty_list="counterparty_list.value"
         :category_list="category_list.value"
@@ -361,7 +362,7 @@ import OrdersApi from "@/api/orders/orders_api";
 import ActualCostInput from "@/views/pages/orders/wagon/components/ActualCostInput.vue";
 import wagon_rate_weight from "@/views/pages/orders/wagon/components/wagon_rate_weight";
 // import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
-import CounterpartyActions from "@/views/pages/orders/wagon/components/CounterpartyActions";
+import CounterpartyActions from "./components/CounterpartyActions.vue";
 
 export default {
   name: "detail",
