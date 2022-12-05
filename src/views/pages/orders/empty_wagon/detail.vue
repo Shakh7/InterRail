@@ -28,15 +28,15 @@
                       </div>
                       <div class="col-md">
                         <h4 class="fw-semibold">
-                          Order number - {{ loadData(order.value.order_number) }}
+                          Order number - {{ loadData(order.order_number) }}
                         </h4>
                         <div class="hstack gap-3 flex-wrap">
                           <div class="text-muted text-capitalize"><i class="ri-building-line align-bottom me-1"></i>
-                            {{ loadData(order.value.position).split('_').join(' ') }}
+                            {{ loadData(order.position).split('_').join(' ') }}
                           </div>
                           <div class="vr"></div>
                           <div class="text-muted">Create Date : <span class="fw-medium"></span>
-                            {{ loadData(order.value.date) }}
+                            {{ loadData(order.date) }}
                           </div>
                           <div class="vr"></div>
                           <div class="badge rounded-pill bg-info fs-12">New</div>
@@ -116,11 +116,9 @@
                       <tr class="bg-light">
                         <th class="text-center">#</th>
                         <th class="text-center">Wagon</th>
-                        <th class="text-center">Agreed rate <br>${{
-                            (expanses.value.filter(a => a.agreed_rate !== null).map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
-                          }}
+                        <th class="text-center">Agreed rate
                         </th>
-                        <th class="text-center py-0 m-0" v-for="party in order.value.counterparties" :key="party"
+                        <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party"
                         >
                           <span class="badge bg-success">{{ party.category.name }}</span>
                           <span class="d-block">{{ party.counterparty.name }}</span>
@@ -130,17 +128,17 @@
                       </tr>
                       </thead>
                       <tbody>
-                      <tr v-for="(wagon, i) in expanses.value" :key="i">
+                      <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 150px">
                           <wagonInput :id="wagon.id" :wagon="wagon.wagon"/>
                         </td>
                         <td class="text-center">
-                          <agreedRate @update="this.fetchData" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
+                          <agreedRate @update="this.fetchData()" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
                         </td>
                         <td class="text-center" v-for="actual_cost in wagon.actual_costs" :key="actual_cost"
                             style="max-width: 150px">
-                          <actualCost @update="this.fetchData" :id="actual_cost.id"
+                          <actualCost @update="this.fetchData()" :id="actual_cost.id"
                                       :actual_cost="actual_cost.actual_cost"/>
                         </td>
                         <td class="text-center">
@@ -150,7 +148,7 @@
                         </td>
                         <td class="text-center">
                           {{
-                            ((expanses.value.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)) - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
+                            ((expanses.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)) - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
                           }}
                         </td>
                       </tr>
@@ -166,9 +164,9 @@
                         <th class="text-center">#</th>
                         <th class="text-center">Wagon</th>
                         <th class="text-center">Agreed rate <br>${{
-                            (expanses.value.filter(a => a.agreed_rate !== null).map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
+                            (expanses.filter(a => a.agreed_rate !== null).map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
                           }}</th>
-                        <th class="text-center py-0 m-0" v-for="party in order.value.counterparties" :key="party">
+                        <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party">
                           <span class="badge bg-success">{{ party.category.name }}</span>
                           <span class="d-block">{{ party.counterparty.name }}</span>
                         </th>
@@ -177,15 +175,15 @@
                       </tr>
                       </thead>
                       <tbody>
-                      <tr v-for="(wagon, i) in expanses.value" :key="i">
+                      <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center" style="max-width: 150px">
                           <wagonInput :id="wagon.id" :wagon="wagon.wagon"/>
                         </td>
                         <td class="text-center">
-                          <agreedRate @update="this.fetchData" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
+                          <agreedRate @update="this.fetchData()" :id="wagon.id" :agreed_rate="wagon.agreed_rate"/>
                         </td>
-                        <td class="text-center" v-for="pre_cost in wagon_empty_preliminary_costs.value" :key="pre_cost"
+                        <td class="text-center" v-for="pre_cost in wagon_empty_preliminary_costs" :key="pre_cost"
                             style="max-width: 150px">
                           {{ pre_cost.preliminary_cost }}
                         </td>
@@ -196,7 +194,7 @@
                         </td>
                         <td class="text-center">
                           {{
-                            ((expanses.value.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)) - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
+                            ((expanses.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)) - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
                           }}
                         </td>
                       </tr>
@@ -221,34 +219,34 @@
                   <tbody>
                   <tr>
                     <td class="fw-medium">Order number</td>
-                    <td>{{ loadData(order.value.order_number) }}</td>
+                    <td>{{ loadData(order.order_number) }}</td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Lot number</td>
-                    <td>{{ loadData(order.value.lot_number) }}</td>
+                    <td>{{ loadData(order.lot_number) }}</td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Departure</td>
-                    <td>{{ loadData(order.value.departure.name) }} ({{ loadData(order.value.departure.code) }})</td>
+                    <td>{{ loadData(order.departure.name) }} ({{ loadData(order.departure.code) }})</td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Destination</td>
-                    <td>{{ loadData(order.value.destination.name) }} ({{ loadData(order.value.destination.code) }})</td>
+                    <td>{{ loadData(order.destination.name) }} ({{ loadData(order.destination.code) }})</td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Create Date</td>
-                    <td>{{ loadData(order.value.date) }}</td>
+                    <td>{{ loadData(order.date) }}</td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Manager</td>
                     <td>
-                      {{ getAccount(loadData(order.value.manager))['full_name'] }}
+                      {{ getAccount(loadData(order.manager))['full_name'] }}
                     </td>
                   </tr>
                   <tr>
                     <td class="fw-medium">Customer</td>
                     <td>
-                      {{ getAccount(loadData(order.value.customer))['full_name'] }}
+                      {{ getAccount(loadData(order.customer))['full_name'] }}
                     </td>
                   </tr>
                   </tbody>
@@ -302,22 +300,23 @@
 </template>
 
 <script>
-import {ref} from "vue";
+
 import wagonInput from "@/views/pages/orders/empty_wagon/components/wagonInput.vue";
 import agreedRate from "@/views/pages/orders/empty_wagon/components/agreedRate.vue";
 import actualCost from "@/views/pages/orders/empty_wagon/components/actualCost.vue";
 import store from "@/state/store.js";
+import {ref} from "vue";
 
 export default {
   name: "empty_wagon_detail",
   data() {
 
     let isFetchingData = ref(true);
-    let order = ref([])
+    let order = []
     let agreed_rate = 0
     let quantity = 0
-    let expanses = ref([])
-    let wagon_empty_preliminary_costs = ref([])
+    let expanses = ref(null)
+    let wagon_empty_preliminary_costs = []
 
     return {
       order,
@@ -348,11 +347,11 @@ export default {
       let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/list/${this.$route.params.id}/`)
       let data = (await response.json())[0]
 
-      this.order.value = data['order']
+      this.order = data['order']
       this.agreed_rate = data['agreed_rate']
-      this.expanses.value = data['expanses']
+      this.expanses = data['expanses']
       this.quantity = data['quantity']
-      this.wagon_empty_preliminary_costs.value = data['wagon_empty_preliminary_costs']
+      this.wagon_empty_preliminary_costs = data['wagon_empty_preliminary_costs']
 
       this.isFetchingData = false
     }

@@ -35,8 +35,6 @@ export default {
         })
       })
 
-      this.$emit('update')
-
       const Toast = Swal.mixin({
         toast: true,
         position: 'bottom',
@@ -70,6 +68,8 @@ export default {
           title: error_msg,
         })
       }
+
+      this.$emit('update')
     }
   }
 }

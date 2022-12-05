@@ -36,7 +36,6 @@ export default {
       container_type_options: ['20', '20HC', '40', '40HC', '45'],
 
       order: {
-        order_number: 1,
         lot_number: "1111",
         date: "2022-10-14",
         position: "block_train",
@@ -318,8 +317,8 @@ export default {
 
             <div class="col-md-4">
               <label class="form-label">Order number</label>
-              <input v-model="order.order_number" type="number" class="form-control"
-                     placeholder="Enter order number">
+              <input type="number" class="form-control"
+                     placeholder="Enter order number" disabled>
             </div>
 
             <div class="col-md-4">

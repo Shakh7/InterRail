@@ -365,10 +365,10 @@
 <script>
 import {ref} from "vue";
 import Swal from "sweetalert2";
-import OrdersApi from "@/api/orders/orders_api";
-import ContainerInput from "@/views/pages/orders/components/ContainerInput";
-import ActualCostInput from "@/views/pages/orders/components/ActualCostInput";
-import CounterpartyActions from "@/views/pages/orders/components/CounterpartyActions";
+import OrdersApi from '@/api/orders/orders_api';
+import ContainerInput from "../../pages/orders/components/ContainerInput.vue";
+import ActualCostInput from "../../pages/orders/components/ActualCostInput";
+import CounterpartyActions from "../../pages/orders/components/CounterpartyActions";
 
 export default {
   name: "detail",
