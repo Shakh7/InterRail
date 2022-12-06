@@ -1,11 +1,12 @@
 <script>
-import custom_wizard from "@/views/pages/orders/components/custom_wizard";
+import custom_wizard from "./components/custom_wizard";
 import counterpartySelect from "@/views/pages/orders/components/counterpartySelect";
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import OrdersApi from "@/api/orders/orders_api";
 import CoreApi from "@/api/core/core_api";
 import Swal from "sweetalert2";
+import store from "../../../state/store";
 
 export default {
   data() {
@@ -31,29 +32,30 @@ export default {
         },
       ],
 
+      autocomplete_options: [],
       counterparty_list: [],
       category_list: [],
       container_type_options: ['20', '20HC', '40', '40HC', '45'],
 
       order: {
-        lot_number: "1111",
-        date: "2022-10-14",
-        position: "block_train",
-        type: "import",
-        shipment_status: "delivered",
-        payment_status: "issued",
-        shipper: "LLC \"Gallaorol kaliy fosfat\"",
-        consignee: "FE MEDEX",
+        lot_number: "",
+        date: "",
+        position: "",
+        type: "",
+        shipment_status: "",
+        payment_status: "",
+        shipper: "",
+        consignee: "",
         departure_id: 1,
         destination_id: 1,
-        border_crossing: "Келес эксп - Сарыагач эксп",
-        conditions_of_carriage: "FOB-FOR",
-        rolling_stock: "СПС контейнер",
-        departure_country: "Uzbekistan",
-        destination_country: "China",
-        comment: "Hello world",
+        border_crossing: "",
+        conditions_of_carriage: "",
+        rolling_stock: "",
+        departure_country: "",
+        destination_country: "",
+        comment: "",
         manager: this.$store.state.user.id,
-        customer: 1,
+        customer: null,
         counterparties: [
           {
             category_id: [],
@@ -281,6 +283,76 @@ export default {
       });
 
       if (response.ok) await this.$router.push({name: "order_container_list"})
+    },
+
+
+    async getAutoCompleteOrders() {
+      let response = null
+      if (store.state.user.role === 'admin') {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      } else {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${store.state.user.id}`);
+      }
+      let data = await response.json();
+      this.autocomplete_options = data
+    },
+
+    onAutoCompleteSelected(selected_order) {
+      if (selected_order === "0") {
+        this.order = {
+          lot_number: "",
+          date: "",
+          position: "",
+          type: "",
+          shipment_status: "",
+          payment_status: "",
+          shipper: "",
+          consignee: "",
+          departure_id: 1,
+          destination_id: 1,
+          border_crossing: "",
+          conditions_of_carriage: "",
+          rolling_stock: "",
+          departure_country: "",
+          destination_country: "",
+          comment: "",
+          manager: this.$store.state.user.id,
+          customer: null,
+        }
+      } else {
+        try {
+          let order_number = parseInt(selected_order)
+          let result = this.autocomplete_options.filter(order => order.order_number === order_number)[0]
+          this.order = result
+          this.order.counterparties = [
+            {
+              category_id: [],
+              counterparty_id: 1
+            }
+          ]
+
+          let dep = [{
+            value: parseInt(result.departure.id),
+            label: result.departure.name,
+            code: result.departure.code
+          }]
+          let des = [{
+            value: parseInt(result.destination.id),
+            label: result.destination.name,
+            code: result.destination.code
+          }]
+
+          this.departure.options = dep
+          this.departure.selected = dep[0]
+          this.order.departure_id = dep[0].value
+          this.destination.options = des
+          this.destination.selected = des[0]
+          this.order.destination_id = des[0].value
+        } catch {
+          alert('Please select a valid order')
+        }
+      }
+
     }
   },
   watch: {
@@ -303,14 +375,19 @@ export default {
   async mounted() {
     await this.getCounterpartyList()
     await this.getCategoryList()
+    await this.getAutoCompleteOrders()
   }
 };
 </script>
 
 <template>
   <div class="row">
+
     <div class="col-xl-12 pb-3">
-      <custom_wizard wizard_header="Create Order" :steps="steps" class="mb-0">
+      <custom_wizard wizard_header="Create Order"
+                     :steps="steps" class="mb-0"
+                     :autocomplete_options="autocomplete_options"
+                     @autocomplete-selected="onAutoCompleteSelected">
 
         <template v-slot:content-step1-body>
           <div class="row g-3">

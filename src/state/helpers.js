@@ -38,4 +38,9 @@ export const todoComputed = {
 
 export const todoMethods = mapActions('todo', ['fetchTodos'])
 
-export const ordersMehtods = mapActions('orders', ['setCurrentlyUpdating', 'updateCurrentUpdating'])
+export const ordersMehtods = mapActions('orders', ['setCurrentlyUpdating', 'updateCurrentUpdating', 'fetchAllOrders', 'orders_list'])
+export const orderComputed = {
+  ...mapState('orders', {
+    orders: (state) => state.orders
+  })
+}

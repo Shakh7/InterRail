@@ -55,6 +55,9 @@ const store = createStore({
         }
     },
     getters: {
+        getUsers(state) {
+            return state.users_list
+        },
     },
 })
 

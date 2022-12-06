@@ -4,18 +4,13 @@ import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import store from "@/state/store.js";
+import store from "../../../state/store";
 
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-// import Lottie from "@/components/widgets/lottie.vue";
-
 import CreautUserModal from './modals/create_user.vue'
 import deleteUserButton from './components/delete_user_button.vue'
 import editUserButton from './components/edit_user_button.vue'
-//
-// import UserApi from '../../../api/users/users_api.js'
-// import Swal from "sweetalert2";
 
 export default {
   name: 'users_list',

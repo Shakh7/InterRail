@@ -1,5 +1,5 @@
 export const state = {
-    orders: [],
+    orders_lists: [],
     currentlyUpdating: [],
 };
 
@@ -8,6 +8,9 @@ export const state = {
 // };
 
 export const mutations = {
+    setOrders(state, newValue) {
+        state.orders = newValue
+    },
     setUpdatingOrder(state, newValue) {
         state.currentlyUpdating = newValue
     },
@@ -99,4 +102,21 @@ export const actions = {
         commit('setUpdatingOrder', order)
         return return_response
     },
+
+
+    async fetchAllOrders({commit}, user) {
+        if (user.role === "admin") {
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+            let data = await response.json();
+            commit('setOrders', data)
+        } else {
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${user.id}`);
+            let data = await response.json();
+            commit('setOrders', data)
+        }
+    }
+};
+
+export const getters = {
+    orders_list: state => state.orders_lists,
 };

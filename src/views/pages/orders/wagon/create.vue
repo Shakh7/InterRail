@@ -6,6 +6,7 @@ import counterpartySelect from "@/views/pages/orders/components/counterpartySele
 import custom_wizard from "@/views/pages/orders/components/custom_wizard";
 import OrdersApi from "@/api/orders/orders_api";
 import Swal from "sweetalert2";
+import store from "../../../../state/store";
 
 export default {
   data() {
@@ -85,6 +86,9 @@ export default {
         selected: null,
         options: []
       },
+
+
+      autocomplete_options: []
 
     }
   },
@@ -257,11 +261,81 @@ export default {
       });
 
       if (response.ok) await this.$router.push({name: "order_wagon_list"})
+    },
+
+    async getAutoCompleteOrders() {
+      let response = null
+      if (store.state.user.role === 'admin') {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      } else {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${store.state.user.id}`);
+      }
+      let data = await response.json();
+      this.autocomplete_options = data
+    },
+
+    onAutoCompleteSelected(selected_order) {
+      if (selected_order === "0") {
+        this.order = {
+          lot_number: "",
+          date: "",
+          position: "",
+          type: "",
+          shipment_status: "",
+          payment_status: "",
+          shipper: "",
+          consignee: "",
+          departure_id: 1,
+          destination_id: 1,
+          border_crossing: "",
+          conditions_of_carriage: "",
+          rolling_stock: "",
+          departure_country: "",
+          destination_country: "",
+          comment: "",
+          manager: this.$store.state.user.id,
+          customer: null,
+        }
+      } else {
+        try {
+          let order_number = parseInt(selected_order)
+          let result = this.autocomplete_options.filter(order => order.order_number === order_number)[0]
+          this.order = result
+          this.order.counterparties = [
+            {
+              category_id: [],
+              counterparty_id: 1
+            }
+          ]
+
+          let dep = [{
+            value: parseInt(result.departure.id),
+            label: result.departure.name,
+            code: result.departure.code
+          }]
+          let des = [{
+            value: parseInt(result.destination.id),
+            label: result.destination.name,
+            code: result.destination.code
+          }]
+
+          this.departure.options = dep
+          this.departure.selected = dep[0]
+          this.order.departure_id = dep[0].value
+          this.destination.options = des
+          this.destination.selected = des[0]
+          this.order.destination_id = des[0].value
+        } catch {
+          alert('Please select a valid order')
+        }
+      }
+
     }
   },
   async mounted() {
     await this.getCounterpartyList()
     await this.getCategoryList()
+    await this.getAutoCompleteOrders()
   }
 };
 </script>
@@ -269,7 +343,8 @@ export default {
 <template>
   <div class="row">
     <div class="col-xl-12 pb-3">
-      <custom_wizard wizard_header="Create Order" :steps="steps" class="mb-0">
+      <custom_wizard wizard_header="Create Order" @autocomplete-selected="onAutoCompleteSelected"
+                     :steps="steps" class="mb-0" :autocomplete_options="autocomplete_options">
 
         <template v-slot:content-step1-body>
           <div class="row g-3">

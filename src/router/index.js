@@ -36,7 +36,7 @@ router.beforeEach(async (routeTo, routeFrom, next) => {
         let userResponse = await user.testToken()
         if (userResponse.detail === undefined) {
             store.commit('setUser', userResponse)
-            if (store.state.loaded_at_least_once === false) {
+            if (!store.state.loaded_at_least_once) {
                 store.dispatch('getUsers')
                 store.commit('setLoadedTrue', true)
             }

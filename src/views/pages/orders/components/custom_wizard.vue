@@ -4,6 +4,7 @@ import FinishContent from "@/components/widgets/lupuorrc.json";
 import Lottie from "@/components/widgets/lottie.vue";
 
 export default {
+  emits: ['autocomplete-selected'],
   props: {
     steps: {
       type: Array,
@@ -13,11 +14,13 @@ export default {
       type: String,
       default: "Default Wizard Header",
     },
+    autocomplete_options: Array,
   },
   data() {
     return {
       noContentAnimation: {animationData: noContent},
       FinishContentAnimation: {animationData: FinishContent},
+      selected_autocomplete: null
     };
   },
   components: {
@@ -76,6 +79,20 @@ export default {
         });
       });
     });
+  },
+  methods: {
+    autoCompleteMouseOver() {
+      alert('hello')
+      // this.selected_autocomplete = option
+    },
+  },
+  watch: {
+    selected_autocomplete: function (val) {
+      this.$emit('autocomplete-selected', val);
+    }
+  },
+  computed: {
+    // autocompleteComputed
   }
 };
 </script>
@@ -114,6 +131,32 @@ export default {
 
               </button>
             </div>
+
+            <b-card class="ribbon-box border shadow-none overflow-hidden mt-3">
+              <div class="text-muted ">
+                <div class="ribbon ribbon-info ribbon-shape trending-ribbon">
+                  <span class="trending-ribbon-text">Magic</span>
+                  <i class="ri-flashlight-fill text-white align-bottom float-end ms-1"></i>
+                </div>
+                <div class="text-end mb-3">
+                  <h5 class="d-inline me-2">AutoComplete</h5>
+                  <img src="https://img.icons8.com/color/48/null/sparkling.png" style="width: 20px"/>
+                </div>
+                <p class="mb-0">
+                  Have your order inputs automatically filled by selecting any similar order.
+                </p>
+
+                <select class="form-select mt-3" v-model="selected_autocomplete">
+                  <option value="0" selected>Select order</option>
+                  <option v-for="option in autocomplete_options" :key="option"
+                          :value="option.order_number">
+                    Order
+                    {{ option.order_number }}
+                  </option>
+                </select>
+              </div>
+            </b-card>
+
           </div>
 
           <div class="col-lg-9">

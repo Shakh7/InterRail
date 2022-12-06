@@ -3,12 +3,16 @@ import {
   CountTo
 } from "vue3-count-to";
 
-import store from "@/state/store.js";
+import store from "../../../state/store.js";
 import revenue from "@/views/pages/home/data.js";
+import spxnqpau from '../../../components/widgets/spxnqpau.json';
+import Lottie from "../../../components/widgets/lottie.vue";
+import {ordersMehtods} from "../../../state/helpers";
 
 export default {
   components: {
     CountTo,
+    lottie: Lottie
   },
   data() {
     return {
@@ -18,10 +22,12 @@ export default {
         data: revenue.series,
         options: revenue.chartOptions,
       },
-      totalOrdersList: []
+      totalOrdersList: [],
+      defaultOptions: {animationData: spxnqpau}
     };
   },
   methods: {
+    ...ordersMehtods,
     async getMonthlyStatistics() {
       let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/statistic/monthly`);
       let data = await response.json();
@@ -43,15 +49,19 @@ export default {
 
     },
     async getTotalOrders() {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      let response = null
+      if (store.state.user.role === 'admin') {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      } else {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${store.state.user.id}`);
+      }
       let data = await response.json();
-
-      this.totalOrdersList = data['results']
+      this.totalOrdersList = data
     },
     getAccount(user_id) {
       let result = store.state.users_list.filter(item => item.id === user_id)
       return [result[0]['full_name'][0], result[0]['full_name']]
-    }
+    },
   },
   async mounted() {
     await this.getMonthlyStatistics()
@@ -142,7 +152,7 @@ export default {
       <div class="row align-items-center justify-content-end">
         <div class="col px-0">
 
-          <select class="form-select" v-model="selected_manager">
+          <select class="form-select" v-model="selected_manager" v-if="totalOrdersList.length > 0">
             <option value="0">All managers</option>
             <option v-for="user in totalOrdersList.map(i => {
               return i['manager']
@@ -171,7 +181,7 @@ export default {
             <th scope="col">Date Created</th>
           </tr>
           </thead>
-          <tbody>
+          <tbody v-if="totalOrdersList.length > 0">
           <tr v-for="order in totalOrdersListComputed.sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
               :key="order">
             <td><a href="#" class="fw-semibold">{{ order.order_number }}</a></td>
@@ -209,6 +219,19 @@ export default {
             </td>
             <td>
               {{ order.date }}
+            </td>
+          </tr>
+          </tbody>
+          <tbody v-else>
+          <tr>
+            <td colspan="7" class="text-center">
+              <lottie
+                  colors="primary:#405189,secondary:#08a88a"
+                  :options="defaultOptions"
+                  :height="80"
+                  :width="80"
+              />
+              <h5>You have no orders yet !</h5>
             </td>
           </tr>
           </tbody>
