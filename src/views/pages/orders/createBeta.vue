@@ -382,7 +382,6 @@ export default {
 
 <template>
   <div class="row">
-
     <div class="col-xl-12 pb-3">
       <custom_wizard wizard_header="Create Order"
                      :steps="steps" class="mb-0"

@@ -22,6 +22,7 @@
         <div class="card shadow-none my-0">
           <div class="card-header bg-light py-1"></div>
         </div>
+
         <div class="card mb-0 shadow-none">
           <div class="card-header py-2" type="button" data-bs-toggle="collapse" href="#containerCreate">
             <div class="row align-items-center w-100 m-auto">
@@ -58,7 +59,8 @@
                         <label for="exampleFormControlTextarea5" class="form-label">
                           Containers List
                         </label>
-                        <textarea v-model="container_type.containers" class="form-control" :placeholder="'Container list for ' + container_type.type"
+                        <textarea v-model="container_type.containers" class="form-control"
+                                  :placeholder="'Container list for ' + container_type.type"
                                   id="exampleFormControlTextarea5"
                                   :rows="container_type.quantity >= 20 ? container_type.quantity / 2 : container_type.quantity"
                         ></textarea>
@@ -99,8 +101,8 @@
                 <div class="row text-start w-100 m-auto">
                   <div class="col-6 ps-0">
                     <div class="mb-3">
-                      <label for="firstNameinput" class="form-label">First Name</label>
-                      <select class="form-select">
+                      <label class="form-label">Counterparty</label>
+                      <select class="form-select" v-model="counterparty">
                         <option selected disabled>Choose...</option>
                         <option v-for="c in counterparty_list" :key="c.id" :value="c.id">{{ c.name }}</option>
                       </select>
@@ -108,8 +110,8 @@
                   </div>
                   <div class="col-6 px-0">
                     <div class="mb-3">
-                      <label for="lastNameinput" class="form-label">Last Name</label>
-                      <select class="form-select">
+                      <label class="form-label">Category</label>
+                      <select class="form-select" v-model="category">
                         <option selected disabled>Choose...</option>
                         <option v-for="c in category_list" :key="c.id" :value="c.id">{{ c.name }}</option>
                       </select>
@@ -117,37 +119,25 @@
                   </div>
                 </div>
 
-                <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified mb-3" role="tablist">
-                  <li class="nav-item" v-for="(container_type, tab_index) in container_types" :key="container_type">
-                    <a class="nav-link" :class="tab_index === 0 ? 'active' : ''"
-                       data-bs-toggle="tab" :href="'#container_type_create_' + tab_index + 10" role="tab">
-                      {{ container_type.type }}
-                    </a>
-                  </li>
-                </ul>
-
-                <div class="tab-content text-start">
-                  <div v-for="(container_type, tab_index) in container_types" :key="container_type"
-                       class="tab-pane" :class="tab_index === 0 ? 'active' : ''"
-                       :id="'container_type_create_' + tab_index + 10" role="tabpanel">
-
-                    <div class="row w-100 m-auto">
-                      <div class="col-10 ps-0">
-                        <input class="form-control" type="number" :placeholder="'Actual cost ' + container_type.id">
-                      </div>
-                      <div class="col-2 text-end px-0">
-                        <b-button variant="success" class="btn-icon waves-effect waves-light w-100">
-                          <i class="ri-check-double-line"></i>
-                        </b-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <b-list-group class="mt-2">
+                  <b-list-group-item
+                      v-for="container_type in container_types_computed" :key="container_type"
+                      class="d-flex justify-content-between align-items-center p-2 pe-3">
+                    <input v-model="container_type.cost" class="form-control w-75 m-0 p-1 border-0" type="number"
+                           placeholder="Preliminary cost">
+                    <span class="badge bg-success m-0">{{ container_type.type }}</span>
+                  </b-list-group-item>
+                  <b-button @click="createCounterparty()"
+                            variant="success" class="w-100 waves-effect waves-light mt-3">
+                    Create
+                  </b-button>
+                </b-list-group>
               </div>
 
             </b-collapse>
           </div>
         </div>
+
         <div class="card shadow-none my-0">
           <div class="card-header bg-light py-1"></div>
         </div>
@@ -227,7 +217,16 @@ import Swal from "sweetalert2";
 export default {
   name: "CounterpartyActions",
   emits: ["updateCounterparties"],
+  data() {
+    return {
+      counterparty: null,
+      category: null
+    }
+  },
   props: {
+    order_number: {
+      type: Number,
+    },
     counterparties: {
       type: Array,
       default: () => []
@@ -311,13 +310,61 @@ export default {
 
       this.$emit('updateCounterparties')
       if (response.ok) {
-        this.$emit('updateCounterparties')
         await Toast.fire({
           icon: 'success',
           title: 'Container has been uploaded'
         })
       } else {
-        this.$emit('updateCounterparties')
+        await Toast.fire({
+          icon: 'error',
+          title: 'Something went wrong'
+        })
+      }
+
+    },
+    async createCounterparty() {
+
+      let data = {
+        order_number: this.order_number,
+        counterparty_id: this.counterparty,
+        category_id: this.category,
+        preliminary_costs: this.container_types_computed.map((container_type) => {
+          return {
+            container_type_id: container_type.id,
+            preliminary_cost: container_type.cost
+          }
+        })
+      }
+
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/counterparty_add/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      //
+
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      this.$emit('updateCounterparties')
+      if (response.ok) {
+        await Toast.fire({
+          icon: 'success',
+          title: 'Counterparty has been created'
+        })
+      } else {
         await Toast.fire({
           icon: 'error',
           title: 'Something went wrong'
@@ -335,6 +382,18 @@ export default {
             counterparty: counterparty.counterparty.name,
             category: counterparty.category.name,
             actual_cost: 0
+          }
+        })
+      }
+    },
+
+    container_types_computed: {
+      get() {
+        return this.container_types.map(container_type => {
+          return {
+            id: container_type.id,
+            type: container_type.type,
+            cost: ''
           }
         })
       }

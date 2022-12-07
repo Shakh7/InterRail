@@ -354,10 +354,11 @@
 
   <CounterpartyActions
       v-if="!isLoading()"
+      :order_number="order.order_number"
       :container_types="container_types.map(c=> { return { type: c.container_type, id: c.id, quantity: c.quantity, containers: '' }})"
       :counterparties="order.counterparties"
-      :counterparty_list="counterparty_list.value"
-      :category_list="category_list.value"
+      :counterparty_list="counterparty_list"
+      :category_list="category_list"
       @updateCounterparties="updatedCounterparties"
   />
 </template>
@@ -377,8 +378,8 @@ export default {
     let product = ref(null)
     let container_types = ref(null)
     let updateCounterpartyInfo = ref(null)
-    let counterparty_list = ref([])
-    let category_list = ref([])
+    let counterparty_list = []
+    let category_list = []
 
     return {
       order,
