@@ -14,6 +14,12 @@ export default {
     CountTo,
     lottie: Lottie
   },
+  props: {
+    totalOrdersList: {
+      type: Array,
+      default: () => []
+    },
+  },
   data() {
     return {
       search: '',
@@ -22,8 +28,9 @@ export default {
         data: revenue.series,
         options: revenue.chartOptions,
       },
-      totalOrdersList: [],
-      defaultOptions: {animationData: spxnqpau}
+      defaultOptions: {animationData: spxnqpau},
+      skip: 0,
+      offset: 10
     };
   },
   methods: {
@@ -48,16 +55,6 @@ export default {
       })
 
     },
-    async getTotalOrders() {
-      let response = null
-      if (store.state.user.role === 'admin') {
-        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
-      } else {
-        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${store.state.user.id}`);
-      }
-      let data = await response.json();
-      this.totalOrdersList = data
-    },
     getAccount(user_id) {
       let result = store.state.users_list.filter(item => item.id === user_id)
       return [result[0]['full_name'][0], result[0]['full_name']]
@@ -65,7 +62,6 @@ export default {
   },
   async mounted() {
     await this.getMonthlyStatistics()
-    await this.getTotalOrders()
   },
   computed: {
     totalOrdersListComputed() {
@@ -84,7 +80,7 @@ export default {
               || item['date'].toString().toLowerCase().includes(this.search.toLowerCase())
         })
       }
-    }
+    },
   }
 };
 </script>
@@ -182,10 +178,10 @@ export default {
           </tr>
           </thead>
           <tbody v-if="totalOrdersList.length > 0">
-          <tr v-for="order in totalOrdersListComputed.sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
+          <tr v-for="order in totalOrdersListComputed.slice(skip, offset).sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
               :key="order">
             <td><a href="#" class="fw-semibold">{{ order.order_number }}</a></td>
-            <td class="text-capitalize">{{ order.position.split('_').join(' ') }}
+            <td class="text-capitalize">{{ order.position.split('_').join(' ') }} {{ order.position }}
             </td>
             <td>
               <span v-for="(user, index) in getAccount(order.customer)" :key="user"
@@ -236,6 +232,21 @@ export default {
           </tr>
           </tbody>
         </table>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <div class="pagination-wrap hstack gap-2">
+          <a class="page-item pagination-prev disabled" href="#">
+            Previous
+          </a>
+          <ul class="pagination listjs-pagination mb-0">
+            <li class="active">
+              <router-link class="page" to="?page=1">1</router-link>
+            </li>
+          </ul>
+          <a class="page-item pagination-next" href="#">
+            Next
+          </a>
+        </div>
       </div>
     </div>
   </div>

@@ -45,7 +45,8 @@ import {
     faPrint,
     faTrain,
     faPenToSquare,
-    faAngleDown
+    faAngleDown,
+    faArrowUpRightFromSquare
 } from '@fortawesome/free-solid-svg-icons'
 
 
@@ -57,7 +58,8 @@ library.add(
     faFolder,
     faPrint,
     faTrain,
-    faAngleDown
+    faAngleDown,
+    faArrowUpRightFromSquare
 )
 
 AOS.init({

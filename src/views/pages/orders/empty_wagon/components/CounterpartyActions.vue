@@ -157,7 +157,7 @@
                                v-on:keyup.enter="saveActualCost(counterparty.id, counterparty.actual_cost)">
                       </div>
                       <div class="col-2 text-end px-0">
-                        <b-button variant="success" class="btn-icon waves-effect waves-light w-100"
+                        <b-button variant="warning" class="btn-icon waves-effect waves-light w-100"
                                   @click="saveActualCost(counterparty.id, counterparty.actual_cost)">
                           <i class="ri-check-double-line"></i>
                         </b-button>

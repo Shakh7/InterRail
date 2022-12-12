@@ -163,16 +163,23 @@
               <div class="p-3">
 
                 <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified mb-3" role="tablist">
-                  <li class="nav-item" v-for="(container_type, tab_index) in container_types" :key="container_type">
+                  <li class="nav-item" v-for="(container_type, tab_index) in container_types_computed"
+                      :key="container_type">
                     <a class="nav-link" :class="tab_index === 0 ? 'active' : ''"
                        data-bs-toggle="tab" :href="'#container_type_' + tab_index + '_' + i" role="tab">
                       {{ container_type.type }}
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" :href="'#container_type_delete_' + counterparty.id"
+                       role="tab">
+                      <font-awesome-icon icon="fa-solid fa-trash" class="text-danger"/>
+                    </a>
+                  </li>
                 </ul>
 
                 <div class="tab-content text-start">
-                  <div v-for="(container_type, tab_index) in container_types" :key="container_type"
+                  <div v-for="(container_type, tab_index) in container_types_computed" :key="container_type"
                        class="tab-pane" :class="tab_index === 0 ? 'active' : ''"
                        :id="'container_type_' + tab_index + '_' + i" role="tabpanel">
 
@@ -186,6 +193,21 @@
                                   v-on:keyup.enter="saveActualCost(counterparty.id, container_type.id, counterparty.actual_cost)"
                                   @click="saveActualCost(counterparty.id, container_type.id, counterparty.actual_cost)">
                           <i class="ri-check-double-line"></i>
+                        </b-button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane pb-0" :id="'container_type_delete_' + counterparty.id" role="tabpanel">
+                    <div class="row w-100 m-auto align-items-center pb-0">
+                      <div class="col-10 ps-0">
+                        <input v-model="counterparty.delete_confirmation_string" class="form-control" type="text"
+                               :placeholder="counterparty.counterparty + '/' + counterparty.category">
+                      </div>
+                      <div class="col-2 text-end px-0">
+                        <b-button
+                            @click="deleteCounterparty(counterparty)"
+                            variant="danger" class="btn-icon waves-effect waves-light w-100">
+                          <i class="ri-delete-bin-5-line"></i>
                         </b-button>
                       </div>
                     </div>
@@ -324,53 +346,129 @@ export default {
     },
     async createCounterparty() {
 
-      let data = {
-        order_number: this.order_number,
-        counterparty_id: this.counterparty,
-        category_id: this.category,
-        preliminary_costs: this.container_types_computed.map((container_type) => {
-          return {
-            container_type_id: container_type.id,
-            preliminary_cost: container_type.cost
+      let empty_inputs = this.container_types_computed.filter(container_type =>
+          container_type.cost.toString().trim() === '' || this.counterparty === null || this.category === null)
+
+      if (empty_inputs.length > 0) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
           }
         })
-      }
 
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/counterparty_add/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-      //
-
-
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      })
-
-      this.$emit('updateCounterparties')
-      if (response.ok) {
         await Toast.fire({
-          icon: 'success',
-          title: 'Counterparty has been created'
+          icon: 'warning',
+          title: 'Please fill all the fields'
         })
       } else {
-        await Toast.fire({
-          icon: 'error',
-          title: 'Something went wrong'
+        let data = {
+          order_number: this.order_number,
+          counterparty_id: this.counterparty,
+          category_id: this.category,
+          preliminary_costs: this.container_types_computed.map((container_type) => {
+            return {
+              container_type_id: container_type.id,
+              preliminary_cost: container_type.cost
+            }
+          })
+        }
+
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/expanse/counterparty_add/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
         })
+
+        this.$emit('updateCounterparties')
+        if (response.ok) {
+          await Toast.fire({
+            icon: 'success',
+            title: 'Counterparty has been created'
+          })
+        } else {
+          await Toast.fire({
+            icon: 'error',
+            title: 'Something went wrong'
+          })
+        }
       }
 
+
+    },
+
+    async deleteCounterparty(counterparty) {
+      if (counterparty.delete_confirmation_string !== (counterparty.counterparty + '/' + counterparty.category)) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        await Toast.fire({
+          icon: 'error',
+          title: 'Confirmation text is not correct'
+        })
+      } else {
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/delete/${counterparty.id}/`, {
+          method: 'DELETE',
+        });
+
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        this.$emit('updateCounterparties')
+        if (response.ok) {
+          await Toast.fire({
+            icon: 'success',
+            title: 'Counterparty has been deleted'
+          })
+        } else if (response.ok === false) {
+          await Toast.fire({
+            icon: 'error',
+            title: 'Something went wrong'
+          })
+        } else {
+          await Toast.fire({
+            icon: 'error',
+            title: 'Server error'
+          })
+        }
+      }
     }
   },
   computed: {
@@ -381,7 +479,8 @@ export default {
             id: counterparty.id,
             counterparty: counterparty.counterparty.name,
             category: counterparty.category.name,
-            actual_cost: 0
+            actual_cost: 0,
+            delete_confirmation_string: ''
           }
         })
       }
@@ -393,7 +492,7 @@ export default {
           return {
             id: container_type.id,
             type: container_type.type,
-            cost: ''
+            cost: '',
           }
         })
       }

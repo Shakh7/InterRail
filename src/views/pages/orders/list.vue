@@ -65,6 +65,12 @@ export default {
         },
       ],
       orders: [],
+      pagination: {
+        perPage: 10,
+        currentPage: 1,
+        total: 0,
+      },
+      orderUrl: `${process.env.VUE_APP_ORDER_URL}/container_order/list/`,
     };
   },
   methods: {
@@ -78,6 +84,7 @@ export default {
         orders.push(order.order)
       })
       this.orders = orders
+      this.totalPages = orders.length
     },
     setToUpdateOrder(order) {
       this.setCurrentlyUpdating(order)
@@ -162,7 +169,11 @@ export default {
 
     getAccount(account) {
       return store.state.users_list.filter(user => user.id === account)[0] || {full_name: 'Unknown'}
-    }
+    },
+
+    pageChange(page) {
+      this.pagination.currentPage = page
+    },
   },
   async mounted() {
     await this.getOrders()
@@ -182,6 +193,13 @@ export default {
       :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
+      :pagination="{
+        perPage: pagination.perPage,
+        currentPage: pagination.currentPage,
+        total: orders.length,
+      }"
+      @page-change="pageChange"
+      :url="orderUrl"
   >
     <template v-slot:top-right>
       <div class="btn-group">

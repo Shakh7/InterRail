@@ -349,8 +349,8 @@
         v-if="!isLoading()"
         :order_number="order.order_number"
         :counterparties="order.counterparties"
-        :counterparty_list="counterparty_list.value"
-        :category_list="category_list.value"
+        :counterparty_list="counterparty_list"
+        :category_list="category_list"
         @updateCounterparties="updatedCounterparties"
     />
 </template>
@@ -373,8 +373,8 @@ export default {
     let expanses = ref([])
     let container_types = ref(null)
     let updateCounterpartyInfo = ref(null)
-    let counterparty_list = ref([])
-    let category_list = ref([])
+    let counterparty_list = []
+    let category_list = []
 
     return {
       order,

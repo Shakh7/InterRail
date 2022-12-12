@@ -6,6 +6,7 @@ import flatPickr from "vue-flatpickr-component";
 import "@vueform/multiselect/themes/default.css";
 
 export default {
+  emits: ['page-change'],
   name: 'CustomTable',
   data() {
     return {
@@ -24,7 +25,7 @@ export default {
       search: {
         query: ''
       },
-
+      apiData: []
     }
   },
   props: {
@@ -40,6 +41,10 @@ export default {
       type: Array,
       default: () => []
     },
+    url: {
+      type: String,
+      default: () => ''
+    },
     rows: {
       type: Array,
       default: () => []
@@ -52,7 +57,10 @@ export default {
       type: Boolean,
       default: () => false
     },
-    filterableFields: []
+    filterableFields: [],
+    pagination: {
+      type: Object
+    }
   },
   components: {
     flatPickr,
@@ -67,9 +75,11 @@ export default {
         searchResults = this.rows
       } else {
         Array.from(this.rows).forEach(item => {
-          for (const [key, value] of Object.entries(item)) {
+          for (let [key, value] of Object.entries(item)) {
+            let expectedValue = value.toString().trim().toLowerCase()
+            let query = this.search.query.toString().trim().toLowerCase()
             if (searchableFields.includes(key)) {
-              if (value.toString().trim().toLowerCase().includes(this.search.query.toString().trim().toLowerCase())) {
+              if (expectedValue.includes(query)) {
                 searchResults.includes(item) === false ? searchResults.push(item) : 0
               }
             }
@@ -101,14 +111,13 @@ export default {
   methods: {
     pushSelected(action, id) {
       if (action === 'all') {
+        let tds = document.querySelectorAll(`#${this.id} tbody tr th input[type="checkbox"]`)
         if (this.table.checkbox.all === true) {
-          let tds = document.querySelectorAll(`#${this.id} tbody tr th input[type="checkbox"]`)
           tds.forEach(td => {
             td.checked = false
           })
           this.table.selected = []
         } else {
-          let tds = document.querySelectorAll(`#${this.id} tbody tr th input[type="checkbox"]`)
           tds.forEach(td => {
             td.checked = true
           })
@@ -134,13 +143,22 @@ export default {
     },
     rowIsSelected(id) {
       let item = this.table.selected.filter(item => item.id === id)
-      if (item.length > 0) {
-        return true
-      } else {
-        return false
-      }
+      return item.length > 0
+    },
+    async getData(){
+      let result = await fetch(this.url)
+      let data = await result.json()
+      this.apiData = data['results']
     }
   },
+  watch: {
+    "$route.query": function() {
+      this.$emit('page-change', this.$route.query.page)
+    },
+  },
+  async mounted() {
+    await this.getData()
+  }
 }
 </script>
 
@@ -259,8 +277,8 @@ export default {
                 Previous
               </a>
               <ul class="pagination listjs-pagination mb-0">
-                <li class="active">
-                  <a class="page" href="#">1</a>
+                <li v-for="p in Math.ceil((pagination.total) / pagination.perPage)" :key="p" :class="p === pagination.currentPage ? 'active' : ''">
+                  <router-link class="page" :to="'?page='+p">{{p}}</router-link>
                 </li>
               </ul>
               <a class="page-item pagination-next" href="#">

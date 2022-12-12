@@ -1,19 +1,15 @@
 <script>
-import appConfig from "../../../../app.config.json";
 
 import flatPickr from "vue-flatpickr-component";
-import {CountTo} from "vue3-count-to";
 
 import Portfolio from "./portfolio.vue";
 import Revenue from "./revenue.vue";
+import Position from "./position.vue";
+import ImportExportPie from "./ImportExportPie.vue";
 
 import store from "@/state/store.js";
 
 export default {
-  page: {
-    title: "Starter",
-    meta: [{name: "description", content: appConfig.description}],
-  },
   data() {
     return {
       title: "Main dashboard",
@@ -28,106 +24,107 @@ export default {
         },
       ],
       date: new Date().getTime(),
-      statistics: [
-        {
-          id: 1,
-          icon: "ri-money-dollar-circle-fill",
-          label: "Rail Forwarder",
-          counter: 0,
-          badge: "ri-arrow-up-s-fill",
-          badgeColor: "success",
-        },
-        {
-          id: 2,
-          icon: "ri-arrow-up-circle-fill",
-          label: "Train Operator",
-          counter: 0,
-          badge: "ri-arrow-up-s-fill",
-          badgeColor: "success",
-        },
-        {
-          id: 3,
-          icon: "ri-arrow-down-circle-fill",
-          label: "Multi Modal",
-          counter: 0,
-          badge: "ri-arrow-down-s-fill",
-          badgeColor: "danger",
-        },
-      ],
+      totalOrdersList: [],
+      statistics: {
+        sales: [
+          {
+            id: 1,
+            icon: "ri-money-dollar-circle-fill",
+            label: "rail_forwarder",
+            counter: 0,
+            badge: "ri-arrow-up-s-fill",
+            badgeColor: "primary",
+            containers_count: 0
+          },
+          {
+            id: 2,
+            icon: "ri-arrow-up-circle-fill",
+            label: "block_train",
+            counter: 0,
+            badge: "ri-arrow-up-s-fill",
+            badgeColor: "info",
+            containers_count: 0
+          },
+          {
+            id: 3,
+            icon: "ri-arrow-down-circle-fill",
+            label: "multi_modal",
+            counter: 0,
+            badge: "ri-arrow-down-s-fill",
+            badgeColor: "warning",
+            containers_count: 0
+          },
+        ],
+        order_type: [
+          {
+            type: "transit",
+            count: 5
+          },
+          {
+            type: "export",
+            count: 18
+          },
+          {
+            type: "import",
+            count: 43
+          }
+        ]
+      }
     };
   },
   components: {
     flatPickr,
-    CountTo,
     Portfolio,
-    Revenue
+    Revenue,
+    ImportExportPie,
+    Position
   },
   methods: {
     async getStatistics() {
       let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/statistic/`)
       let data = JSON.parse(JSON.stringify(await response.json()));
+      let sales = data['sales']
+      this.statistics.order_type = data['order_type']
 
-      let rail_forwarder_rate = 0
-      let rail_forwarder_ctr_count = 0
-      let block_train_rate = 0
-      let block_train_rate_ctr_count = 0
-      let multi_modal_rate = 0
-      let multi_modal_rate_ctr_count = 0
+      sales.filter(a => a.type === 'ContainerOrder').forEach(item => {
 
-      data.filter(a => a.type === 'ContainerOrder').forEach(item => {
+        let Rail = item.stat.filter(s => s['order__position'] === 'rail_forwarder')[0]
+        let BlockTrain = item.stat.filter(s => s['order__position'] === 'block_train')[0]
+        let MultiModal = item.stat.filter(s => s['order__position'] === 'multi_modal')[0]
 
-        let rail_rate = item.stat.filter(s => s['order__position'] === 'rail_forwarder')[0]
-        let block_rate = item.stat.filter(s => s['order__position'] === 'block_train')[0]
-        let multi_rate = item.stat.filter(s => s['order__position'] === 'multi_modal')[0]
-
-        if (rail_rate !== undefined) {
-          rail_forwarder_rate += rail_rate.agreed_rate
-          rail_forwarder_ctr_count += rail_rate.containers_count
+        if (Rail !== undefined) {
+          this.statistics.sales[0].counter += Rail.agreed_rate
+          this.statistics.sales[0].containers_count += Rail.containers_count
         }
-        if (block_rate !== undefined) {
-          block_train_rate += block_rate.agreed_rate
-          block_train_rate_ctr_count += block_rate.containers_count
+        if (BlockTrain !== undefined) {
+          this.statistics.sales[1].counter += BlockTrain.agreed_rate
+          this.statistics.sales[1].containers_count += BlockTrain.containers_count
         }
-        if (multi_rate !== undefined) {
-          multi_modal_rate += multi_rate.agreed_rate
-          multi_modal_rate_ctr_count += multi_rate.containers_count
+        if (MultiModal !== undefined) {
+          this.statistics.sales[2].counter += MultiModal.agreed_rate
+          this.statistics.sales[2].containers_count += MultiModal.containers_count
         }
+
       })
-
-      this.statistics = [
-        {
-          id: 1,
-          icon: "ri-money-dollar-circle-fill",
-          label: "Rail Forwarder",
-          counter: rail_forwarder_rate,
-          badge: "ri-arrow-up-s-fill",
-          badgeColor: "primary",
-          containers_count: rail_forwarder_ctr_count
-        },
-        {
-          id: 2,
-          icon: "ri-arrow-up-circle-fill",
-          label: "Block Train",
-          counter: block_train_rate,
-          badge: "ri-arrow-up-s-fill",
-          badgeColor: "info",
-          containers_count: block_train_rate_ctr_count
-        },
-        {
-          id: 3,
-          icon: "ri-arrow-down-circle-fill",
-          label: "Multi Modal",
-          counter: multi_modal_rate,
-          badge: "ri-arrow-down-s-fill",
-          badgeColor: "warning",
-          containers_count: multi_modal_rate_ctr_count
-        },
-      ]
-
+    },
+    async getTotalOrders() {
+      let response = null
+      if (store.state.user.role === 'admin') {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/`);
+      } else {
+        response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/list/?manager=${store.state.user.id}`);
+      }
+      let data = await response.json();
+      this.totalOrdersList = data
+    },
+    getRelatedOrdersByPosition(type) {
+      let orders = this.totalOrdersList.filter(order => order.position === type)
+      return orders
     },
   },
-  mounted() {
-    this.getStatistics();
+  async mounted() {
+    await this.getStatistics()
+    await this.getTotalOrders()
   },
   computed: {
     sayHelloToUser() {
@@ -149,7 +146,6 @@ export default {
     <div class="col">
       <div class="h-100">
 
-        <!-- start PAGE HEADER -->
         <div class="row mb-3 pb-1">
           <div class="col-12">
             <div class="d-flex align-items-lg-center flex-lg-row flex-column">
@@ -160,105 +156,46 @@ export default {
                 </p>
               </div>
               <div class="mt-3 mt-lg-0">
-                <form action="javascript:void(0);">
-                  <div class="row g-3 mb-0 align-items-center">
-                    <div class="col-sm-auto">
-                      <div class="input-group">
-                        <flat-pickr v-model="date" placeholder="Current date"
-                                    class="form-control border-0 dash-filter-picker shadow"></flat-pickr>
-
-                        <div class="input-group-text bg-primary border-primary text-white">
-                          <i class="ri-calendar-2-line"></i>
-                        </div>
+                <div class="row g-3 mb-0 align-items-center">
+                  <div class="col-sm-auto">
+                    <div class="input-group">
+                      <flat-pickr
+                          v-model="date" placeholder="Current date"
+                          class="form-control border-0 dash-filter-picker shadow">
+                      </flat-pickr>
+                      <div class="input-group-text bg-primary border-primary text-white">
+                        <i class="ri-calendar-2-line"></i>
                       </div>
                     </div>
-                    <!--end col-->
-                    <!-- <div class="col-auto">
-                      <button type="button"
-                        class="btn btn-soft-info btn-icon waves-effect waves-light layout-rightside-btn"
-                        @click="rightcolumn">
-                        <i class="ri-pulse-line"></i>
-                      </button>
-                    </div> -->
-                    <!--end col-->
                   </div>
-                  <!--end row-->
-                </form>
+                </div>
               </div>
             </div>
-            <!-- end card header -->
           </div>
         </div>
-        <!-- end PAGE HEADER -->
 
         <div class="row">
 
           <div class="col-xxl-3">
-            <Portfolio :statistic="statistics"/>
+            <Portfolio :statistic="statistics.sales"/>
+            <ImportExportPie cardTitle="Order Types" :order_type="statistics.order_type"/>
           </div>
           <!-- end col -->
 
           <div class="col-xxl-9 order-xxl-0 order-first">
             <div class="row">
-              <div class="col-lg-4 col-md-6" v-for="(item, index) of statistics" :key="index">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex align-items-center">
-                      <div class="avatar-sm flex-shrink-0">
-                          <span class="avatar-title bg-light text-primary rounded-circle fs-3">
-                            <i :class="`${item.icon} align-middle`"></i>
-                          </span>
-                      </div>
-                      <div class="flex-grow-1 ms-3">
-                        <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ item.label }}</p>
-
-                        <VTooltip>
-                          <h4 class="mb-0">
-                              <span class="counter-value">
-                                $<count-to :startVal='0' :endVal='item.counter' :duration='1500'></count-to>
-                              </span>
-                          </h4>
-                          <template #popper>
-                            Total agreed rates - ${{ item.counter }}
-                          </template>
-                        </VTooltip>
-                      </div>
-                      <div class="flex-shrink-0">
-
-                        <VTooltip>
-                          <div class="w-100">
-                            <h4 class="text-success mb-0">
-                              <i class="ri-table-alt-fill align-middle"></i>
-                              {{ item.containers_count }}
-                            </h4>
-                          </div>
-                          <template #popper>
-                            Containers count - {{ item.containers_count }}
-                          </template>
-                        </VTooltip>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- end card body -->
-                </div>
-                <!-- end card -->
+              <div class="col-lg-4 col-md-6" v-for="(item, index) of statistics.sales" :key="index">
+                <Position :item="item" :orders="getRelatedOrdersByPosition(item.label)"/>
               </div>
-              <!-- end col -->
             </div>
-            <!-- end row -->
 
             <div class="row">
               <div class="col-xl-12">
-                <Revenue/>
-                <!-- end card -->
+                <Revenue :totalOrdersList="totalOrdersList"/>
               </div>
-              <!-- end col -->
             </div>
-            <!-- end row -->
           </div>
-          <!-- end col -->
         </div>
-        <!-- end row -->
 
       </div>
     </div>

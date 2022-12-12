@@ -297,6 +297,16 @@
     </div>
 
   </Transition>
+
+
+  <CounterpartyActions
+      v-if="!isLoading()"
+      :order_number="order.order_number"
+      :counterparties="order.counterparties"
+      :counterparty_list="counterparty_list"
+      :category_list="category_list"
+      @updateCounterparties="updatedCounterparties"
+  />
 </template>
 
 <script>
@@ -304,7 +314,9 @@
 import wagonInput from "./components/wagonInput.vue";
 import agreedRate from "./components/agreedRate.vue";
 import actualCost from "./components/actualCost.vue";
+import CounterpartyActions from "./components/CounterpartyActions.vue";
 import store from "../../../../state/store.js";
+import OrdersApi from "@/api/orders/orders_api";
 import {ref} from "vue";
 
 export default {
@@ -317,6 +329,8 @@ export default {
     let quantity = 0
     let expanses = ref(null)
     let wagon_empty_preliminary_costs = []
+    let counterparty_list = []
+    let category_list = []
 
     return {
       order,
@@ -324,10 +338,12 @@ export default {
       expanses,
       quantity,
       wagon_empty_preliminary_costs,
-      isFetchingData
+      isFetchingData,
+      counterparty_list,
+      category_list
     }
   },
-  components: {wagonInput, agreedRate, actualCost},
+  components: {wagonInput, agreedRate, actualCost, CounterpartyActions},
   methods: {
     loadData(data) {
       return this.isLoading() ? 'Loading...' : data
@@ -354,10 +370,27 @@ export default {
       this.wagon_empty_preliminary_costs = data['wagon_empty_preliminary_costs']
 
       this.isFetchingData = false
-    }
+    },
+    async updatedCounterparties() {
+      await this.fetchData();
+      await this.getCategoryList()
+      await this.getCounterpartyList()
+    },
+    async getCounterpartyList() {
+      if (this.counterparty_list.length > 0) return
+      let orders = new OrdersApi()
+      this.counterparty_list = (await orders.getCounterpartyList()).results
+    },
+    async getCategoryList() {
+      if (this.category_list.length > 0) return;
+      let orders = new OrdersApi()
+      this.category_list = (await orders.getCategoryList()).results
+    },
   },
   async mounted() {
     await this.fetchData()
+    await this.getCounterpartyList()
+    await this.getCategoryList()
   }
 }
 </script>
