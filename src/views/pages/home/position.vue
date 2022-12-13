@@ -11,10 +11,10 @@
         <div class="flex-grow-1 ms-3">
           <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ item.label }}</p>
 
-            <a class="card-link h4">
-              $
-              <count-to :startVal='0' :endVal='item.counter' :duration='1500'></count-to>
-            </a>
+          <a class="card-link h4">
+            $
+            <count-to :startVal='0' :endVal='item.counter' :duration='1500'></count-to>
+          </a>
 
         </div>
         <div class="flex-shrink-0">

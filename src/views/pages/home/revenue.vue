@@ -59,6 +59,11 @@ export default {
       let result = store.state.users_list.filter(item => item.id === user_id)
       return [result[0]['full_name'][0], result[0]['full_name']]
     },
+    getOrderUrl(order_type) {
+      return order_type === 'container_order' ? '/orders/container/view/'
+          : order_type === 'wagon_order' ? '/orders/wagon/view/'
+              : order_type === 'wagon_empty_order' ? '/orders/wagon-empty/view/'  : ''
+    }
   },
   async mounted() {
     await this.getMonthlyStatistics()
@@ -180,7 +185,9 @@ export default {
           <tbody v-if="totalOrdersList.length > 0">
           <tr v-for="order in totalOrdersListComputed.slice(skip, offset).sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
               :key="order">
-            <td><a href="#" class="fw-semibold">{{ order.order_number }}</a></td>
+            <td>
+              <a :href="getOrderUrl(order.child_type) + order.order_number" class="fw-semibold">{{ order.order_number }}</a>
+            </td>
             <td class="text-capitalize">{{ order.position.split('_').join(' ') }} {{ order.position }}
             </td>
             <td>
