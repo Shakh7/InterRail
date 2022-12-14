@@ -254,12 +254,12 @@ export default {
           </router-link>
         </li>
 
-        <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/rates/">
-            <i class="ri-honour-line  ri-list-ordered"></i>
-            <span data-key="t-orders">Rates</span>
-          </router-link>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <router-link class="nav-link menu-link" to="/rates/">-->
+<!--            <i class="ri-honour-line  ri-list-ordered"></i>-->
+<!--            <span data-key="t-orders">Rates</span>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
         <li class="nav-item">
           <a href="#sidebarTasks" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false"
@@ -324,15 +324,15 @@ export default {
           </a>
         </li>
 
-        <li class="menu-title">
-          <span data-key="t-orders-menu"> Services </span>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link menu-link" to="/smgs/list/">
-            <font-awesome-icon icon="fa-solid fa-print"/>
-            <span data-key="t-orders">SMGS printing</span>
-          </router-link>
-        </li>
+<!--        <li class="menu-title">-->
+<!--          <span data-key="t-orders-menu"> Services </span>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--          <router-link class="nav-link menu-link" to="/smgs/list/">-->
+<!--            <font-awesome-icon icon="fa-solid fa-print"/>-->
+<!--            <span data-key="t-orders">SMGS printing</span>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
       </ul>
     </template>

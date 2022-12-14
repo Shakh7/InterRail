@@ -12,6 +12,10 @@ export default {
     return {
       date: null,
 
+      config: {
+        mode: "range",
+      },
+
       multiselect: {
         value: null,
         multiple: true,
@@ -22,9 +26,7 @@ export default {
           all: false
         }
       },
-      search: {
-        query: ''
-      },
+      search: '',
       apiData: []
     }
   },
@@ -58,9 +60,6 @@ export default {
       default: () => false
     },
     filterableFields: [],
-    pagination: {
-      type: Object
-    }
   },
   components: {
     flatPickr,
@@ -69,22 +68,41 @@ export default {
   computed: {
     searchedTable() {
       let searchableFields = this.headers.filter(header => header.searchable === true).map(header => header.field)
+      let data = this.rows
       let searchResults = []
 
-      if (this.search.query === '') {
-        searchResults = this.rows
-      } else {
-        Array.from(this.rows).forEach(item => {
+      if (this.search.length > 0) {
+        Array.from(data).forEach(item => {
           for (let [key, value] of Object.entries(item)) {
-            let expectedValue = value.toString().trim().toLowerCase()
-            let query = this.search.query.toString().trim().toLowerCase()
-            if (searchableFields.includes(key)) {
-              if (expectedValue.includes(query)) {
-                searchResults.includes(item) === false ? searchResults.push(item) : 0
+            if (value !== null) {
+              let expectedValue = value.toString().toLowerCase()
+              let query = this.search.toString().trim().toLowerCase()
+              if (searchableFields.includes(key)) {
+                if (expectedValue.includes(query)) {
+                  searchResults.includes(item) === false ? searchResults.push(item) : 0
+                }
               }
             }
           }
         })
+      } else {
+        searchResults = data
+      }
+
+      if (this.date !== null) {
+        let dates = this.date.split('to')
+        searchResults = searchResults.filter(item => {
+          let itemDate = new Date(item.date)
+          if (dates.length === 1) {
+            return dates[0].trim() === item.date
+          } else {
+            let startDate = new Date(dates[0].trim())
+            let endDate = new Date(dates[1].trim())
+            return itemDate >= startDate && itemDate <= endDate
+          }
+        })
+
+        return searchResults
       }
 
       return searchResults;
@@ -145,14 +163,14 @@ export default {
       let item = this.table.selected.filter(item => item.id === id)
       return item.length > 0
     },
-    async getData(){
+    async getData() {
       let result = await fetch(this.url)
       let data = await result.json()
       this.apiData = data['results']
     }
   },
   watch: {
-    "$route.query": function() {
+    "$route.query": function () {
       this.$emit('page-change', this.$route.query.page)
     },
   },
@@ -187,30 +205,31 @@ export default {
         >
           <form class="mb-0">
             <div class="row g-3">
-              <div class="col-xxl-5 col-sm-12">
+              <div class="col-xxl-6 col-sm-12">
                 <div class="search-box">
                   <input
                       type="text"
                       class="form-control search"
                       placeholder="Search for order ID, customer, order status or something..."
-                      v-model="search.query"
+                      v-model="search"
                   />
                   <i class="ri-search-line search-icon"></i>
                 </div>
               </div>
               <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
+              <div class="col-xxl-3 col-sm-6">
                 <div>
                   <flat-pickr
                       placeholder="Select date"
                       v-model="date"
                       class="form-control flatpickr-input"
                       id="demo-datepicker"
+                      :config="config"
                   ></flat-pickr>
                 </div>
               </div>
               <!--end col-->
-              <div class="col-xxl-2 col-sm-4">
+              <div class="col-xxl-3 col-sm-6">
                 <div>
                   <Multiselect
                       class="form-control"
@@ -222,18 +241,7 @@ export default {
                   />
                 </div>
               </div>
-              <!--end col-->
-              <div class="col-xxl-2 col-sm-4">
-                <div>
-                  <button type="button" class="btn btn-primary w-100">
-                    <i class="ri-equalizer-fill me-1 align-bottom"></i>
-                    Filters
-                  </button>
-                </div>
-              </div>
-              <!--end col-->
             </div>
-            <!--end row-->
           </form>
         </div>
         <div class="card-body pt-0 mt-0">
@@ -271,22 +279,6 @@ export default {
               </table>
             </div>
           </div>
-          <div class="d-flex justify-content-end mt-3">
-            <div class="pagination-wrap hstack gap-2">
-              <a class="page-item pagination-prev disabled" href="#">
-                Previous
-              </a>
-              <ul class="pagination listjs-pagination mb-0">
-                <li v-for="p in Math.ceil((pagination.total) / pagination.perPage)" :key="p" :class="p === pagination.currentPage ? 'active' : ''">
-                  <router-link class="page" :to="'?page='+p">{{p}}</router-link>
-                </li>
-              </ul>
-              <a class="page-item pagination-next" href="#">
-                Next
-              </a>
-            </div>
-          </div>
-          <!--end modal -->
         </div>
       </div>
     </div>

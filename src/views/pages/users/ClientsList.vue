@@ -2,7 +2,6 @@
 
 import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
-import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import store from "@/state/store.js";
 
@@ -34,7 +33,7 @@ export default {
         dateFormat: "d M, Y",
       },
 
-      date: null,
+      user_status: 'all',
 
       value: null,
 
@@ -45,15 +44,12 @@ export default {
         animationData: animationData1
       },
 
-      search: {
-        query: '',
-      },
+      search: '',
     };
   },
   components: {
     Multiselect,
     // lottie: Lottie,
-    flatPickr,
     CreautUserModal,
     deleteUserButton,
     editUserButton,
@@ -67,33 +63,25 @@ export default {
   computed: {
     allUsers: {
       get() {
-        return this.usersList.filter(user => user.role === 'client')
-      },
-      set() {
-        console.log('ss')
+        let managers = this.usersList.filter(user => user.role === 'client')
+        if (this.search.length > 0) {
+          managers = managers.filter((user) =>
+              user.full_name.toLowerCase().includes(this.search.toLowerCase()) ||
+              user.email.toLowerCase().includes(this.search.toLowerCase())
+          )
+        }
+        if (this.user_status !== 'all') {
+          managers = managers.filter((user) => {
+            return user.is_active === (this.user_status === 'active')
+          })
+        }
+        return managers
       }
     }
   },
   async mounted() {
     await this.getUsersList()
   },
-
-  watch: {
-    search: {
-      handler(newValue) {
-        if (newValue.query.length > 0) {
-          this.usersList.searched = this.usersList.original.filter((user) => {
-            return user.full_name.toLowerCase().includes(newValue.query.toLowerCase()) ||
-                user.email.toLowerCase().includes(newValue.query.toLowerCase()) ||
-                user.role.toLowerCase().includes(newValue.query.toLowerCase())
-          })
-        } else {
-          this.usersList.searched = this.usersList.original
-        }
-      },
-      deep: true
-    }
-  }
 };
 </script>
 
@@ -103,7 +91,7 @@ export default {
       <div class="card" id="invoiceList">
         <div class="card-header border-0">
           <div class="d-flex align-items-center">
-            <h5 class="card-title mb-0 flex-grow-1">Users table</h5>
+            <h5 class="card-title mb-0 flex-grow-1">Clients table</h5>
             <div class="flex-shrink-0">
               <a class="btn btn-success" href="#CreateUserModal" data-bs-toggle="modal"><i
                   class="ri-add-line align-bottom me-1"></i>
@@ -114,42 +102,28 @@ export default {
         <div class="card-body bg-soft-light border border-dashed border-start-0 border-end-0">
           <form>
             <div class="row g-3">
-              <div class="col-xxl-5 col-sm-12">
+              <div class="col-9">
                 <div class="search-box">
-                  <input v-model="search.query" type="text" class="form-control search bg-light border-light"
-                         placeholder="Search for customer, email, country, status or something...">
+                  <input v-model="search" type="text" class="form-control search bg-light border-light"
+                         placeholder="Search for customer, email, status or something...">
                   <i class="ri-search-line search-icon"></i>
                 </div>
               </div>
               <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
-                <flat-pickr v-model="date" :config="config" class="form-control bg-light border-light"
-                            placeholder="Select date">
-                </flat-pickr>
-              </div>
-              <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
+              <div class="col-xxl-3 col-sm-6">
                 <div class="input-light">
 
-                  <Multiselect class="form-control" v-model="value" :close-on-select="true" :searchable="true"
-                               :create-option="true" :options="[
-                      { value: 'all', label: 'all' },
-                      { value: 'Unpaid', label: 'Unpaid' },
-                      { value: 'Paid', label: 'Paid' },
-                      { value: 'Cancel', label: 'Cancel' },
-                      { value: 'Refund', label: 'Refund' },
-                    ]"/>
+                  <Multiselect class="form-control" v-model="user_status" :close-on-select="true" :searchable="true"
+                               :create-option="true"
+                               :options="[
+                                   { value: 'all', label: 'All Statuses' },
+                                   { value: 'active', label: 'Active' },
+                                   { value: 'inactive', label: 'Inactive' },
+                               ]"/>
 
                 </div>
               </div>
-              <!--end col-->
 
-              <div class="col-xxl-1 col-sm-4">
-                <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
-                  <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters
-                </button>
-              </div>
-              <!--end col-->
             </div>
             <!--end row-->
           </form>

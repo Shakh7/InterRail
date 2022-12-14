@@ -390,21 +390,6 @@ export default {
           </tbody>
         </table>
       </div>
-      <div class="d-flex justify-content-end mt-3">
-        <div class="pagination-wrap hstack gap-2">
-          <a class="page-item pagination-prev disabled" href="#">
-            Previous
-          </a>
-          <ul class="pagination listjs-pagination mb-0">
-            <li class="active">
-              <router-link class="page" to="?page=1">1</router-link>
-            </li>
-          </ul>
-          <a class="page-item pagination-next" href="#">
-            Next
-          </a>
-        </div>
-      </div>
     </div>
   </div>
 

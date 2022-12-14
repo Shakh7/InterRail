@@ -199,11 +199,6 @@ export default {
       :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
-      :pagination="{
-        perPage: pagination.perPage,
-        currentPage: pagination.currentPage,
-        total: orders.length,
-      }"
       @page-change="pageChange"
       :url="orderUrl"
   >
@@ -295,6 +290,10 @@ export default {
       <span v-else-if="slotProps.row.payment_status == 'Issued'" class="badge badge-outline-warning">
         {{ slotProps.row.payment_status }}
       </span>
+    </template>
+
+    <template v-slot:lot_number="slotProps">
+      {{ slotProps.row.lot_number === null  || slotProps.row.lot_number === '' ? '-' : slotProps.row.lot_number }}
     </template>
 
   </CustomTable>
