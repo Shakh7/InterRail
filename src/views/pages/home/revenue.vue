@@ -24,6 +24,9 @@ export default {
     return {
       search: '',
       selected_manager: '0',
+      selected_position: '0',
+      selected_shipment: '0',
+      selected_payment: '0',
       revenue_apex: {
         data: revenue.series,
         options: revenue.chartOptions,
@@ -62,7 +65,7 @@ export default {
     getOrderUrl(order_type) {
       return order_type === 'container_order' ? '/orders/container/view/'
           : order_type === 'wagon_order' ? '/orders/wagon/view/'
-              : order_type === 'wagon_empty_order' ? '/orders/wagon-empty/view/'  : ''
+              : order_type === 'wagon_empty_order' ? '/orders/wagon-empty/view/' : ''
     }
   },
   async mounted() {
@@ -70,21 +73,29 @@ export default {
   },
   computed: {
     totalOrdersListComputed() {
-      if (this.search.trim().length === 0 && parseInt(this.selected_manager) === 0) {
-        return this.totalOrdersList
-      } else if (this.search.trim().length === 0 && parseInt(this.selected_manager) !== 0) {
-        return this.totalOrdersList.filter(item => {
-          return item['manager'].toString().toLowerCase().includes(this.selected_manager.toString())
-        })
-      } else {
-        return this.totalOrdersList.filter(item => {
-          return item['order_number'].toString().toLowerCase().includes(this.search.toLowerCase())
-              || item['position'].toString().toLowerCase().includes(this.search.toLowerCase())
-              || item['payment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
-              || item['shipment_status'].toString().toLowerCase().includes(this.search.toLowerCase())
-              || item['date'].toString().toLowerCase().includes(this.search.toLowerCase())
-        })
+      let all = this.totalOrdersList
+      if (this.selected_manager !== '0') {
+        all = all.filter(item => item.manager === parseInt(this.selected_manager))
       }
+      if (this.search !== '') {
+        all = all.filter(item =>
+            item.order_number.toString().includes(this.search) ||
+            item.shipment_status.toString().includes(this.search) ||
+            item.payment_status.toString().includes(this.search) ||
+            item.date.toString().includes(this.search) ||
+            item.position.toString().includes(this.search)
+        )
+      }
+      if (this.selected_position !== '0') {
+        all = all.filter(item => item.position.toString().includes(this.selected_position))
+      }
+      if (this.selected_shipment !== '0') {
+        all = all.filter(item => item.shipment_status.toString().includes(this.selected_shipment))
+      }
+      if (this.selected_payment !== '0') {
+        all = all.filter(item => item.payment_status.toString().includes(this.selected_payment))
+      }
+      return all
     },
   }
 };
@@ -150,11 +161,20 @@ export default {
   <div class="card">
     <div class="card-header border-dashed border-start-0 border-top-0 border-end-0 align-items-center d-flex">
       <h4 class="card-title mb-0 flex-grow-1">Total Orders</h4>
-      <div class="row align-items-center justify-content-end">
-        <div class="col px-0">
-
+      <div class="d-flex align-items-center justify-content-end">
+        <div>
+          <select class="form-select" v-model="selected_position" v-if="totalOrdersList.length > 0">
+            <option value="0">Positions</option>
+            <option class="text-capitalize" v-for="position in totalOrdersList.map(i => {
+              return i['position']
+            }).filter((v, i, a) => a.indexOf(v) === i)" :value="position" :key="position">
+              {{ position.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+        <div class="mx-2">
           <select class="form-select" v-model="selected_manager" v-if="totalOrdersList.length > 0">
-            <option value="0">All managers</option>
+            <option value="0">Managers</option>
             <option v-for="user in totalOrdersList.map(i => {
               return i['manager']
             }).filter((v, i, a) => a.indexOf(v) === i)" :value="user" :key="user">
@@ -162,7 +182,27 @@ export default {
             </option>
           </select>
         </div>
-        <div class="col pe-0">
+        <div>
+          <select class="form-select" v-model="selected_payment" v-if="totalOrdersList.length > 0">
+            <option value="0">Payment statuses</option>
+            <option class="text-capitalize" v-for="payment in totalOrdersList.map(i => {
+              return i['payment_status']
+            }).filter((v, i, a) => a.indexOf(v) === i)" :value="payment" :key="payment">
+              {{ payment }}
+            </option>
+          </select>
+        </div>
+        <div class="mx-2">
+          <select class="form-select" v-model="selected_shipment" v-if="totalOrdersList.length > 0">
+            <option value="0">Shipment statuses</option>
+            <option class="text-capitalize" v-for="shipment in totalOrdersList.map(i => {
+              return i['shipment_status']
+            }).filter((v, i, a) => a.indexOf(v) === i)" :value="shipment" :key="shipment">
+              {{ shipment.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+        <div class="pe-0" style="max-width: 200px">
           <input v-model="search" type="text" class="form-control ms-auto" placeholder="Search for orders..">
         </div>
       </div>
@@ -186,9 +226,11 @@ export default {
           <tr v-for="order in totalOrdersListComputed.slice(skip, offset).sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
               :key="order">
             <td>
-              <a :href="getOrderUrl(order.child_type) + order.order_number" class="fw-semibold">{{ order.order_number }}</a>
+              <a :href="getOrderUrl(order.child_type) + order.order_number" class="fw-semibold">{{
+                  order.order_number
+                }}</a>
             </td>
-            <td class="text-capitalize">{{ order.position.split('_').join(' ') }} {{ order.position }}
+            <td class="text-capitalize">{{ order.position.split('_').join(' ') }}
             </td>
             <td>
               <span v-for="(user, index) in getAccount(order.customer)" :key="user"

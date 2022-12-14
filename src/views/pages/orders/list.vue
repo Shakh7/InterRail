@@ -47,6 +47,12 @@ export default {
           searchable: true,
         },
         {
+          label: 'SHIPMENT STATUS',
+          field: 'shipment_status',
+          align: 'center',
+          searchable: true,
+        },
+        {
           label: 'DATE',
           field: 'date',
           align: 'center',
@@ -186,6 +192,84 @@ export default {
 
 <template>
 
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fs-15 fw-semibold">In process</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+            <div class="flex-shrink-0 pe-3">
+              <h5 class="text-warning fw-medium">
+                45
+              </h5>
+            </div>
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar bg-warning rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fs-15 fw-semibold">Delivered</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+            <div class="flex-shrink-0 pe-3">
+              <h5 class="text-primary fw-medium">
+                75
+              </h5>
+            </div>
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar bg-primary rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100"></div>
+          <!--          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"-->
+          <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+          <!--          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"-->
+          <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fs-15 fw-semibold">Completed</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+            <div class="flex-shrink-0 pe-3">
+              <h5 class="text-success fw-medium">
+                25
+              </h5>
+            </div>
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100"></div>
+          <!--          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"-->
+          <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+          <!--          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"-->
+          <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row-->
+
   <CustomTable
       name="ORDERS TABLE"
       id="orders_table"
@@ -253,6 +337,42 @@ export default {
           {{ getAccount(slotProps.row.manager)['full_name'] }}
         </span>
       </div>
+    </template>
+
+    <template v-slot:type="slotProps">
+      <span v-if="slotProps.row.type == 'Export'" class="badge bg-success">
+        {{ slotProps.row.type }}
+      </span>
+      <span v-else-if="slotProps.row.type == 'Import'" class="badge bg-primary">
+        {{ slotProps.row.type }}
+      </span>
+      <span v-else-if="slotProps.row.type == 'Transit'" class="badge bg-warning">
+        {{ slotProps.row.type }}
+      </span>
+    </template>
+
+    <template v-slot:shipment_status="slotProps">
+      <span v-if="slotProps.row.shipment_status == 'Completed'" class="badge badge-outline-success">
+        {{ slotProps.row.shipment_status }}
+      </span>
+      <span v-else-if="slotProps.row.shipment_status == 'Delivered'" class="badge badge-outline-primary">
+        {{ slotProps.row.shipment_status }}
+      </span>
+      <span v-else-if="slotProps.row.shipment_status == 'In process'" class="badge badge-outline-warning">
+        {{ slotProps.row.shipment_status }}
+      </span>
+    </template>
+
+    <template v-slot:payment_status="slotProps">
+      <span v-if="slotProps.row.payment_status == 'Reserved'" class="badge badge-outline-success">
+        {{ slotProps.row.payment_status }}
+      </span>
+      <span v-else-if="slotProps.row.payment_status == 'Received'" class="badge badge-outline-primary">
+        {{ slotProps.row.payment_status }}
+      </span>
+      <span v-else-if="slotProps.row.payment_status == 'Issued'" class="badge badge-outline-warning">
+        {{ slotProps.row.payment_status }}
+      </span>
     </template>
 
   </CustomTable>

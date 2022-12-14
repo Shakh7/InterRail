@@ -10,6 +10,7 @@ import BootstrapVue3 from 'bootstrap-vue-3';
 import vClickOutside from "click-outside-vue3"
 import VueApexCharts from "vue3-apexcharts";
 import FloatingVue from 'floating-vue'
+import Paginate from "vuejs-paginate-next";
 
 FloatingVue.options.themes.tooltip.delay.show = 0
 FloatingVue.options.themes.tooltip.delay.hide = 10
@@ -79,4 +80,5 @@ createApp(App)
     .use(i18n)
     .use(FloatingVue)
     .directive('tooltip', VTooltip)
+    .use(Paginate)
     .use(vClickOutside).mount('#app')
