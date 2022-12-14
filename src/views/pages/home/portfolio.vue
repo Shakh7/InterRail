@@ -140,27 +140,29 @@ export default {
       </apexchart>
 
       <h6>ORDERS STATISTICS BY USERS</h6>
-      <ul class="list-group list-group-flush border-dashed mb-0" v-if="user_orders.length > 0">
 
-        <li class="list-group-item px-0"
-            v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
+      <div data-simplebar style="max-height: 277px;" v-if="user_orders.length > 0">
+        <b-list-group>
+          <b-list-group-item class="border-0 border-bottom ps-0"
+              v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="mb-1">
+                  {{ getManagerInfo(user.manager)['full_name'] }}
+                </h6>
+                <p class="fs-12 mb-0 text-muted">
+                  <i class="mdi mdi-circle fs-10 align-middle me-1 text-success"></i>
+                  <small>Orders created</small>
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-end align-self-center">
+                <span class="badge badge-gradient-info fs-6">{{ user.count }}</span>
+              </div>
+            </div>
+          </b-list-group-item>
+        </b-list-group>
+      </div>
 
-          <div class="d-flex">
-            <div class="flex-grow-1">
-              <h6 class="mb-1">
-                {{ getManagerInfo(user.manager)['full_name'] }}
-              </h6>
-              <p class="fs-12 mb-0 text-muted">
-                <i class="mdi mdi-circle fs-10 align-middle me-1 text-success"></i>
-                <small>Orders created</small>
-              </p>
-            </div>
-            <div class="flex-shrink-0 text-end align-self-center">
-              <span class="badge badge-gradient-info fs-6">{{ user.count }}</span>
-            </div>
-          </div>
-        </li>
-      </ul>
     </div>
   </div>
 </template>

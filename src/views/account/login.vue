@@ -84,7 +84,7 @@ export default {
                 </router-link>
               </div>
               <p class="mt-3 fs-15 fw-medium">
-                Premium Admin & Dashboard Template
+                InterRail Premium Dashboard
               </p>
             </div>
           </div>
@@ -116,11 +116,6 @@ export default {
                     </div>
 
                     <div class="mb-3">
-                      <div class="float-end">
-                        <router-link to="/forgot-password" class="text-muted">Forgot
-                          password?
-                        </router-link>
-                      </div>
                       <label class="form-label" for="password-input">Password</label>
                       <div class="position-relative auth-pass-inputgroup mb-3">
                         <input type="password" v-model="password" class="form-control pe-5" placeholder="Enter password"
@@ -135,12 +130,6 @@ export default {
                       </div>
                     </div>
 
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="auth-remember-check"/>
-                      <label class="form-check-label" for="auth-remember-check">Remember
-                        me</label>
-                    </div>
-
                     <div class="mt-4">
                       <button class="btn btn-success w-100"
                               v-if="password.toString().trim().length !== 0 && email.toString().trim().length !== 0 "
@@ -149,37 +138,37 @@ export default {
                       </button>
 
                       <button v-if="password.toString().trim().length === 0 || email.toString().trim().length === 0 " class="btn btn-success w-100"
-                              type="submit" disabled>
+                              type="button" disabled>
                         Sign In
                       </button>
                     </div>
 
-                    <div class="mt-4 text-center">
-                      <div class="signin-other-title">
-                        <h5 class="fs-13 mb-4 title">Sign In with</h5>
-                      </div>
-                      <div>
-                        <button type="button" class="btn btn-primary btn-icon
-                          waves-effect waves-light">
-                          <i class="ri-facebook-fill fs-16"></i>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-icon
-                          waves-effect waves-light
-                          ms-1">
-                          <i class="ri-google-fill fs-16"></i>
-                        </button>
-                        <button type="button" class="btn btn-dark btn-icon
-                          waves-effect waves-light
-                          ms-1">
-                          <i class="ri-github-fill fs-16"></i>
-                        </button>
-                        <button type="button" class="btn btn-info btn-icon
-                          waves-effect waves-light
-                          ms-1">
-                          <i class="ri-twitter-fill fs-16"></i>
-                        </button>
-                      </div>
-                    </div>
+<!--                    <div class="mt-4 text-center">-->
+<!--                      <div class="signin-other-title">-->
+<!--                        <h5 class="fs-13 mb-4 title">Sign In with</h5>-->
+<!--                      </div>-->
+<!--                      <div>-->
+<!--                        <button type="button" class="btn btn-primary btn-icon-->
+<!--                          waves-effect waves-light">-->
+<!--                          <i class="ri-facebook-fill fs-16"></i>-->
+<!--                        </button>-->
+<!--                        <button type="button" class="btn btn-danger btn-icon-->
+<!--                          waves-effect waves-light-->
+<!--                          ms-1">-->
+<!--                          <i class="ri-google-fill fs-16"></i>-->
+<!--                        </button>-->
+<!--                        <button type="button" class="btn btn-dark btn-icon-->
+<!--                          waves-effect waves-light-->
+<!--                          ms-1">-->
+<!--                          <i class="ri-github-fill fs-16"></i>-->
+<!--                        </button>-->
+<!--                        <button type="button" class="btn btn-info btn-icon-->
+<!--                          waves-effect waves-light-->
+<!--                          ms-1">-->
+<!--                          <i class="ri-twitter-fill fs-16"></i>-->
+<!--                        </button>-->
+<!--                      </div>-->
+<!--                    </div>-->
                   </form>
                 </div>
               </div>
@@ -187,15 +176,15 @@ export default {
             </div>
             <!-- end card -->
 
-            <div class="mt-4 text-center">
-              <p class="mb-0">
-                Don't have an account ?
-                <router-link to="/register" class="fw-semibold text-primary
-                  text-decoration-underline">
-                  Signup
-                </router-link>
-              </p>
-            </div>
+<!--            <div class="mt-4 text-center">-->
+<!--              <p class="mb-0">-->
+<!--                Don't have an account ?-->
+<!--                <router-link to="/register" class="fw-semibold text-primary-->
+<!--                  text-decoration-underline">-->
+<!--                  Signup-->
+<!--                </router-link>-->
+<!--              </p>-->
+<!--            </div>-->
           </div>
         </div>
         <!-- end row -->
@@ -211,8 +200,8 @@ export default {
           <div class="col-lg-12">
             <div class="text-center">
               <p class="mb-0 text-muted">
-                &copy; {{ new Date().getFullYear() }} InterRail. Crafted with
-                <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                &copy; {{ new Date().getFullYear() }} InterRail. Created with
+                <i class="mdi mdi-heart text-danger"></i>
               </p>
             </div>
           </div>

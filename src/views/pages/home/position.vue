@@ -29,9 +29,10 @@
         <div data-simplebar style="max-height: 350px;">
           <b-list-group>
             <b-list-group-item class="list-group-istem border-0 p-1 px-3">
-              <input type="text" class="form-control border-dashed" placeholder="Search">
+              <input v-model="search" type="text" class="form-control border-dashed" placeholder="Search for order number">
             </b-list-group-item>
-            <a v-for="order in orders" :key="order" :href="setUrlForOrder(order.child_type) + order.order_number + '/'">
+            <a v-for="order in ordersComputed" :key="order"
+               :href="setUrlForOrder(order.child_type) + order.order_number + '/'">
               <b-list-group-item class="list-group-item-action border-0 border-bottom">
                 <div class="d-flex align-items-center">
                   <div class="flex-grow-1">
@@ -70,6 +71,11 @@ import store from "../../../state/store.js";
 
 export default {
   name: "position",
+  data() {
+    return {
+      search: ''
+    }
+  },
   props: {
     item: {
       type: Object,
@@ -95,6 +101,15 @@ export default {
     users: {
       get() {
         return store.state.users_list
+      }
+    },
+    ordersComputed: {
+      get() {
+        if (this.search.length > 0) {
+          return this.orders.filter(order => order.order_number.toString().includes(this.search))
+        } else {
+          return this.orders
+        }
       }
     }
   }

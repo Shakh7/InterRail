@@ -60,10 +60,6 @@
       },
     },
     methods: {
-
-
-      // Try to register the user in with the email, username
-      // and password they provided.
       async tryToRegisterIn() {
         this.submitted = true;
         // stop here if form is invalid

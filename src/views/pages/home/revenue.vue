@@ -19,6 +19,10 @@ export default {
       type: Array,
       default: () => []
     },
+    shipment_status: {
+      type: Array,
+      default: () => []
+    },
   },
   data() {
     return {
@@ -63,9 +67,19 @@ export default {
       return [result[0]['full_name'][0], result[0]['full_name']]
     },
     getOrderUrl(order_type) {
-      return order_type === 'container_order' ? '/orders/container/view/'
-          : order_type === 'wagon_order' ? '/orders/wagon/view/'
-              : order_type === 'wagon_empty_order' ? '/orders/wagon-empty/view/' : ''
+      return order_type === 'container_order' ? 'orders_container_detail'
+          : order_type === 'wagon_order' ? 'orders_wagon_detail'
+              : order_type === 'wagon_empty_order' ? 'orders_empty_wagon_detail' : ''
+    },
+
+    redirectToDetailedView(order_number, order_type) {
+      if (order_type === 'container_order') {
+        this.$router.push({name: 'orders_container_detail', params: {id: order_number}})
+      } else if (order_type === 'wagon_order') {
+        this.$router.push({name: 'orders_wagon_detail', params: {id: order_number}})
+      } else if (order_type === 'wagon_empty_order') {
+        this.$router.push({name: 'orders_empty_wagon_detail', params: {id: order_number}})
+      }
     }
   },
   async mounted() {
@@ -109,13 +123,13 @@ export default {
         <button type="button" class="btn btn-soft-secondary btn-sm me-1">
           ALL
         </button>
-        <button type="button" class="btn btn-soft-secondary btn-sm me-1">
-          1M
-        </button>
-        <button type="button" class="btn btn-soft-secondary btn-sm me-1">
-          6M
-        </button>
-        <button type="button" class="btn btn-soft-primary btn-sm">1Y</button>
+        <!--        <button type="button" class="btn btn-soft-secondary btn-sm me-1">-->
+        <!--          1M-->
+        <!--        </button>-->
+        <!--        <button type="button" class="btn btn-soft-secondary btn-sm me-1">-->
+        <!--          6M-->
+        <!--        </button>-->
+        <!--        <button type="button" class="btn btn-soft-primary btn-sm">1Y</button>-->
       </div>
     </div>
 
@@ -156,6 +170,97 @@ export default {
     </div>
     <!-- end card body -->
   </div>
+
+  <div class="row">
+    <div class="col-lg-4" v-for="status in shipment_status" :key="status">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+              <h5 class="fs-15 fw-semibold text-capitalize">{{ status.shipment_status.replace('_', ' ') }}</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize"
+                  :class="status.shipment_status === 'in_process' ? 'text-warning'
+                  : status.shipment_status === 'completed' ? 'text-primary'  : 'text-success'">
+                {{
+                  status.count
+                }}
+              </h5>
+              <p class="text-muted">{{
+                  ((status.count / (shipment_status.map(s => s.count).reduce((a, b) => a + b, 0))) * 100).toFixed(1)
+                }}%</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100"
+               :class="status.shipment_status === 'in_process' ? 'bg-warning'
+                  : status.shipment_status === 'completed' ? 'bg-primary'  : 'bg-success'">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--    <div class="col-lg-4">-->
+    <!--      <div class="card">-->
+    <!--        <div class="card-body pb-0">-->
+    <!--          <div class="d-flex justify-content-between align-items-center">-->
+    <!--            <div>-->
+    <!--              <h5 class="fs-15 fw-semibold">Delivered</h5>-->
+    <!--              <p class="text-muted">Shipment status</p>-->
+    <!--            </div>-->
+    <!--            <div class="flex-shrink-0 pe-3">-->
+    <!--              <h5 class="text-primary fw-medium">-->
+    <!--                75-->
+    <!--              </h5>-->
+    <!--            </div>-->
+    <!--          </div>-->
+
+    <!--        </div>-->
+    <!--        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">-->
+    <!--          <div class="progress-bar bg-primary rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"-->
+    <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+    <!--          &lt;!&ndash;          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"&ndash;&gt;-->
+    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
+    <!--          &lt;!&ndash;          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"&ndash;&gt;-->
+    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--    <div class="col-lg-4">-->
+    <!--      <div class="card">-->
+    <!--        <div class="card-body pb-0">-->
+    <!--          <div class="d-flex justify-content-between align-items-center">-->
+    <!--            <div>-->
+    <!--              <h5 class="fs-15 fw-semibold">Completed</h5>-->
+    <!--              <p class="text-muted">Shipment status</p>-->
+    <!--            </div>-->
+    <!--            <div class="flex-shrink-0 pe-3">-->
+    <!--              <h5 class="text-success fw-medium">-->
+    <!--                25-->
+    <!--              </h5>-->
+    <!--            </div>-->
+    <!--          </div>-->
+
+    <!--        </div>-->
+    <!--        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">-->
+    <!--          <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"-->
+    <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
+    <!--          &lt;!&ndash;          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"&ndash;&gt;-->
+    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
+    <!--          &lt;!&ndash;          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"&ndash;&gt;-->
+    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+  <!-- end row-->
 
 
   <div class="card">
@@ -210,7 +315,7 @@ export default {
 
     <div class="card-body p-0 pb-2 w-100">
       <div class="table-responsive table-card w-100 m-auto">
-        <table class="table table-nowrap table-striped-columns text-center mb-0">
+        <table class="table table-nowrap table-hover table-striped-columns text-center mb-0">
           <thead class="table-light">
           <tr>
             <th scope="col">Order Number</th>
@@ -224,11 +329,14 @@ export default {
           </thead>
           <tbody v-if="totalOrdersList.length > 0">
           <tr v-for="order in totalOrdersListComputed.slice(skip, offset).sort((a, b) => (a.order_number < b.order_number) ? 1: -1)"
-              :key="order">
+              :key="order" @click="redirectToDetailedView(order.order_number, order.child_type)"
+              style="cursor: pointer">
             <td>
-              <a :href="getOrderUrl(order.child_type) + order.order_number" class="fw-semibold">{{
+              <router-link :to="{name: getOrderUrl(order.child_type), params: {id: order.order_number}}"
+                           class="fw-semibold">{{
                   order.order_number
-                }}</a>
+                }}
+              </router-link>
             </td>
             <td class="text-capitalize">{{ order.position.split('_').join(' ') }}
             </td>

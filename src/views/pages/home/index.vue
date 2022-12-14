@@ -68,7 +68,8 @@ export default {
             type: "import",
             count: 43
           }
-        ]
+        ],
+        shipment_status: []
       }
     };
   },
@@ -85,6 +86,8 @@ export default {
       let data = JSON.parse(JSON.stringify(await response.json()));
       let sales = data['sales']
       this.statistics.order_type = data['order_type']
+      this.statistics.shipment_status = data['shipment_status']
+
 
       sales.filter(a => a.type === 'ContainerOrder').forEach(item => {
 
@@ -191,7 +194,7 @@ export default {
 
             <div class="row">
               <div class="col-xl-12">
-                <Revenue :totalOrdersList="totalOrdersList"/>
+                <Revenue :totalOrdersList="totalOrdersList" :shipment_status="statistics.shipment_status"/>
               </div>
             </div>
           </div>
