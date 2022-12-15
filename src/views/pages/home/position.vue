@@ -29,10 +29,11 @@
         <div data-simplebar style="max-height: 350px;">
           <b-list-group>
             <b-list-group-item class="list-group-istem border-0 p-1 px-3">
-              <input v-model="search" type="text" class="form-control border-dashed" placeholder="Search for order number">
+              <input v-model="search" type="text" class="form-control border-dashed"
+                     placeholder="Search for order number">
             </b-list-group-item>
-            <a v-for="order in ordersComputed" :key="order"
-               :href="setUrlForOrder(order.child_type) + order.order_number + '/'">
+            <router-link v-for="order in ordersComputed" :key="order"
+                         :to="{name: getOrderUrl(order.child_type), params: {id: order.order_number}}">
               <b-list-group-item class="list-group-item-action border-0 border-bottom">
                 <div class="d-flex align-items-center">
                   <div class="flex-grow-1">
@@ -57,7 +58,7 @@
                   </div>
                 </div>
               </b-list-group-item>
-            </a>
+            </router-link>
           </b-list-group>
         </div>
       </div>
@@ -92,6 +93,12 @@ export default {
       return order_type === 'container_order'
           ? `/orders/container/view/` :
           order_type === 'wagon_order' ? `/orders/wagon/view/` : `/orders/empty-wagon-order/view/`
+    },
+
+    getOrderUrl(order_type) {
+      return order_type === 'container_order' ? 'orders_container_detail'
+          : order_type === 'wagon_order' ? 'orders_wagon_detail'
+              : order_type === 'wagon_empty_order' ? 'orders_empty_wagon_detail' : ''
     },
   },
   mounted() {
