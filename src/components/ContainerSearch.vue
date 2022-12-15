@@ -37,7 +37,7 @@
         </div>
 
         <b-list-group class="mt-0" v-if="!isLoading">
-          <a v-for="result in searchResults" :key="result" :href="getOrderUrl(result.child_type) + result.order_number">
+          <a v-for="result in searchResults" :key="result" :href="getOrderUrl(result.child_type) + result.order_number + `?container=${this.search}`">
             <b-list-group-item class="list-group-item-action border-0 border-bottom">
               <div class="d-flex align-items-center">
                 <div class="flex-grow-1">

@@ -1,7 +1,8 @@
 <template>
   <input v-if="ctr.container !== null"
-         maxlength="11" :class="inputClass"
+         maxlength="11"
          class="form-control form-control-sm"
+         :class="inputClass + ' ' + $route.query.container === undefined ? '' : searchedContainerColor()"
          type="text" placeholder="Container"
          v-model="ctr.container.name"
          v-on:keyup.enter="saveContainer(ctr.id, 'old')"
@@ -99,6 +100,16 @@ export default {
             title: title,
           })
     },
+
+    searchedContainerColor() {
+      let query = this.$route.query.container.trim().toLowerCase()
+      let container = this.ctr.container.name.trim().toLowerCase()
+      if (container.includes(query)) {
+        return 'border-success border-3'
+      } else {
+        return ''
+      }
+    }
   },
   computed: {
     ctr: {
