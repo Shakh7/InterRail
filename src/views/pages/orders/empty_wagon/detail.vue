@@ -32,7 +32,7 @@
                         </h4>
                         <div class="hstack gap-3 flex-wrap">
                           <div class="text-muted text-capitalize"><i class="ri-building-line align-bottom me-1"></i>
-                            {{ loadData(order.position).split('_').join(' ') }}
+                            {{ loadData(order.position).replace('_', ' ') }}
                           </div>
                           <div class="vr"></div>
                           <div class="text-muted">Create Date : <span class="fw-medium"></span>
@@ -51,30 +51,30 @@
                         </span>
                       </button>
 
-<!--                      <button type="button" class="btn py-0 fs-16 text-body" id="settingDropdown"-->
-<!--                              data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        <i class="ri-share-line"></i>-->
-<!--                      </button>-->
+                      <!--                      <button type="button" class="btn py-0 fs-16 text-body" id="settingDropdown"-->
+                      <!--                              data-bs-toggle="dropdown" aria-expanded="false">-->
+                      <!--                        <i class="ri-share-line"></i>-->
+                      <!--                      </button>-->
 
-<!--                      <ul class="dropdown-menu" aria-labelledby="settingDropdown" style="">-->
-<!--                        <li>-->
-<!--                          <a class="dropdown-item" href="#">-->
-<!--                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i>View-->
-<!--                          </a>-->
-<!--                        </li>-->
+                      <!--                      <ul class="dropdown-menu" aria-labelledby="settingDropdown" style="">-->
+                      <!--                        <li>-->
+                      <!--                          <a class="dropdown-item" href="#">-->
+                      <!--                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i>View-->
+                      <!--                          </a>-->
+                      <!--                        </li>-->
 
-<!--                        <li>-->
-<!--                          <a class="dropdown-item" href="#">-->
-<!--                            <i class="ri-share-forward-fill align-bottom me-2 text-muted"></i> Share with-->
-<!--                          </a>-->
-<!--                        </li>-->
+                      <!--                        <li>-->
+                      <!--                          <a class="dropdown-item" href="#">-->
+                      <!--                            <i class="ri-share-forward-fill align-bottom me-2 text-muted"></i> Share with-->
+                      <!--                          </a>-->
+                      <!--                        </li>-->
 
-<!--                        <li>-->
-<!--                          <a class="dropdown-item" href="#">-->
-<!--                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete-->
-<!--                          </a>-->
-<!--                        </li>-->
-<!--                      </ul>-->
+                      <!--                        <li>-->
+                      <!--                          <a class="dropdown-item" href="#">-->
+                      <!--                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete-->
+                      <!--                          </a>-->
+                      <!--                        </li>-->
+                      <!--                      </ul>-->
                       <button type="button" class="btn py-0 fs-16 text-body"><i class="ri-flag-line"></i></button>
                     </div>
                   </div>
@@ -262,32 +262,32 @@
               </div>
             </div>
           </div>
-<!--          <div class="card">-->
-<!--            <div class="card-header"><h6 class="card-title fw-semibold mb-0">Files Attachment</h6></div>-->
-<!--            <div class="card-body">-->
-<!--              <div class="d-flex align-items-center border border-dashed p-2 rounded">-->
-<!--                <div class="flex-shrink-0 avatar-sm">-->
-<!--                  <div class="avatar-title bg-light rounded"><i class="ri-file-zip-line fs-20 text-primary"></i></div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1 ms-3"><h6 class="mb-1"><a href="javascript:void(0);">Velzon-admin.zip</a></h6>-->
-<!--                  <small class="text-muted">3.2 MB</small></div>-->
-<!--                <div class="hstack gap-3 fs-16"><a href="javascript:void(0);" class="text-muted"><i-->
-<!--                    class="ri-download-2-line"></i></a><a href="javascript:void(0);" class="text-muted"><i-->
-<!--                    class="ri-delete-bin-line"></i></a></div>-->
-<!--              </div>-->
-<!--              <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">-->
-<!--                <div class="flex-shrink-0 avatar-sm">-->
-<!--                  <div class="avatar-title bg-light rounded"><i class="ri-file-ppt-2-line fs-20 text-danger"></i>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1 ms-3"><h6 class="mb-1"><a href="javascript:void(0);">Velzon-admin.ppt</a></h6>-->
-<!--                  <small class="text-muted">4.5 MB</small></div>-->
-<!--                <div class="hstack gap-3 fs-16"><a href="javascript:void(0);" class="text-muted"><i-->
-<!--                    class="ri-download-2-line"></i></a><a href="javascript:void(0);" class="text-muted"><i-->
-<!--                    class="ri-delete-bin-line"></i></a></div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="card">-->
+          <!--            <div class="card-header"><h6 class="card-title fw-semibold mb-0">Files Attachment</h6></div>-->
+          <!--            <div class="card-body">-->
+          <!--              <div class="d-flex align-items-center border border-dashed p-2 rounded">-->
+          <!--                <div class="flex-shrink-0 avatar-sm">-->
+          <!--                  <div class="avatar-title bg-light rounded"><i class="ri-file-zip-line fs-20 text-primary"></i></div>-->
+          <!--                </div>-->
+          <!--                <div class="flex-grow-1 ms-3"><h6 class="mb-1"><a href="javascript:void(0);">Velzon-admin.zip</a></h6>-->
+          <!--                  <small class="text-muted">3.2 MB</small></div>-->
+          <!--                <div class="hstack gap-3 fs-16"><a href="javascript:void(0);" class="text-muted"><i-->
+          <!--                    class="ri-download-2-line"></i></a><a href="javascript:void(0);" class="text-muted"><i-->
+          <!--                    class="ri-delete-bin-line"></i></a></div>-->
+          <!--              </div>-->
+          <!--              <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">-->
+          <!--                <div class="flex-shrink-0 avatar-sm">-->
+          <!--                  <div class="avatar-title bg-light rounded"><i class="ri-file-ppt-2-line fs-20 text-danger"></i>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--                <div class="flex-grow-1 ms-3"><h6 class="mb-1"><a href="javascript:void(0);">Velzon-admin.ppt</a></h6>-->
+          <!--                  <small class="text-muted">4.5 MB</small></div>-->
+          <!--                <div class="hstack gap-3 fs-16"><a href="javascript:void(0);" class="text-muted"><i-->
+          <!--                    class="ri-download-2-line"></i></a><a href="javascript:void(0);" class="text-muted"><i-->
+          <!--                    class="ri-delete-bin-line"></i></a></div>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </div>
       </div>
 

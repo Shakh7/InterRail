@@ -22,8 +22,7 @@ export default {
   computed: {
     chart: {
       get() {
-        simplePieChart.chartOptions.labels = this.order_type.map(item => item.type.split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))
+        simplePieChart.chartOptions.labels = this.order_type.map(item => item.type)
         simplePieChart.series = this.order_type.map(item => item.count)
         return simplePieChart;
       }

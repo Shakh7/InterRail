@@ -36,8 +36,8 @@
                           }}
                         </h4>
                         <div class="hstack gap-3 flex-wrap">
-                          <div class="text-muted"><i class="ri-building-line align-bottom me-1"></i>
-                            {{ loadData(order.position) }}
+                          <div class="text-muted text-capitalize"><i class="ri-building-line align-bottom me-1"></i>
+                            {{ loadData(order.position).replace('_', ' ') }}
                           </div>
                           <div class="vr"></div>
                           <div class="text-muted">Create Date : <span class="fw-medium">{{

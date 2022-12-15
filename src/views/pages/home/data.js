@@ -117,7 +117,7 @@ const simplePieChart = {
             height: 300,
             type: "pie",
         },
-        labels: ["Import", "Export", "Transit"],
+        labels: ['Transit', 'Export', 'Import'],
         legend: {
             position: "bottom",
         },
@@ -126,7 +126,7 @@ const simplePieChart = {
                 enabled: false,
             },
         },
-        colors: getChartColorsArray('["--vz-primary", "--vz-success", "--vz-warning"]'),
+        colors: getChartColorsArray('["--vz-warning", "--vz-success", "--vz-primary"]'),
     },
 };
 

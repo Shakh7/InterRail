@@ -18,7 +18,7 @@
 
         </div>
         <div class="flex-shrink-0">
-          <h4 class="text-success mb-0">
+          <h4 class="mb-0" :class="'text-' + item.color">
             <i class="ri-table-alt-fill align-middle"></i>
             {{ item.containers_count }}
           </h4>

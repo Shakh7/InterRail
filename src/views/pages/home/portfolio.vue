@@ -94,7 +94,7 @@ export default {
           lineCap: "round",
           width: 2,
         },
-        colors: getChartColorsArray('["--vz-warning", "--vz-info", "--vz-primary", "--vz-success"]'),
+        colors: getChartColorsArray('["--vz-warning", "--vz-primary", "--vz-success"]'),
       },
       user_orders: []
     };

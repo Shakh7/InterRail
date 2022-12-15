@@ -32,8 +32,7 @@ export default {
             icon: "ri-money-dollar-circle-fill",
             label: "rail_forwarder",
             counter: 0,
-            badge: "ri-arrow-up-s-fill",
-            badgeColor: "primary",
+            color: 'warning',
             containers_count: 0
           },
           {
@@ -41,8 +40,7 @@ export default {
             icon: "ri-arrow-up-circle-fill",
             label: "block_train",
             counter: 0,
-            badge: "ri-arrow-up-s-fill",
-            badgeColor: "info",
+            color: 'primary',
             containers_count: 0
           },
           {
@@ -50,25 +48,11 @@ export default {
             icon: "ri-arrow-down-circle-fill",
             label: "multi_modal",
             counter: 0,
-            badge: "ri-arrow-down-s-fill",
-            badgeColor: "warning",
+            color: 'success',
             containers_count: 0
           },
         ],
-        order_type: [
-          {
-            type: "transit",
-            count: 5
-          },
-          {
-            type: "export",
-            count: 18
-          },
-          {
-            type: "import",
-            count: 43
-          }
-        ],
+        order_type: [],
         shipment_status: []
       }
     };
@@ -181,7 +165,7 @@ export default {
 
           <div class="col-xxl-3">
             <Portfolio :statistic="statistics.sales"/>
-            <ImportExportPie cardTitle="Order Types" :order_type="statistics.order_type"/>
+            <ImportExportPie v-if="statistics.order_type.length > 0" cardTitle="Order Types" :order_type="statistics.order_type"/>
           </div>
           <!-- end col -->
 

@@ -172,7 +172,7 @@ export default {
   </div>
 
   <div class="row">
-    <div class="col-lg-4" v-for="status in shipment_status" :key="status">
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'in_process')" :key="status">
       <div class="card">
         <div class="card-body pb-0">
           <div class="d-flex justify-content-between align-items-center">
@@ -183,9 +183,7 @@ export default {
             </div>
 
             <div class="text-end">
-              <h5 class="fs-15 fw-semibold text-capitalize"
-                  :class="status.shipment_status === 'in_process' ? 'text-warning'
-                  : status.shipment_status === 'completed' ? 'text-primary'  : 'text-success'">
+              <h5 class="fs-15 fw-semibold text-capitalize text-warning">
                 {{
                   status.count
                 }}
@@ -199,10 +197,72 @@ export default {
 
         </div>
         <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
-          <div class="progress-bar rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
-               aria-valuemin="0" aria-valuemax="100"
-               :class="status.shipment_status === 'in_process' ? 'bg-warning'
-                  : status.shipment_status === 'completed' ? 'bg-primary'  : 'bg-success'">
+          <div class="progress-bar rounded-0 bg-warning" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'delivered')" :key="status">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+              <h5 class="fs-15 fw-semibold text-capitalize">{{ status.shipment_status.replace('_', ' ') }}</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize text-primary">
+                {{
+                  status.count
+                }}
+              </h5>
+              <p class="text-muted">{{
+                  ((status.count / (shipment_status.map(s => s.count).reduce((a, b) => a + b, 0))) * 100).toFixed(1)
+                }}%</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0 bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'completed')" :key="status">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+              <h5 class="fs-15 fw-semibold text-capitalize">{{ status.shipment_status.replace('_', ' ') }}</h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
+
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize text-success">
+                {{
+                  status.count
+                }}
+              </h5>
+              <p class="text-muted">{{
+                  ((status.count / (shipment_status.map(s => s.count).reduce((a, b) => a + b, 0))) * 100).toFixed(1)
+                }}%</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0 bg-success" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
           </div>
         </div>
       </div>
