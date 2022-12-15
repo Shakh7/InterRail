@@ -52,14 +52,27 @@ export default {
         body: JSON.stringify(data)
       })
       this.$emit('update')
-      await Swal.fire({
-        position: "center",
-        icon: response.ok ? "success" : "error",
-        title: response.ok ? "Order expanse updated successfully" : "Order update failed",
-        text: response.ok ? "" : `${(await response.json()).error}`,
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
         showConfirmButton: false,
-        timer: response.ok ? 1000 : 3000,
-      });
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      response.ok ?
+          await Toast.fire({
+            icon: 'success',
+            title: 'Updated successfully',
+          }) : await Toast.fire({
+            icon: 'error',
+            title: 'Something went wrong',
+          })
+
     },
   }
 }

@@ -102,12 +102,14 @@ export default {
     },
 
     searchedContainerColor() {
-      let query = this.$route.query.container.trim().toLowerCase()
-      let container = this.ctr.container.name.trim().toLowerCase()
-      if (container.includes(query)) {
-        return 'border-success border-3'
-      } else {
-        return ''
+      if (this.$route.query.container !== undefined) {
+        let query = this.$route.query.container.trim().toLowerCase()
+        let container = this.ctr.container.name.trim().toLowerCase()
+        if (container.includes(query)) {
+          return 'border-success border-3'
+        } else {
+          return ''
+        }
       }
     }
   },
