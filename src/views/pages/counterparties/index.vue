@@ -1,38 +1,27 @@
 <script>
 import "flatpickr/dist/flatpickr.css";
-
-import animationData from "@/components/widgets/gsqxdxog.json";
+import PageHeader from "../../../components/page-header.vue";
 
 export default {
   data() {
     return {
-      config: {
-        wrap: true,
-        altFormat: "M j, Y",
-        altInput: true,
-        dateFormat: "d M, Y",
-      },
-      date: null,
-      date1: null,
-      defaultOptions: {animationData: animationData},
-      unassigned: [
+      items: [
         {
-          title: "Profile Page Satructure",
-          description: "Profile Page means a web page accessible to the public or to guests.",
-          features: ["Admin"],
-          users: [require("@/assets/images/users/avatar-6.jpg"), require("@/assets/images/users/avatar-5.jpg")],
-          id: "#VL2436",
-          watch: "04",
-          message: "19",
-          file: "2"
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Counterparties List",
+          active: true,
         },
       ],
+      counterparties: [],
       enabled: true,
       dragging: false,
       loading: true,
     };
   },
-  components: {},
+  components: {PageHeader},
   methods: {
     async getCounterparties() {
       let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/list/`)
@@ -48,7 +37,7 @@ export default {
         return result;
       };
 
-      this.unassigned = groupByCounterparty(data.results)
+      this.counterparties = groupByCounterparty(data.results)
       this.loading = false;
     },
     loadData(data) {
@@ -61,13 +50,12 @@ export default {
   async mounted() {
     this.loading = true;
     await this.getCounterparties()
-
   }
 }
 </script>
 
 <template>
-
+  <PageHeader title="Counterparties" :items="items"/>
   <div class="card">
     <div class="card-body">
       <div class="row g-2">
@@ -91,7 +79,7 @@ export default {
       </div>
     </div>
     <div class="tasks-board mb-3" v-else-if="!isLoading()">
-      <div class="tasks-list" v-for="data in unassigned" :key="data">
+      <div class="tasks-list" v-for="data in counterparties" :key="data">
         <div class="d-flex mb-3">
           <div class="flex-grow-1">
             <h6 class="fs-14 fw-semibold mb-0">{{ data.length === 0 ? 'Loading' : loadData(data) }}<small
@@ -109,7 +97,7 @@ export default {
                       <b-badge variant="success">{{ item.category }}</b-badge>
                     </h6>
                   </div>
-                  <div class="col-3 text-end pe-0"> 0 </div>
+                  <div class="col-3 text-end pe-0"> 0</div>
                 </div>
               </div>
             </div>

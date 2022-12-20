@@ -10,6 +10,7 @@ import animationData1 from "@/components/widgets/gsqxdxog.json";
 import CreautUserModal from './modals/create_user.vue'
 import deleteUserButton from './components/delete_user_button.vue'
 import editUserButton from './components/edit_user_button.vue'
+import PageHeader from "../../../components/page-header.vue";
 
 export default {
   name: 'users_list',
@@ -18,7 +19,17 @@ export default {
   },
   data() {
     return {
-      title: "Invoice List",
+      title: "Users Management",
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Users",
+          active: true,
+        },
+      ],
       usersList: [],
       config: {
         mode: "range",
@@ -49,6 +60,7 @@ export default {
     CreautUserModal,
     deleteUserButton,
     editUserButton,
+    PageHeader
   },
   methods: {
     async getUsersList() {
@@ -88,6 +100,7 @@ export default {
 </script>
 
 <template>
+  <PageHeader :items="items" :title="title"></PageHeader>
   <div class="row">
     <div class="col-lg-12">
       <div class="card" id="invoiceList">

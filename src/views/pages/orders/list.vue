@@ -4,10 +4,22 @@ import OrderApi from '@/api/orders/orders_api.js'
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
 import store from "@/state/store";
+import PageHeader from "../../../components/page-header.vue";
 
 export default {
   data() {
     return {
+      title: 'Orders',
+      items: [
+        {
+          text: 'Home',
+          href: '/',
+        },
+        {
+          text: 'Container Orders',
+          active: true,
+        },
+      ],
       numberOfErrors: 0,
       headers: [
         {
@@ -185,13 +197,14 @@ export default {
     await this.getOrders()
   },
   components: {
-    CustomTable
+    CustomTable,
+    PageHeader
   },
 };
 </script>
 
 <template>
-
+  <PageHeader :title="title" :items="items"/>
   <CustomTable
       name="ORDERS TABLE"
       id="orders_table"
@@ -293,7 +306,7 @@ export default {
     </template>
 
     <template v-slot:lot_number="slotProps">
-      {{ slotProps.row.lot_number === null  || slotProps.row.lot_number === '' ? '-' : slotProps.row.lot_number }}
+      {{ slotProps.row.lot_number === null || slotProps.row.lot_number === '' ? '-' : slotProps.row.lot_number }}
     </template>
 
   </CustomTable>

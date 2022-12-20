@@ -117,6 +117,7 @@ export default {
       <!-- Vertical Overlay-->
       <div class="vertical-overlay" id="overlay"></div>
     </div>
+
     <!-- ============================================================== -->
     <!-- Start Page Content here -->
     <!-- ============================================================== -->

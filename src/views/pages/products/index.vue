@@ -1,4 +1,5 @@
 <template>
+  <PageHeader title="General" :items="items"/>
   <div class="container-fluid">
     <div class="row">
       <div class="col-xxl-9 ps-0">
@@ -188,7 +189,7 @@
 <script>
 import CoreApi from "@/api/core/core_api.js";
 import Swal from "sweetalert2";
-// import Swal from "sweetalert2";
+import PageHeader from "../../../components/page-header.vue";
 
 export default {
   name: "ProductsList",
@@ -209,7 +210,17 @@ export default {
         isInEditMode: false,
       },
       create: false,
-      search: ''
+      search: '',
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Products List",
+          active: true,
+        },
+      ]
     }
   },
   methods: {
@@ -446,6 +457,9 @@ export default {
     search: async function (newVal) {
       await this.searchProducts(newVal)
     }
+  },
+  components: {
+    PageHeader
   }
 }
 </script>

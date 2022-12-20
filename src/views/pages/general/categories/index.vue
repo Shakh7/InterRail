@@ -1,4 +1,5 @@
 <template>
+  <PageHeader title="General" :items="items"/>
   <div class="container-fluid">
     <div class="row">
       <div class="col-12 px-0">
@@ -7,7 +8,8 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <div class="search-box">
-                  <input v-model="search" type="text" class="form-control search" placeholder="Search for categories...">
+                  <input v-model="search" type="text" class="form-control search"
+                         placeholder="Search for categories...">
                   <i class="ri-search-line search-icon"></i>
                 </div>
               </div>
@@ -80,13 +82,24 @@
 <script>
 import CoreApi from "@/api/core/core_api.js";
 import Swal from "sweetalert2";
+import PageHeader from "../../../../components/page-header.vue";
 
 export default {
   name: "CategoryList",
   data() {
     return {
       categories: [],
-      search: ''
+      search: '',
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Categories List",
+          active: true,
+        },
+      ]
     }
   },
   methods: {
@@ -219,6 +232,9 @@ export default {
           ? this.categories
           : this.categories.filter(category => category.name.trim().toLowerCase().includes(this.search.trim().toLowerCase()))
     }
+  },
+  components: {
+    PageHeader
   }
 }
 </script>

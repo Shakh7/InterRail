@@ -39,7 +39,8 @@ export default {
               :key="index"
               :class="{ active: item[0] }"
             >
-              <a href="javascript: void(0);">{{ item.text }}</a>
+              <a href="/" v-if="index === 0">{{ item.text }}</a>
+              <a v-else>{{ item.text }}</a>
             </li>
           </ol>
         </div>

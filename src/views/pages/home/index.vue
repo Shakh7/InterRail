@@ -1,21 +1,22 @@
 <script>
 
 import flatPickr from "vue-flatpickr-component";
-
 import Portfolio from "./portfolio.vue";
 import Revenue from "./revenue.vue";
 import Position from "./position.vue";
 import ImportExportPie from "./ImportExportPie.vue";
-
-import store from "@/state/store.js";
+import store from "../../../state/store.js";
+import PageHeader from "../../../components/page-header.vue";
+import skeleton from "../../../components/custom/skeleton.vue";
 
 export default {
   data() {
     return {
+      isLoading: false,
       title: "Main dashboard",
       items: [
         {
-          text: "Pages",
+          text: "Home",
           href: "/",
         },
         {
@@ -62,7 +63,9 @@ export default {
     Portfolio,
     Revenue,
     ImportExportPie,
-    Position
+    Position,
+    PageHeader,
+    skeleton
   },
   methods: {
     async getStatistics() {
@@ -103,6 +106,7 @@ export default {
       }
       let data = await response.json();
       this.totalOrdersList = data
+      this.isLoading = false
     },
     getRelatedOrdersByPosition(type) {
       let orders = this.totalOrdersList.filter(order => order.position === type)
@@ -110,18 +114,20 @@ export default {
     },
   },
   async mounted() {
+    this.isLoading = true;
     await this.getStatistics()
     await this.getTotalOrders()
   },
   computed: {
     sayHelloToUser() {
       let date = new Date();
+      let username = store.state.user.full_name;
       if (date.getHours() < 12) {
-        return `Good Morning, ${store.state.user.full_name} !`;
+        return `Good Morning, ${username} !`;
       } else if (date.getHours() < 18) {
-        return `Good Afternoon, ${store.state.user.full_name} !`;
+        return `Good Afternoon, ${username} !`;
       } else {
-        return `Good Evening, ${store.state.user.full_name} !`;
+        return `Good Evening, ${username} !`;
       }
     },
   }
@@ -129,6 +135,7 @@ export default {
 </script>
 
 <template>
+  <PageHeader :items="items" :title="title"></PageHeader>
   <div class="row">
     <div class="col">
       <div class="h-100">
@@ -165,14 +172,34 @@ export default {
 
           <div class="col-xxl-3">
             <Portfolio :statistic="statistics.sales"/>
-            <ImportExportPie v-if="statistics.order_type.length > 0" cardTitle="Order Types" :order_type="statistics.order_type"/>
+            <ImportExportPie v-if="statistics.order_type.length > 0" cardTitle="Order Types"
+                             :order_type="statistics.order_type"/>
           </div>
           <!-- end col -->
 
           <div class="col-xxl-9 order-xxl-0 order-first">
             <div class="row">
               <div class="col-lg-4 col-md-6" v-for="(item, index) of statistics.sales" :key="index">
-                <Position :item="item" :orders="getRelatedOrdersByPosition(item.label)"/>
+                <Position v-if="!isLoading" :item="item" :orders="getRelatedOrdersByPosition(item.label)"/>
+                <div class="card" v-else>
+                  <div class="card-body p-0" type="button">
+                    <div class="d-flex p-3 align-items-center">
+                      <div class="avatar-sm flex-shrink-0">
+                          <span class="avatar-title bg-light text-primary rounded-circle fs-3">
+                            <skeleton class="p-4" custom_style="min-height: 15px; min-width: 15px; border-radius: 50%"/>
+                          </span>
+                      </div>
+                      <div class="flex-grow-1 ms-3">
+                        <p class="text-uppercase w-75 fw-semibold fs-12 text-muted mb-3">
+                          <skeleton/>
+                        </p>
+                        <p class="card-link w-50 my-0">
+                          <skeleton custom_style="min-height: 12px"/>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -184,6 +211,10 @@ export default {
           </div>
         </div>
 
+        <!--        <div v-else class="py-5 my-5 text-center">-->
+        <!--          <b-spinner variant="secondary"></b-spinner>-->
+        <!--          <h6 class="mt-3">Loading your dashboard..</h6>-->
+        <!--        </div>-->
       </div>
     </div>
   </div>

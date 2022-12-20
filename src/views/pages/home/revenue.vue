@@ -8,11 +8,13 @@ import revenue from "@/views/pages/home/data.js";
 import spxnqpau from '../../../components/widgets/spxnqpau.json';
 import Lottie from "../../../components/widgets/lottie.vue";
 import {ordersMehtods} from "../../../state/helpers";
+import skeleton from "../../../components/custom/skeleton.vue";
 
 export default {
   components: {
     CountTo,
-    lottie: Lottie
+    lottie: Lottie,
+    skeleton
   },
   props: {
     totalOrdersList: {
@@ -171,8 +173,9 @@ export default {
     <!-- end card body -->
   </div>
 
-  <div class="row">
-    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'in_process')" :key="status">
+  <div class="row" v-if="shipment_status.length > 0">
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'in_process')"
+         :key="status">
       <div class="card">
         <div class="card-body pb-0">
           <div class="d-flex justify-content-between align-items-center">
@@ -203,8 +206,8 @@ export default {
         </div>
       </div>
     </div>
-
-    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'delivered')" :key="status">
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'delivered')"
+         :key="status">
       <div class="card">
         <div class="card-body pb-0">
           <div class="d-flex justify-content-between align-items-center">
@@ -235,8 +238,8 @@ export default {
         </div>
       </div>
     </div>
-
-    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'completed')" :key="status">
+    <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'completed')"
+         :key="status">
       <div class="card">
         <div class="card-body pb-0">
           <div class="d-flex justify-content-between align-items-center">
@@ -267,58 +270,37 @@ export default {
         </div>
       </div>
     </div>
-    <!--    <div class="col-lg-4">-->
-    <!--      <div class="card">-->
-    <!--        <div class="card-body pb-0">-->
-    <!--          <div class="d-flex justify-content-between align-items-center">-->
-    <!--            <div>-->
-    <!--              <h5 class="fs-15 fw-semibold">Delivered</h5>-->
-    <!--              <p class="text-muted">Shipment status</p>-->
-    <!--            </div>-->
-    <!--            <div class="flex-shrink-0 pe-3">-->
-    <!--              <h5 class="text-primary fw-medium">-->
-    <!--                75-->
-    <!--              </h5>-->
-    <!--            </div>-->
-    <!--          </div>-->
+  </div>
 
-    <!--        </div>-->
-    <!--        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">-->
-    <!--          <div class="progress-bar bg-primary rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"-->
-    <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
-    <!--          &lt;!&ndash;          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"&ndash;&gt;-->
-    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
-    <!--          &lt;!&ndash;          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"&ndash;&gt;-->
-    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="col-lg-4">-->
-    <!--      <div class="card">-->
-    <!--        <div class="card-body pb-0">-->
-    <!--          <div class="d-flex justify-content-between align-items-center">-->
-    <!--            <div>-->
-    <!--              <h5 class="fs-15 fw-semibold">Completed</h5>-->
-    <!--              <p class="text-muted">Shipment status</p>-->
-    <!--            </div>-->
-    <!--            <div class="flex-shrink-0 pe-3">-->
-    <!--              <h5 class="text-success fw-medium">-->
-    <!--                25-->
-    <!--              </h5>-->
-    <!--            </div>-->
-    <!--          </div>-->
+  <div class="row" v-else>
+    <div class="col-lg-4" v-for="i in 3" :key="i">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fs-15 fw-semibold text-capitalize">
+                <skeleton />
+              </h5>
+              <p class="text-muted">Shipment status</p>
+            </div>
 
-    <!--        </div>-->
-    <!--        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">-->
-    <!--          <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"-->
-    <!--               aria-valuemin="0" aria-valuemax="100"></div>-->
-    <!--          &lt;!&ndash;          <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 50%" aria-valuenow="50"&ndash;&gt;-->
-    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
-    <!--          &lt;!&ndash;          <div class="progress-bar rounded-0" role="progressbar" style="width: 20%" aria-valuenow="20"&ndash;&gt;-->
-    <!--          &lt;!&ndash;               aria-valuemin="0" aria-valuemax="100"></div>&ndash;&gt;-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize text-success">
+                1
+              </h5>
+              <p class="text-muted">0%</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0 bg-success" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- end row-->
 

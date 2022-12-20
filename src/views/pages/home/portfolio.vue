@@ -23,6 +23,7 @@ function getChartColorsArray(colors) {
 }
 
 import store from "@/state/store.js";
+import skeleton from "../../../components/custom/skeleton.vue";
 
 export default {
   setup() {
@@ -123,6 +124,9 @@ export default {
   },
   async mounted() {
     await this.getOrderStatisticsByUsers()
+  },
+  components: {
+    skeleton
   }
 };
 </script>
@@ -144,7 +148,7 @@ export default {
       <div data-simplebar style="max-height: 277px;" v-if="user_orders.length > 0">
         <b-list-group>
           <b-list-group-item class="border-0 border-bottom ps-0 pe-2"
-              v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
+                             v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
             <div class="d-flex">
               <div class="flex-grow-1">
                 <h6 class="mb-1">
@@ -162,7 +166,27 @@ export default {
           </b-list-group-item>
         </b-list-group>
       </div>
-
+      <div data-simplebar style="max-height: 277px;" v-else>
+        <b-list-group>
+          <b-list-group-item class="border-0 border-bottom ps-0 pe-2" v-for="i in 3" :key="i">
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="mb-1 w-50">
+                  <skeleton />
+                </h6>
+                <p class="fs-12 mb-0 text-muted">
+                  <i class="mdi mdi-circle fs-10 align-middle me-1 text-success"></i>
+                  <small>Orders created</small>
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-end align-self-center">
+                <span class="badge badge-gradient-info fs-6">
+                </span>
+              </div>
+            </div>
+          </b-list-group-item>
+        </b-list-group>
+      </div>
     </div>
   </div>
 </template>

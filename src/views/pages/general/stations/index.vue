@@ -1,4 +1,5 @@
 <template>
+  <PageHeader title="General" :items="items" />
   <div class="container-fluid">
     <div class="row">
       <div class="col-xxl-9 ps-0">
@@ -50,33 +51,7 @@
                   </tbody>
                 </table>
               </div>
-              <!--              <div class="d-flex justify-content-end mt-4">-->
-              <!--                <div class="pagination-wrap hstack gap-2">-->
-              <!--                  <a v-if="currentPage.page > 1" class="page-item pagination-next" @click="changePage(true, false)">-->
-              <!--                    Previous-->
-              <!--                  </a>-->
-              <!--                  <ul class="pagination listjs-pagination mb-0">-->
-              <!--                    <li :class="currentPage.page === '1' ? 'active' : ''">-->
-              <!--                      <router-link class="page" to="/stations/?page=1">1</router-link>-->
-              <!--                    </li>-->
-              <!--                    <li :class="currentPage.page === '2' ? 'active' : ''">-->
-              <!--                      <router-link class="page" to="/stations/?page=2">2</router-link>-->
-              <!--                    </li>-->
-              <!--                    <li :class="currentPage.page === '3' ? 'active' : ''">-->
-              <!--                      <router-link class="page" to="/stations/?page=3">3</router-link>-->
-              <!--                    </li>-->
-              <!--                    <li class="">-->
-              <!--                      <router-link class="page" to="/stations/?page=635">635</router-link>-->
-              <!--                    </li>-->
-              <!--                    <li class="">-->
-              <!--                      <router-link class="page" to="/stations/?page=636">636</router-link>-->
-              <!--                    </li>-->
-              <!--                  </ul>-->
-              <!--                  <a class="page-item pagination-next" @click="changePage(false, true)">-->
-              <!--                    Next-->
-              <!--                  </a>-->
-              <!--                </div>-->
-              <!--              </div>-->
+
             </div>
           </div>
         </div>
@@ -162,7 +137,7 @@
 <script>
 import CoreApi from "@/api/core/core_api.js";
 import Swal from "sweetalert2";
-// import Swal from "sweetalert2";
+import PageHeader from "../../../../components/page-header.vue";
 
 export default {
   name: "StationsList",
@@ -181,7 +156,17 @@ export default {
         railway_name: "",
         isInEditMode: false,
       },
-      search: ''
+      search: '',
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Stations List",
+          active: true,
+        },
+      ]
     }
   },
   methods: {
@@ -397,6 +382,9 @@ export default {
       await this.searchStations(newVal)
     }
   },
+  components: {
+    PageHeader
+  }
 }
 </script>
 

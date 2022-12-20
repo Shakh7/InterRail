@@ -4,10 +4,21 @@ import OrderApi from '@/api/orders/orders_api.js'
 import Swal from "sweetalert2";
 import store from '@/state/store.js'
 import {ordersMehtods} from "@/state/helpers";
+import PageHeader from "../../../../components/page-header.vue";
 
 export default {
   data() {
     return {
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Wagon Orders",
+          active: true,
+        },
+      ],
       headers: [
         {
           label: 'ORDER NUMBER',
@@ -170,12 +181,14 @@ export default {
     await this.getOrders()
   },
   components: {
-    CustomTable
+    CustomTable,
+    PageHeader
   }
 };
 </script>
 
 <template>
+  <PageHeader title="Orders" :items="items"/>
   <CustomTable
       name="ORDERS TABLE"
       id="orders_table"

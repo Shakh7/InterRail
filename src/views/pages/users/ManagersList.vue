@@ -8,7 +8,7 @@ import store from "@/state/store.js";
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
 // import Lottie from "@/components/widgets/lottie.vue";
-
+import PageHeader from "../../../components/page-header.vue";
 import CreautUserModal from './modals/create_user.vue'
 import deleteUserButton from './components/delete_user_button.vue'
 import editUserButton from './components/edit_user_button.vue'
@@ -23,7 +23,17 @@ export default {
   },
   data() {
     return {
-      title: "Invoice List",
+      title: "Users Management",
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Managers",
+          active: true,
+        },
+      ],
       usersList: [],
       config: {
         mode: "range",
@@ -53,6 +63,7 @@ export default {
     CreautUserModal,
     deleteUserButton,
     editUserButton,
+    PageHeader
   },
   methods: {
     async getUsersList() {
@@ -86,6 +97,7 @@ export default {
 </script>
 
 <template>
+  <PageHeader :title="title" :items="items" />
   <div class="row">
     <div class="col-lg-12">
       <div class="card" id="invoiceList">

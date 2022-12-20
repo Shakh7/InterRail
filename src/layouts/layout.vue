@@ -1,6 +1,6 @@
 <script>
 import Layout from "./main.vue";
-import PageHeader from "@/components/page-header";
+// import PageHeader from "@/components/page-header";
 import appConfig from "../../app.config.json";
 
 export default {
@@ -25,14 +25,13 @@ export default {
     },
     components: {
         Layout,
-        PageHeader,
+        // PageHeader,
     },
 };
 </script>
     
 <template>
     <Layout>
-        <PageHeader :title="title" :items="items" />
         <router-view/>
     </Layout>
 </template>

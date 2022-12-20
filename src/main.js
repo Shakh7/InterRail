@@ -29,6 +29,7 @@ import '@/assets/scss/config/default/app.scss';
 import '@vueform/slider/themes/default.css';
 import 'floating-vue/dist/style.css'
 import '../src/assets/css/custom.css'
+import '../src/assets/css/skelton.scss'
 
 /* import the fontawesome core */
 import {library} from '@fortawesome/fontawesome-svg-core'
