@@ -9,7 +9,7 @@
                           </span>
         </div>
         <div class="flex-grow-1 ms-3">
-          <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ item.label }}</p>
+          <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ item.label.replace('_', ' ') }}</p>
 
           <a class="card-link h4">
             $

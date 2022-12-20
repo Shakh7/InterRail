@@ -147,8 +147,10 @@ export default {
 
       <div data-simplebar style="max-height: 277px;" v-if="user_orders.length > 0">
         <b-list-group>
-          <b-list-group-item class="border-0 border-bottom ps-0 pe-2"
-                             v-for="user in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user">
+          <b-list-group-item
+              class="ps-0 pe-2"
+              v-for="(user, i) in user_orders.sort((a, b) => (a.count < b.count) ? 1: -1)" :key="user"
+              :class="i === user_orders.length - 1 ? 'border-0' : 'border-0 border-bottom'">
             <div class="d-flex">
               <div class="flex-grow-1">
                 <h6 class="mb-1">
