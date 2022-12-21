@@ -60,7 +60,7 @@ export default {
           }
         ]
       },
-      sending_type: "single",
+      sending_type: "",
       product_id: null,
       quantity: 1,
       weight: null,
@@ -350,15 +350,18 @@ export default {
           <div class="row g-3">
 
             <div class="col-md-4">
-              <label class="form-label">Order number</label>
-              <input type="number" class="form-control"
-                     placeholder="Enter order number" disabled>
-            </div>
-
-            <div class="col-md-4">
               <label for="lotNumber" class="form-label">Lot number</label>
               <input type="text" class="form-control" v-model="order.lot_number"
                      id="lotNumber" placeholder="Enter lot number">
+            </div>
+
+            <div class="col-md-4">
+              <label for="position" class="form-label">Sending type</label>
+              <select class="form-select" aria-label="sending type" v-model="sending_type">
+                <option selected disabled>Select sending type</option>
+                <option value="single">Single</option>
+                <option value="block_train">Block train</option>
+              </select>
             </div>
 
             <div class="col-md-4 mb-3">

@@ -4,6 +4,9 @@
 import Multiselect from "@vueform/multiselect";
 import flatPickr from "vue-flatpickr-component";
 import "@vueform/multiselect/themes/default.css";
+import skeleton from "@/components/custom/skeleton.vue";
+import spxnqpau from "@/components/widgets/spxnqpau.json";
+import Lottie from "../widgets/lottie.vue";
 
 export default {
   emits: ['page-change'],
@@ -27,7 +30,8 @@ export default {
         }
       },
       search: '',
-      apiData: []
+      apiData: [],
+      defaultOptions: {animationData: spxnqpau},
     }
   },
   props: {
@@ -60,10 +64,16 @@ export default {
       default: () => false
     },
     filterableFields: [],
+    isLoading: {
+      type: Boolean,
+      default: () => false
+    },
   },
   components: {
     flatPickr,
-    Multiselect
+    Multiselect,
+    skeleton,
+    lottie: Lottie,
   },
   computed: {
     searchedTable() {
@@ -263,7 +273,7 @@ export default {
                   </th>
                 </tr>
                 </thead>
-                <tbody class="list form-check-all">
+                <tbody v-if="rows.length > 0" class="list form-check-all">
                 <tr v-for="r in searchedTable" :key="r" :class="rowIsSelected(r.id) ? 'bg-soft-secondary' : ''">
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
                     <div class="form-check">
@@ -273,6 +283,40 @@ export default {
                   <td v-for="td in headers" :key="td"
                       :class="td.align === undefined ? '' : 'text-' + td.align">
                     <slot :name="td.field" :row="r" :key="td.field">{{ r[td.field] }}</slot>
+                  </td>
+                </tr>
+                </tbody>
+                <tbody v-else-if="rows.length === 0 && isLoading">
+                <tr v-for="i in 5" :key="i">
+                  <th scope="col" style="width: 50px;" v-if="selectable === true">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox">
+                    </div>
+                  </th>
+                  <td v-for="td in headers" :key="td">
+                    <skeleton/>
+                  </td>
+                </tr>
+                </tbody>
+                <tbody v-else-if="rows.length === 0 && !isLoading">
+                <tr class="text-center">
+                  <td v-if="selectable === true" :colspan="headers.length">
+                    <lottie
+                        colors="primary:#405189,secondary:#08a88a"
+                        :options="defaultOptions"
+                        :height="80"
+                        :width="80"
+                    />
+                    <h5>No data here!</h5>
+                  </td>
+                  <td v-else :colspan="headers.length + 1">
+                    <lottie
+                        colors="primary:#405189,secondary:#08a88a"
+                        :options="defaultOptions"
+                        :height="80"
+                        :width="80"
+                    />
+                    <h5>No data here!</h5>
                   </td>
                 </tr>
                 </tbody>

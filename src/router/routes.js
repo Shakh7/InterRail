@@ -55,6 +55,7 @@ export default [
             },
         },
     },
+
     {
         path: "/",
         name: "entry",
@@ -74,6 +75,7 @@ export default [
         name: "Users",
         meta: {title: "Users List", authRequired: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
+        redirect: {name: "users_list"},
         children: [
             {path: 'users/', name: 'users_list', component: () => import("../views/pages/users/UsersList.vue"),},
             {
@@ -90,12 +92,13 @@ export default [
         name: "orders",
         meta: {title: "Orders", authRequired: true, permissions: ['admin', 'staff', 'client']},
         component: () => import("../layouts/layout.vue"),
+        redirect: {name: "order_container_list"},
         children: [
             {
                 path: 'container/',
                 name: 'order_container_list',
                 meta: {title: "Container Orders List",},
-                component: () => import("../views/pages/orders/list.vue"),
+                component: () => import("../views/pages/orders/container/list.vue"),
             },
             {
                 path: 'wagon/',
@@ -113,7 +116,7 @@ export default [
                 path: 'create-container/',
                 name: 'create_container',
                 meta: {title: "Container Order",},
-                component: () => import("../views/pages/orders/createBeta.vue"),
+                component: () => import("../views/pages/orders/container/create.vue"),
             },
             {
                 path: 'create-wagon/',
@@ -131,7 +134,7 @@ export default [
                 path: 'container/update/:id',
                 name: 'orders_container_update',
                 meta: {title: "Container Orders Update",},
-                component: () => import("../views/pages/orders/update.vue"),
+                component: () => import("../views/pages/orders/container/update.vue"),
             },
             {
                 path: 'wagon/update/:id',
@@ -149,7 +152,7 @@ export default [
                 path: 'container/view/:id',
                 name: 'orders_container_detail',
                 meta: {title: "Container Order Detail",},
-                component: () => import("../views/pages/orders/detail.vue"),
+                component: () => import("../views/pages/orders/container/detail.vue"),
             },
             {
                 path: 'wagon/view/:id',
@@ -181,6 +184,7 @@ export default [
         name: "General",
         meta: {title: "General", authRequired: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
+        redirect: {name: "products_list"},
         children: [
             {path: 'products/', name: 'products_list', component: () => import("../views/pages/products/index.vue"),},
             {
@@ -206,8 +210,9 @@ export default [
         name: "Smgs",
         meta: {title: "Smgs List", authRequired: true, permissions: ['admin', 'staff', 'client']},
         component: () => import("../layouts/layout.vue"),
+        redirect: {name: "smgs_list"},
         children: [
-            {path: 'list/', name: 'smgs list', component: () => import("../views/pages/smgs/list.vue"),}
+            {path: 'list/', name: 'smgs_list', component: () => import("../views/pages/smgs/list.vue"),}
         ],
     },
 
@@ -221,11 +226,13 @@ export default [
             {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),}
         ],
     },
+
     {
         path: "/counterparty/",
         name: "Counterparty",
         meta: {title: "Counterparty List", authRequired: true, permissions: ['admin', 'staff', 'client']},
         component: () => import("../layouts/layout.vue"),
+        redirect: {name: "counterparty_list"},
         children: [
             {
                 path: 'list/',

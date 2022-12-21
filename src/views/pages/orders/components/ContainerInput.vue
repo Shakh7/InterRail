@@ -89,6 +89,8 @@ export default {
         }
       })
 
+      this.$emit('update')
+
       text !== undefined
           ? Toast.fire({
             icon: iconOptions.includes(icon) ? icon : 'info',

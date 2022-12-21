@@ -75,11 +75,13 @@ export default {
         },
       ],
       orders: [],
+      isLoading: false,
     };
   },
   methods: {
     ...ordersMehtods,
     async getOrders() {
+      this.isLoading = true;
       let orderApi = new OrderApi();
       let data = await orderApi.getWagonOrders()
       let orders = []
@@ -88,6 +90,7 @@ export default {
         orders.push(order.order)
       })
       this.orders = orders
+      this.isLoading = false;
     },
     deleteOrderConfirmation(order) {
       Swal.fire({
@@ -196,6 +199,7 @@ export default {
       :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
+      :isLoading="isLoading"
   >
     <template v-slot:top-right>
       <div class="btn-group">

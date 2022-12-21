@@ -1,6 +1,5 @@
 <script>
 import animationData from "@/components/widgets/lupuorrc.json";
-// import Lottie from "@/components/widgets/lottie.vue";
 import custom_wizard from "@/views/pages/orders/components/custom_wizard";
 import Multiselect from "@vueform/multiselect";
 import CoreApi from "@/api/core/core_api";
@@ -171,10 +170,12 @@ export default {
 
     async updateContainerOrder() {
       let order = this.$store.state.orders.currentlyUpdating;
+      alert(order.sending_type.replace(' ', '_').toLowerCase())
       let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
         order: order,
         type: 'container',
-        product: this.products.selected
+        product: this.products.selected,
+        sending_type: order.sending_type.replace(' ', '_').toLowerCase()
       })))
       await Swal.fire({
         position: "center",
@@ -208,15 +209,18 @@ export default {
       <div class="row g-3">
 
         <div class="col-md-4">
-          <label class="form-label">Order number</label>
-          <input :value="currentOrder.order_number" type="number" class="form-control"
-                 placeholder="Order number may not be updated !" disabled>
-        </div>
-
-        <div class="col-md-4">
           <label for="lotNumber" class="form-label">Lot number</label>
           <input type="text" class="form-control" v-model="currentOrder.lot_number"
                  id="lotNumber" placeholder="Enter lot number">
+        </div>
+
+        <div class="col-md-4">
+          <label for="position" class="form-label">Sending type</label>
+          <select class="form-select" aria-label="sending type" v-model="currentOrder.sending_type">
+            <option selected disabled>Select sending type</option>
+            <option value="Single">Single</option>
+            <option value="Block train">Block train</option>
+          </select>
         </div>
 
         <div class="col-md-4 mb-3">

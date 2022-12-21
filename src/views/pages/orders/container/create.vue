@@ -1,12 +1,12 @@
 <script>
-import custom_wizard from "./components/custom_wizard";
+import custom_wizard from "../components/custom_wizard.vue";
 import counterpartySelect from "@/views/pages/orders/components/counterpartySelect";
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import OrdersApi from "@/api/orders/orders_api";
 import CoreApi from "@/api/core/core_api";
 import Swal from "sweetalert2";
-import store from "../../../state/store";
+import store from "@/state/store";
 
 export default {
   data() {
@@ -31,12 +31,10 @@ export default {
           data_target: "step4",
         },
       ],
-
       autocomplete_options: [],
       counterparty_list: [],
       category_list: [],
       container_type_options: ['20', '20HC', '40', '40HC', '45'],
-
       order: {
         lot_number: "",
         date: "",
@@ -63,7 +61,7 @@ export default {
           }
         ]
       },
-      sending_type: "single",
+      sending_type: "",
       container_types: [
         {
           agreed_rate: '',
@@ -77,7 +75,6 @@ export default {
           ]
         }
       ],
-
       departure: {
         selected: null,
         options: []
@@ -90,7 +87,6 @@ export default {
         selected: null,
         options: []
       },
-
       loading: false,
     }
   },
@@ -392,15 +388,18 @@ export default {
           <div class="row g-3">
 
             <div class="col-md-4">
-              <label class="form-label">Order number</label>
-              <input type="number" class="form-control"
-                     placeholder="Enter order number" disabled>
-            </div>
-
-            <div class="col-md-4">
               <label for="lotNumber" class="form-label">Lot number</label>
               <input type="text" class="form-control" v-model="order.lot_number"
                      id="lotNumber" placeholder="Enter lot number">
+            </div>
+
+            <div class="col-md-4">
+              <label for="position" class="form-label">Sending type</label>
+              <select class="form-select" aria-label="sending type" v-model="sending_type">
+                <option selected disabled>Select sending type</option>
+                <option value="single">Single</option>
+                <option value="block_train">Block train</option>
+              </select>
             </div>
 
             <div class="col-md-4 mb-3">

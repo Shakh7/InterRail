@@ -1,10 +1,10 @@
 <script>
-import CustomTable from '../../../components/custom/table.vue'
+import CustomTable from '../../../../components/custom/table.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
 import store from "@/state/store";
-import PageHeader from "../../../components/page-header.vue";
+import PageHeader from "../../../../components/page-header.vue";
 
 export default {
   data() {
@@ -89,20 +89,23 @@ export default {
         total: 0,
       },
       orderUrl: `${process.env.VUE_APP_ORDER_URL}/container_order/list/`,
+      isLoading: false
     };
   },
   methods: {
     ...ordersMehtods,
     async getOrders() {
+      this.isLoading = true;
       let orderApi = new OrderApi();
       let data = await orderApi.getContainerOrders();
       let orders = []
       data.results.forEach(order => {
         order.order.product = order.product
+        order.order.sending_type = order.sending_type
         orders.push(order.order)
       })
       this.orders = orders
-      this.totalPages = orders.length
+      this.isLoading = false
     },
     setToUpdateOrder(order) {
       this.setCurrentlyUpdating(order)
@@ -214,6 +217,7 @@ export default {
       :searchable="true"
       @page-change="pageChange"
       :url="orderUrl"
+      :isLoading="isLoading"
   >
     <template v-slot:top-right>
       <div class="btn-group">
