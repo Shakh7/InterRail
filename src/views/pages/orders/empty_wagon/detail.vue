@@ -296,11 +296,10 @@
                     <tr class="bg-light">
                       <th class="text-center">#</th>
                       <th class="text-center">Wagon</th>
-                      <th class="text-center">Agreed rate <br>${{
-                          (expanses.filter(a => a.agreed_rate !== null).map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
-                        }}
+                      <th class="text-center">Agreed rate
                       </th>
-                      <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party">
+                      <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party"
+                      >
                         <span class="badge bg-success">{{ party.category.name }}</span>
                         <span class="d-block">{{ party.counterparty.name }}</span>
                       </th>
