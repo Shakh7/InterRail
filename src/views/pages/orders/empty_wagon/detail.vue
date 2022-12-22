@@ -193,12 +193,13 @@
                         Order number - {{ order.order_number }}
                       </h4>
                       <div class="hstack gap-3 flex-wrap">
-                        <div class="text-muted text-capitalize"><i class="ri-building-line align-bottom me-1"></i>
+                        <div class="text-muted text-capitalize">
+                          <i class="ri-building-line align-bottom me-1"></i>
                           {{ order.position.replace('_', ' ') }}
                         </div>
                         <div class="vr"></div>
-                        <div class="text-muted">Create Date : <span class="fw-medium"></span>
-                          {{ order.date }}
+                        <div class="text-muted text-capitalize">Order type :
+                          {{ order.type }}
                         </div>
                       </div>
                     </div>
