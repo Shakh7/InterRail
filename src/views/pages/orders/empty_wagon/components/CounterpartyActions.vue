@@ -157,7 +157,7 @@
                                v-on:keyup.enter="saveActualCost(counterparty.id, counterparty.actual_cost)">
                       </div>
                       <div class="col-2 text-end px-0">
-                        <b-button variant="warning" class="btn-icon waves-effect waves-light w-100"
+                        <b-button variant="success" class="btn-icon waves-effect waves-light w-100"
                                   @click="saveActualCost(counterparty.id, counterparty.actual_cost)">
                           <i class="ri-check-double-line"></i>
                         </b-button>
@@ -233,7 +233,7 @@ export default {
   },
   methods: {
     async saveActualCost(counterparty_id, actual_cost) {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/expanse/actual_cost_to_all/`, {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/expanse/actual_cost_to_all/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -271,7 +271,7 @@ export default {
       }
     },
     async createWagons() {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/expanse/wagon_add/`, {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/expanse/wagon_add/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -327,7 +327,7 @@ export default {
           title: 'Please fill all the fields'
         })
       } else {
-        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/expanse/counterparty_add/`, {
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/expanse/counterparty_add/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -409,6 +409,7 @@ export default {
         })
 
         this.$emit('updateCounterparties')
+
         if (response.ok) {
           await Toast.fire({
             icon: 'success',
