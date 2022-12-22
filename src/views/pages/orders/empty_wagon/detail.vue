@@ -243,7 +243,6 @@
             <!-- TAB CONTENT STARTS -->
             <div class="tab-content text-muted">
               <div class="tab-pane active" id="actual_cost_tab" role="tabpanel">
-
                 <div class="table-responsive table-card">
                   <table class="table table-striped">
                     <thead>
@@ -259,6 +258,18 @@
                       </th>
                       <th class="text-center">Total</th>
                       <th class="text-center">Profit</th>
+                    </tr>
+                    <tr class="bg-white">
+                      <th class="text-center"></th>
+                      <th class="text-center"></th>
+                      <th class="text-center">
+                        ${{ agreed_rate_sum }}
+                      </th>
+                      <th class="text-center" v-for="party in order.counterparties" :key="party">
+                        --
+                      </th>
+                      <th class="text-center">100</th>
+                      <th class="text-center">100</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -349,7 +360,7 @@
                 <tbody>
                 <tr>
                   <td class="fw-medium">Lot number</td>
-                  <td>{{ order.lot_number.trim() === '' ? '--' : order.lot_number.trim() }}</td>
+                  <td>{{ order.lot_number === null ? '--' : order.lot_number.trim() }}</td>
                 </tr>
                 <tr>
                   <td class="fw-medium">Departure</td>
@@ -378,7 +389,7 @@
                 <tr>
                   <td class="fw-medium">Comment</td>
                   <td>
-                    {{ order.comment.trim() === '' ? '--' : order.comment.trim() }}
+                    {{ order.comment === '' || order.comment === null ? '--' : order.comment.trim() }}
                   </td>
                 </tr>
                 </tbody>
@@ -434,6 +445,7 @@ export default {
       counterparty_list: [],
       category_list: [],
       loading: true,
+      agreed_rate_sum: 0
     }
   },
   components: {
@@ -465,6 +477,7 @@ export default {
       this.quantity = data['quantity']
       this.wagon_empty_preliminary_costs = data['wagon_empty_preliminary_costs']
 
+      this.getAgreedRateSum()
     },
     async updatedCounterparties() {
       await this.fetchData();
@@ -480,6 +493,10 @@ export default {
       if (this.category_list.length > 0) return;
       let orders = new OrdersApi()
       this.category_list = (await orders.getCategoryList()).results
+    },
+    getAgreedRateSum() {
+      let sum = this.expanses.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)
+      this.agreed_rate_sum = sum
     },
   },
   async mounted() {
