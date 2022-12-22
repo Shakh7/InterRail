@@ -266,10 +266,14 @@
                         ${{ agreed_rate_sum }}
                       </th>
                       <th class="text-center" v-for="party in order.counterparties" :key="party">
-                        --
+                        ${{ party.total_expanses }}
                       </th>
-                      <th class="text-center">100</th>
-                      <th class="text-center">100</th>
+                      <th class="text-center">
+                        ${{ total_expanses_sum }}
+                      </th>
+                      <th class="text-center">
+                        ${{ agreed_rate_sum - total_expanses_sum }}
+                      </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -316,6 +320,22 @@
                       </th>
                       <th class="text-center">Total</th>
                       <th class="text-center">Profit</th>
+                    </tr>
+                    <tr class="bg-white">
+                      <th class="text-center"></th>
+                      <th class="text-center"></th>
+                      <th class="text-center">
+                        ${{ agreed_rate_sum }}
+                      </th>
+                      <th class="text-center" v-for="party in order.counterparties" :key="party">
+                        ${{ party.total_expanses }}
+                      </th>
+                      <th class="text-center">
+                        ${{ total_expanses_sum }}
+                      </th>
+                      <th class="text-center">
+                        ${{ agreed_rate_sum - total_expanses_sum }}
+                      </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -445,7 +465,8 @@ export default {
       counterparty_list: [],
       category_list: [],
       loading: true,
-      agreed_rate_sum: 0
+      agreed_rate_sum: 0,
+      total_expanses_sum: 0,
     }
   },
   components: {
@@ -478,6 +499,7 @@ export default {
       this.wagon_empty_preliminary_costs = data['wagon_empty_preliminary_costs']
 
       this.getAgreedRateSum()
+      this.getTotalExpansesSum()
     },
     async updatedCounterparties() {
       await this.fetchData();
@@ -497,6 +519,10 @@ export default {
     getAgreedRateSum() {
       let sum = this.expanses.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)
       this.agreed_rate_sum = sum
+    },
+    getTotalExpansesSum() {
+      let sum = this.order.counterparties.map(s => s.total_expanses).reduce((a, b) => parseInt(a) + parseInt(b), 0)
+      this.total_expanses_sum = sum
     },
   },
   async mounted() {
