@@ -143,9 +143,7 @@
                           }}
                         </td>
                         <td class="text-center">
-                          {{
-                            ((expanses.map(s => s.agreed_rate).reduce((a, b) => parseInt(a) + parseInt(b), 0)) - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US')
-                          }}
+                          {{ (wagon.agreed_rate - wagon.actual_costs.map(a => a.actual_cost).reduce((a, b) => parseInt(a) + parseInt(b), 0)).toLocaleString('en-US') }}
                         </td>
                       </tr>
                       </tbody>
