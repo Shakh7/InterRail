@@ -144,6 +144,12 @@ export default [
             },
             {
                 path: 'empty-wagon/update/:id',
+                name: 'orders_empty_wagon_update',
+                meta: {title: "Empty Wagon Orders Update",},
+                component: () => import("../views/pages/orders/empty_wagon/update.vue"),
+            },
+            {
+                path: 'empty-wagon/update/:id',
                 name: 'orders_empty-wagon_update',
                 meta: {title: "Empty Wagon Orders Update",},
                 component: () => import("../views/pages/orders/wagon/update.vue"),

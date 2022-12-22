@@ -127,7 +127,6 @@ export default {
       this.hasData = true
       let departure = data.departure
       let destination = data.destination
-      let product = data.product
 
       this.departure.options = [{
         value: parseInt(departure.id),
@@ -153,28 +152,26 @@ export default {
         code: destination.code
       }
 
-      this.products.options = [{
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }]
-
-      this.products.selected = {
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }
+      // this.products.options = [{
+      //   value: parseInt(product.id),
+      //   label: product.name,
+      //   hc_code: product['hc_code'],
+      //   etcng: product['etcng_code'],
+      // }]
+      //
+      // this.products.selected = {
+      //   value: parseInt(product.id),
+      //   label: product.name,
+      //   hc_code: product['hc_code'],
+      //   etcng: product['etcng_code'],
+      // }
     },
 
     async updateContainerOrder() {
       let order = this.$store.state.orders.currentlyUpdating;
       let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
         order: order,
-        type: 'container',
-        product: this.products.selected,
-        sending_type: order.sending_type.replace(' ', '_').toLowerCase()
+        type: 'empty_wagon',
       })))
       await Swal.fire({
         position: "center",
@@ -183,7 +180,7 @@ export default {
         showConfirmButton: false,
         timer: 5000,
       });
-      await this.$router.push({name: "order_container_list"})
+      await this.$router.push({name: "order_empty_wagon_list"})
     }
   },
   computed: {
@@ -194,7 +191,7 @@ export default {
   mounted() {
     let data = this.$store.state.orders.currentlyUpdating
     data.length === 0
-        ? this.$router.push({name: 'order_container_list'})
+        ? this.$router.push({name: 'order_empty_wagon_list'})
         : this.setStationOptions(data)
   },
 }
@@ -203,23 +200,21 @@ export default {
 
 <template>
 
+  {{ currentOrder }}
   <custom_wizard wizard_header="Update order" :steps="steps" v-if="hasData">
     <template v-slot:content-step1-body>
       <div class="row g-3">
 
         <div class="col-md-4">
-          <label for="lotNumber" class="form-label">Lot number</label>
-          <input type="text" class="form-control" v-model="currentOrder.lot_number"
-                 id="lotNumber" placeholder="Enter lot number">
+          <label class="form-label">Order number</label>
+          <input :value="currentOrder.order_number" type="number" class="form-control"
+                 placeholder="Order number may not be updated" disabled>
         </div>
 
         <div class="col-md-4">
-          <label for="position" class="form-label">Sending type</label>
-          <select class="form-select" aria-label="sending type" v-model="currentOrder.sending_type">
-            <option selected disabled>Select sending type</option>
-            <option value="Single">Single</option>
-            <option value="Block train">Block train</option>
-          </select>
+          <label for="lotNumber" class="form-label">Lot number</label>
+          <input type="text" class="form-control" v-model="currentOrder.lot_number"
+                 id="lotNumber" placeholder="Enter lot number">
         </div>
 
         <div class="col-md-4 mb-3">
@@ -367,53 +362,6 @@ export default {
         </div>
 
         <div class="col-md-4">
-          <label class="form-label">Product</label>
-          <Multiselect
-              class="form-control"
-              v-model="products.selected"
-              :searchable="true"
-              :hideSelected="true"
-              :options="products.options"
-              placeholder="Choose product.."
-              @search-change="getOptions($event, 'products')"
-              :object="true"
-              @select="onOptionSelect($event, 'products')"
-          />
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label">Hc code</label>
-          <Multiselect
-              class="form-control"
-              v-model="products.selected"
-              :searchable="true"
-              :hideSelected="true"
-              :options="products.options"
-              placeholder="Choose hc code.."
-              @search-change="getOptions($event, 'products')"
-              :object="true"
-              label="hc_code"
-              @select="onOptionSelect($event, 'products')"
-          />
-        </div>
-
-        <div class="col-md-4 mb-3">
-          <label class="form-label">Etcng</label>
-          <Multiselect
-              class="form-control"
-              v-model="products.selected"
-              :searchable="true"
-              :hideSelected="true"
-              :options="products.options"
-              placeholder="Choose destination.."
-              @search-change="getOptions($event, 'products')"
-              :object="true"
-              label="etcng"
-              @select="onOptionSelect($event, 'products')"
-          />
-        </div>
-
-        <div class="col-md-4">
           <label class="form-label">Departure country</label>
           <input type="text" class="form-control" v-model="currentOrder.departure_country"
                  placeholder="Departure country">
@@ -429,9 +377,7 @@ export default {
           <label for="payment_status" class="form-label">Customer</label>
           <select class="form-select" id="payment_status" v-model="currentOrder.customer">
             <option selected disabled>Select user</option>
-            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client"
-                    :value="client.id">{{ client.full_name }}
-            </option>
+            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client" :value="client.id">{{ client.full_name }}</option>
           </select>
         </div>
 

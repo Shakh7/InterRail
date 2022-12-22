@@ -87,7 +87,7 @@ export default {
       let data = await orderApi.getEmptyWagonOrders();
       let orders = []
       data.results.forEach(order => {
-        order.order.product = order.product
+        order.order.quantity = order.quantity
         orders.push(order.order)
       })
       this.orders = orders
@@ -96,7 +96,7 @@ export default {
 
     setToUpdateOrder(order) {
       this.setCurrentlyUpdating(order)
-      this.$router.push({name: 'orders_container_update', params: {id: order.id}})
+      this.$router.push({name: 'orders_empty_wagon_update', params: {id: order.order_number}})
     },
 
     deleteOrderConfirmation(order) {
