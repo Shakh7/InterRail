@@ -252,6 +252,7 @@
                       <th class="text-center">Agreed rate
                       </th>
                       <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party"
+                          @click="updateCounterparty(party)"
                       >
                         <span class="badge bg-success">{{ party.category.name }}</span>
                         <span class="d-block">{{ party.counterparty.name }}</span>
@@ -314,6 +315,7 @@
                       <th class="text-center">Agreed rate
                       </th>
                       <th class="text-center py-0 m-0" v-for="party in order.counterparties" :key="party"
+                          @click="updateCounterparty(party)"
                       >
                         <span class="badge bg-success">{{ party.category.name }}</span>
                         <span class="d-block">{{ party.counterparty.name }}</span>
@@ -452,6 +454,7 @@ import CounterpartyActions from "./components/CounterpartyActions.vue";
 import store from "../../../../state/store.js";
 import OrdersApi from "@/api/orders/orders_api";
 import skeleton from "@/components/custom/skeleton.vue";
+import Swal from "sweetalert2";
 
 export default {
   name: "empty_wagon_detail",
@@ -523,6 +526,66 @@ export default {
     getTotalExpansesSum() {
       let sum = this.order.counterparties.map(s => s.total_expanses).reduce((a, b) => parseInt(a) + parseInt(b), 0)
       this.total_expanses_sum = sum
+    },
+    async updateCounterparty(item) {
+      const {value: formValues} = await Swal.fire({
+        title: 'Update Counterparty',
+        html:
+            '<select class="form-select m-auto w-75 mt-3" id="categoryUpdate">' +
+            `${this.category_list.map(c => {
+              return item.category.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>' +
+            '<select class="form-select m-auto w-75 mt-3" id="counterpartyUpdate">' +
+            `${this.counterparty_list.map(c => {
+              return item.counterparty.id === c.id ? `<option value="${c.id}" selected>${c.name}</option>` : `<option value="${c.id}">${c.name}</option>`
+            })}` +
+            '</select>',
+        focusConfirm: false,
+        confirmButtonText: 'Save',
+        confirmButtonColor: '#0AB39C',
+        preConfirm: () => {
+          return [
+            document.getElementById('counterpartyUpdate').value,
+            document.getElementById('categoryUpdate').value
+          ]
+        }
+      })
+
+      if (formValues) {
+        let headers = new Headers();
+        headers.append("Content-Type", `application/json`);
+
+        let requestGetOptions = {
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify({
+            "category_id": formValues[1],
+            "counterparty_id": formValues[0]
+          }),
+        };
+
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/counterparty/update/${item.id}/`, requestGetOptions)
+        if (response.status >= 200) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          await this.fetchData();
+
+          await Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated'
+          })
+        }
+      }
     },
   },
   async mounted() {
