@@ -77,6 +77,12 @@ export default {
       ],
       orders: [],
       isLoading: false,
+      table: {
+        url: `${process.env.VUE_APP_ORDER_URL}/wagon_empty_order/list/`,
+      },
+      pagination: {
+        perPage: 10,
+      },
     };
   },
   methods: {
@@ -202,13 +208,14 @@ export default {
 <template>
   <PageHeader title="Orders" :items="items"/>
   <CustomTable
-      name="ORDERS TABLE"
+      name="EMPTY WAGON ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
       :isLoading="isLoading"
+      :url="table.url"
+      :pagination="pagination"
   >
     <template v-slot:top-right>
       <div class="btn-group">

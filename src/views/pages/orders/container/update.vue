@@ -127,7 +127,6 @@ export default {
       this.hasData = true
       let departure = data.departure
       let destination = data.destination
-      let product = data.product
 
       this.departure.options = [{
         value: parseInt(departure.id),
@@ -153,37 +152,38 @@ export default {
         code: destination.code
       }
 
-      this.products.options = [{
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }]
-
-      this.products.selected = {
-        value: parseInt(product.id),
-        label: product.name,
-        hc_code: product['hc_code'],
-        etcng: product['etcng_code'],
-      }
+      // this.products.options = [{
+      //   value: parseInt(product.id),
+      //   label: product.name,
+      //   hc_code: product['hc_code'],
+      //   etcng: product['etcng_code'],
+      // }]
+      //
+      // this.products.selected = {
+      //   value: parseInt(product.id),
+      //   label: product.name,
+      //   hc_code: product['hc_code'],
+      //   etcng: product['etcng_code'],
+      // }
     },
 
     async updateContainerOrder() {
-      let order = this.$store.state.orders.currentlyUpdating;
-      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
-        order: order,
-        type: 'container',
-        product: this.products.selected,
-        sending_type: order.sending_type.replace(' ', '_').toLowerCase()
-      })))
-      await Swal.fire({
-        position: "center",
-        icon: response.ok ? "success" : "error",
-        title: response.ok ? "Order updated successfully" : "Order update failed",
-        showConfirmButton: false,
-        timer: 5000,
-      });
-      await this.$router.push({name: "order_container_list"})
+      await Swal.fire('Under maintenance')
+      // let order = this.$store.state.orders.currentlyUpdating;
+      // let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
+      //   order: order,
+      //   type: 'container',
+      //   // product: this.products.selected,
+      //   // sending_type: order.sending_type.replace(' ', '_').toLowerCase()
+      // })))
+      // await Swal.fire({
+      //   position: "center",
+      //   icon: response.ok ? "success" : "error",
+      //   title: response.ok ? "Order updated successfully" : "Order update failed",
+      //   showConfirmButton: false,
+      //   timer: 5000,
+      // });
+      // await this.$router.push({name: "order_container_list"})
     }
   },
   computed: {
@@ -202,6 +202,12 @@ export default {
 </script>
 
 <template>
+  <!-- Success Alert -->
+  <b-alert show dismissible variant="warning" class="alert-solid alert-label-icon fade show" role="alert">
+    <i class="ri-notification-off-line label-icon"></i>
+    <strong>Warning</strong> - This page is currently under maintenance
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+  </b-alert>
 
   <custom_wizard wizard_header="Update order" :steps="steps" v-if="hasData">
     <template v-slot:content-step1-body>
@@ -259,7 +265,7 @@ export default {
           <label for="shipment_status" class="form-label">Shipment status</label>
           <select class="form-select" id="shipment_status" v-model="currentOrder.shipment_status">
             <option selected disabled>Select shipment status</option>
-            <option value="Block train">In process</option>
+            <option value="In process">In process</option>
             <option value="Delivered">Delivered</option>
             <option value="Completed">Completed</option>
           </select>

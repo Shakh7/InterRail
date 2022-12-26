@@ -7,9 +7,10 @@ import "@vueform/multiselect/themes/default.css";
 import skeleton from "@/components/custom/skeleton.vue";
 import spxnqpau from "@/components/widgets/spxnqpau.json";
 import Lottie from "../widgets/lottie.vue";
+import pagination from "./pagination.vue";
+import store from "../../state/store.js";
 
 export default {
-  emits: ['page-change'],
   name: 'CustomTable',
   data() {
     return {
@@ -32,6 +33,11 @@ export default {
       search: '',
       apiData: [],
       defaultOptions: {animationData: spxnqpau},
+
+      paginate: {
+        current: 1,
+        count: 0
+      }
     }
   },
   props: {
@@ -68,52 +74,58 @@ export default {
       type: Boolean,
       default: () => false
     },
+    pagination: {
+      type: Object,
+      default: () => {
+      }
+    }
   },
   components: {
     flatPickr,
     Multiselect,
     skeleton,
     lottie: Lottie,
+    pagination
   },
   computed: {
     searchedTable() {
-      let searchableFields = this.headers.filter(header => header.searchable === true).map(header => header.field)
-      let data = this.rows
-      let searchResults = []
-
-      if (this.search.length > 0) {
-        Array.from(data).forEach(item => {
-          for (let [key, value] of Object.entries(item)) {
-            if (value !== null) {
-              let expectedValue = value.toString().toLowerCase()
-              let query = this.search.toString().trim().toLowerCase()
-              if (searchableFields.includes(key)) {
-                if (expectedValue.includes(query)) {
-                  searchResults.includes(item) === false ? searchResults.push(item) : 0
-                }
-              }
-            }
-          }
-        })
-      } else {
-        searchResults = data
-      }
-
-      if (this.date !== null) {
-        let dates = this.date.split('to')
-        searchResults = searchResults.filter(item => {
-          let itemDate = new Date(item.date)
-          if (dates.length === 1) {
-            return dates[0].trim() === item.date
-          } else {
-            let startDate = new Date(dates[0].trim())
-            let endDate = new Date(dates[1].trim())
-            return itemDate >= startDate && itemDate <= endDate
-          }
-        })
-
-        return searchResults
-      }
+      // let searchableFields = this.headers.filter(header => header.searchable === true).map(header => header.field)
+      // let data = this.rows
+      let searchResults = this.apiData
+      //
+      // if (this.search.length > 0) {
+      //   Array.from(data).forEach(item => {
+      //     for (let [key, value] of Object.entries(item)) {
+      //       if (value !== null) {
+      //         let expectedValue = value.toString().toLowerCase()
+      //         let query = this.search.toString().trim().toLowerCase()
+      //         if (searchableFields.includes(key)) {
+      //           if (expectedValue.includes(query)) {
+      //             searchResults.includes(item) === false ? searchResults.push(item) : 0
+      //           }
+      //         }
+      //       }
+      //     }
+      //   })
+      // } else {
+      //   searchResults = data
+      // }
+      //
+      // if (this.date !== null) {
+      //   let dates = this.date.split('to')
+      //   searchResults = searchResults.filter(item => {
+      //     let itemDate = new Date(item.date)
+      //     if (dates.length === 1) {
+      //       return dates[0].trim() === item.date
+      //     } else {
+      //       let startDate = new Date(dates[0].trim())
+      //       let endDate = new Date(dates[1].trim())
+      //       return itemDate >= startDate && itemDate <= endDate
+      //     }
+      //   })
+      //
+      //   return searchResults
+      // }
 
       return searchResults;
     },
@@ -134,7 +146,7 @@ export default {
         }
       })
       return fields
-    }
+    },
   },
   methods: {
     pushSelected(action, id) {
@@ -174,15 +186,18 @@ export default {
       return item.length > 0
     },
     async getData() {
-      let result = await fetch(this.url)
+      let result = store.state.user.role === 'admin'
+          ? await fetch(this.url + `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`)
+          : await fetch(this.url + `?offset=${0}&limit=${30}&manager=${store.state.user.id}`)
+
       let data = await result.json()
       this.apiData = data['results']
-    }
-  },
-  watch: {
-    "$route.query": function () {
-      this.$emit('page-change', this.$route.query.page)
+      this.paginate.count = data['count']
     },
+    async pageChange(page) {
+      this.paginate.current = Math.ceil(page)
+      await this.getData()
+    }
   },
   async mounted() {
     await this.getData()
@@ -191,6 +206,7 @@ export default {
 </script>
 
 <template>
+
   <div class="row">
     <div class="col-lg-12">
       <div class="card" id="orderList">
@@ -256,7 +272,7 @@ export default {
         </div>
         <div class="card-body pt-0 mt-0">
           <div class="pt-3">
-            <div class="table-responsive table-card">
+            <div class="table-responsive table-card border-bottom-0">
               <table class="table align-middle table-nowrap" :id="id">
                 <thead class="text-muted table-light">
                 <tr>
@@ -273,16 +289,18 @@ export default {
                   </th>
                 </tr>
                 </thead>
-                <tbody v-if="rows.length > 0" class="list form-check-all">
-                <tr v-for="r in searchedTable" :key="r" :class="rowIsSelected(r.id) ? 'bg-soft-secondary' : ''">
+                <tbody v-if="apiData.length > 0" class="list form-check-all">
+                <tr v-for="r in apiData" :key="r">
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" @click="pushSelected('one', r.id)">
+                      <input class="form-check-input" type="checkbox">
                     </div>
                   </th>
                   <td v-for="td in headers" :key="td"
                       :class="td.align === undefined ? '' : 'text-' + td.align">
-                    <slot :name="td.field" :row="r" :key="td.field">{{ r[td.field] }}</slot>
+                    <slot :name="td.field" :row="r.order" :key="td.field">
+                      {{ r.order[td.field] }}
+                    </slot>
                   </td>
                 </tr>
                 </tbody>
@@ -299,7 +317,7 @@ export default {
                 </tr>
                 </tbody>
                 <tbody v-else-if="rows.length === 0 && !isLoading">
-                <tr class="text-center">
+                <tr class="text-center border-white">
                   <td v-if="selectable === true" :colspan="headers.length">
                     <lottie
                         colors="primary:#405189,secondary:#08a88a"
@@ -322,6 +340,18 @@ export default {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+        <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0">
+          <div class="d-flex justify-content-end py-0 w-100">
+            <pagination
+                :page_count="paginate.count"
+                :per_page="pagination.perPage"
+                prev_text="Prev"
+                next_text="Next"
+                @page_change="pageChange"
+                @current_page="pageChange"
+            />
           </div>
         </div>
       </div>

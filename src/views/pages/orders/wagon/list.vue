@@ -76,6 +76,12 @@ export default {
       ],
       orders: [],
       isLoading: false,
+      table: {
+        url: `${process.env.VUE_APP_ORDER_URL}/wagon_order/list/`,
+      },
+      pagination: {
+        perPage: 10,
+      },
     };
   },
   methods: {
@@ -196,10 +202,11 @@ export default {
       name="ORDERS TABLE"
       id="orders_table"
       :headers="headers"
-      :rows="orders.filter(order => order.manager === $store.state.user.id || $store.state.user.role === 'admin')"
       :selectable="true"
       :searchable="true"
       :isLoading="isLoading"
+      :url="table.url"
+      :pagination="pagination"
   >
     <template v-slot:top-right>
       <div class="btn-group">

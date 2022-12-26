@@ -170,21 +170,22 @@ export default {
     },
 
     async updateContainerOrder() {
-      let order = this.$store.state.orders.currentlyUpdating;
-      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
-        order: order,
-        type: 'wagon',
-        product: this.products.selected
-      })))
-      await Swal.fire({
-        position: "center",
-        icon: response.ok ? "success" : "error",
-        title: response.ok ? "Order updated successfully" : "Order update failed",
-        showConfirmButton: false,
-        timer: 5000,
-      });
-      console.log(await response.json())
-      await this.$router.push({name: "order_wagon_list"})
+      // let order = this.$store.state.orders.currentlyUpdating;
+      // let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
+      //   order: order,
+      //   type: 'wagon',
+      //   product: this.products.selected
+      // })))
+      // await Swal.fire({
+      //   position: "center",
+      //   icon: response.ok ? "success" : "error",
+      //   title: response.ok ? "Order updated successfully" : "Order update failed",
+      //   showConfirmButton: false,
+      //   timer: 5000,
+      // });
+      // console.log(await response.json())
+      // await this.$router.push({name: "order_wagon_list"})
+      await Swal.fire('Under maintenance')
     }
   },
   computed: {
@@ -427,7 +428,9 @@ export default {
           <label for="payment_status" class="form-label">Customer</label>
           <select class="form-select" id="payment_status" v-model="currentOrder.customer">
             <option selected disabled>Select user</option>
-            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client" :value="client.id">{{ client.full_name }}</option>
+            <option v-for="client in $store.state.users_list.filter(user => user.role === 'client')" :key="client"
+                    :value="client.id">{{ client.full_name }}
+            </option>
           </select>
         </div>
 
