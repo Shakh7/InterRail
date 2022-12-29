@@ -1651,7 +1651,7 @@ export default {
 
                 <div class="card">
                   <div class="card-body">
-                    <h5 class="card-title mb-3">Projects</h5>
+                    <h5 class="card-title mb-3">Orders</h5>
 
                     <!-- Swiper -->
                     <div class="swiper project-swiper">
