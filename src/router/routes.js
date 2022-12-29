@@ -84,7 +84,8 @@ export default [
                 component: () => import("../views/pages/users/ManagersList.vue"),
             },
             {path: 'clients/', name: 'clients_list', component: () => import("../views/pages/users/ClientsList.vue"),},
-            {path: 'users/:id', name: 'user_profile', component: () => import("../views/pages/profile/index.vue"),}
+            {path: 'users/:id', name: 'user_profile', component: () => import("../views/pages/profile/index.vue"),},
+            {path: 'clients/:id', name: 'client_profile', component: () => import("../views/pages/users/client/index.vue"),}
         ],
     },
 
