@@ -178,12 +178,16 @@ export default {
 
 
     setToUpdateOrder(order) {
-      this.setCurrentlyUpdating(order, 'wagon')
-      this.$router.push({name: 'orders_wagon_update', params: {id: order.id}})
+      this.setCurrentlyUpdating(order)
+      this.$router.push({name: 'orders_wagon_update', params: {id: order.order.id}})
     },
 
     getAccount(account) {
       return store.state.users_list.find(user => user.id === account) || {full_name: 'Unknown'}
+    },
+
+    getTableData(data, field) {
+      return data.row['order'][field]
     }
   },
   async mounted() {
@@ -225,8 +229,8 @@ export default {
 
     <template v-slot:order_number="slotProps">
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="{name: 'orders_wagon_detail', params: {id: slotProps.row.order_number}}">
-          {{ slotProps.row.order_number }}
+        <router-link :to="{name: 'orders_wagon_detail', params: {id: getTableData(slotProps, 'order_number')}}">
+          {{ getTableData(slotProps, 'order_number') }}
         </router-link>
       </span>
     </template>
@@ -241,10 +245,10 @@ export default {
     <template v-slot:customer="slotProps">
       <div>
         <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-          {{ getAccount(slotProps.row.customer)['full_name'][0].toUpperCase() }}
+          {{ getAccount(getTableData(slotProps, 'customer'))['full_name'][0].toUpperCase() }}
         </span>
         <span>
-          {{ getAccount(slotProps.row.customer)['full_name'] }}
+          {{ getAccount(getTableData(slotProps, 'customer'))['full_name'] }}
         </span>
       </div>
     </template>
@@ -252,10 +256,10 @@ export default {
     <template v-slot:manager="slotProps">
       <div>
         <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-          {{ getAccount(slotProps.row.manager)['full_name'][0].toUpperCase() }}
+          {{ getAccount(getTableData(slotProps, 'manager'))['full_name'][0].toUpperCase() }}
         </span>
         <span>
-          {{ getAccount(slotProps.row.manager)['full_name'] }}
+          {{ getAccount(getTableData(slotProps, 'manager'))['full_name'] }}
         </span>
       </div>
     </template>

@@ -298,7 +298,7 @@ export default {
                   </th>
                   <td v-for="td in headers" :key="td"
                       :class="td.align === undefined ? '' : 'text-' + td.align">
-                    <slot :name="td.field" :row="r.order" :key="td.field">
+                    <slot :name="td.field" :row="r" :key="td.field">
                       {{ r.order[td.field] }}
                     </slot>
                   </td>

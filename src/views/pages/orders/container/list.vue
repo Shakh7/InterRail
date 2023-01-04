@@ -110,9 +110,8 @@ export default {
       this.isLoading = false
     },
     setToUpdateOrder(order) {
-      console.log(order)
       this.setCurrentlyUpdating(order)
-      this.$router.push({name: 'orders_container_update', params: {id: order.order_number}})
+      this.$router.push({name: 'orders_container_update', params: {id: order.order.order_number}})
     },
     deleteOrderConfirmation(order) {
       Swal.fire({
@@ -198,6 +197,10 @@ export default {
     pageChange(page) {
       this.pagination.currentPage = page
     },
+
+    getTableData(data, field) {
+      return data.row['order'][field]
+    }
   },
   async mounted() {
     // await this.getOrders()
@@ -238,9 +241,10 @@ export default {
     </template>
 
     <template v-slot:order_number="slotProps">
+
       <span class="badge badge-soft-secondary fs-12">
-        <router-link :to="{name: 'orders_container_detail', params: {id: slotProps.row.order_number}}">
-          {{ slotProps.row.order_number }}
+        <router-link :to="{name: 'orders_container_detail', params: {id: getTableData(slotProps, 'order_number')}}">
+          {{ getTableData(slotProps, 'order_number') }}
         </router-link>
       </span>
     </template>
@@ -256,64 +260,69 @@ export default {
 
     <template v-slot:customer="slotProps">
       <div>
-            <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-              {{ getAccount(slotProps.row.customer)['full_name'][0].toUpperCase() }}
-            </span>
+        <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
+          {{ getAccount(getTableData(slotProps, 'customer'))['full_name'][0].toUpperCase() }}
+        </span>
         <span>
-              {{ getAccount(slotProps.row.customer)['full_name'] }}
-            </span>
+          {{ getAccount(getTableData(slotProps, 'customer'))['full_name'] }}
+        </span>
       </div>
     </template>
 
     <template v-slot:manager="slotProps">
       <div>
-            <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
-              {{ getAccount(slotProps.row.manager)['full_name'][0].toUpperCase() }}
-            </span>
+        <span class="rounded-circle bg-soft-secondary text-secondary mx-1 px-2">
+          {{ getAccount(getTableData(slotProps, 'manager'))['full_name'][0].toUpperCase() }}
+        </span>
         <span>
-              {{ getAccount(slotProps.row.manager)['full_name'] }}
-            </span>
+          {{ getAccount(getTableData(slotProps, 'manager'))['full_name'] }}
+        </span>
       </div>
     </template>
 
     <template v-slot:type="slotProps">
-          <span v-if="slotProps.row.type == 'Export'" class="badge bg-success">
-            {{ slotProps.row.type }}
-          </span>
-      <span v-else-if="slotProps.row.type == 'Import'" class="badge bg-primary">
-            {{ slotProps.row.type }}
-          </span>
-      <span v-else-if="slotProps.row.type == 'Transit'" class="badge bg-warning">
-            {{ slotProps.row.type }}
-          </span>
+      <span v-if="getTableData(slotProps, 'type') == 'Export'" class="badge bg-success">
+        Export
+      </span>
+      <span v-else-if="getTableData(slotProps, 'type') == 'Import'" class="badge bg-primary">
+        Import
+      </span>
+      <span v-else-if="getTableData(slotProps, 'type') == 'Transit'" class="badge bg-warning">
+        Transit
+      </span>
     </template>
 
     <template v-slot:shipment_status="slotProps">
-          <span v-if="slotProps.row.shipment_status == 'Completed'" class="badge badge-outline-success">
-            {{ slotProps.row.shipment_status }}
-          </span>
-      <span v-else-if="slotProps.row.shipment_status == 'Delivered'" class="badge badge-outline-primary">
-            {{ slotProps.row.shipment_status }}
-          </span>
-      <span v-else-if="slotProps.row.shipment_status == 'In process'" class="badge badge-outline-warning">
-            {{ slotProps.row.shipment_status }}
-          </span>
+      <span v-if="getTableData(slotProps, 'shipment_status') == 'Completed'" class="badge badge-outline-success">
+        Completed
+      </span>
+      <span v-else-if="getTableData(slotProps, 'shipment_status') == 'Delivered'"
+            class="badge badge-outline-primary">
+        Delivered
+      </span>
+      <span v-else-if="getTableData(slotProps, 'shipment_status') == 'In process'"
+            class="badge badge-outline-warning">
+        In process
+      </span>
     </template>
 
     <template v-slot:payment_status="slotProps">
-          <span v-if="slotProps.row.payment_status == 'Reserved'" class="badge badge-outline-success">
-            {{ slotProps.row.payment_status }}
-          </span>
-      <span v-else-if="slotProps.row.payment_status == 'Received'" class="badge badge-outline-primary">
-            {{ slotProps.row.payment_status }}
-          </span>
-      <span v-else-if="slotProps.row.payment_status == 'Issued'" class="badge badge-outline-warning">
-            {{ slotProps.row.payment_status }}
-          </span>
+      <span v-if="getTableData(slotProps, 'payment_status') == 'Reserved'" class="badge badge-outline-success">
+        Reserved
+      </span>
+      <span v-else-if="getTableData(slotProps, 'payment_status') == 'Received'" class="badge badge-outline-primary">
+        Received
+      </span>
+      <span v-else-if="getTableData(slotProps, 'payment_status') == 'Issued'" class="badge badge-outline-warning">
+        Issued
+      </span>
     </template>
 
     <template v-slot:lot_number="slotProps">
-      {{ slotProps.row.lot_number === null || slotProps.row.lot_number === '' ? '-' : slotProps.row.lot_number }}
+      {{
+        getTableData(slotProps, 'lot_number') === null || getTableData(slotProps, 'lot_number') === '' ? '-'
+            : getTableData(slotProps, 'lot_number')
+      }}
     </template>
 
   </CustomTable>

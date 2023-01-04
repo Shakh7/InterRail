@@ -118,17 +118,17 @@ export default {
     },
     onOptionSelect(option, option_type) {
       let id = option.value
-      option_type === 'departure' ? this.order.departure_id = id
-          : option_type === 'destination' ? this.order.destination_id = id
-              : option_type === 'products' ? this.product_id = id
-                  : null
+      let order = this.$store.state.orders.currentlyUpdating['order']
+      option_type === 'departure' ? order.departure_id = id
+          : option_type === 'destination' ? order.destination_id = id : null
     },
     setStationOptions(data) {
+      let order = data['order']
+      let product = data['product']
 
-      this.hasData = true
-      let departure = data.departure
-      let destination = data.destination
-      let product = data.product
+      let departure = order.departure
+      let destination = order.destination
+
 
       this.departure.options = [{
         value: parseInt(departure.id),
@@ -136,11 +136,7 @@ export default {
         code: departure.code
       }]
 
-      this.departure.selected = {
-        value: parseInt(departure.id),
-        label: departure.name,
-        code: departure.code
-      }
+      this.departure.selected = this.departure.options[0]
 
       this.destination.options = [{
         value: parseInt(destination.id),
@@ -148,11 +144,7 @@ export default {
         code: destination.code
       }]
 
-      this.destination.selected = {
-        value: parseInt(destination.id),
-        label: destination.name,
-        code: destination.code
-      }
+      this.destination.selected = this.destination.options[0]
 
       this.products.options = [{
         value: parseInt(product.id),
@@ -167,36 +159,43 @@ export default {
         hc_code: product['hc_code'],
         etcng: product['etcng_code'],
       }
+
+      delete this.$store.state.orders.currentlyUpdating['order'].departure
+      delete this.$store.state.orders.currentlyUpdating['order'].destination
+
+      this.$store.state.orders.currentlyUpdating['order'].departure_id = departure.id
+      this.$store.state.orders.currentlyUpdating['order'].destination_id = destination.id
+
+      this.hasData = true
     },
 
     async updateContainerOrder() {
-      // let order = this.$store.state.orders.currentlyUpdating;
-      // let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
-      //   order: order,
-      //   type: 'wagon',
-      //   product: this.products.selected
-      // })))
-      // await Swal.fire({
-      //   position: "center",
-      //   icon: response.ok ? "success" : "error",
-      //   title: response.ok ? "Order updated successfully" : "Order update failed",
-      //   showConfirmButton: false,
-      //   timer: 5000,
-      // });
-      // console.log(await response.json())
-      // await this.$router.push({name: "order_wagon_list"})
-      await Swal.fire('Under maintenance')
+      let order = this.$store.state.orders.currentlyUpdating['order'];
+      let response = await this.updateCurrentUpdating(JSON.parse(JSON.stringify({
+        order: order,
+        type: 'wagon',
+        product: this.products.selected.value,
+        quantity: this.$store.state.orders.currentlyUpdating['quantity']
+      })))
+      await Swal.fire({
+        position: "center",
+        icon: response.ok ? "success" : "error",
+        title: response.ok ? "Order updated successfully" : "Order update failed",
+        showConfirmButton: false,
+        timer: 5000,
+      });
+      await this.$router.push({name: "order_wagon_list"})
     }
   },
   computed: {
     currentOrder() {
-      return this.$store.state.orders.currentlyUpdating;
+      return this.$store.state.orders.currentlyUpdating['order'];
     },
   },
   mounted() {
     let data = this.$store.state.orders.currentlyUpdating
     data.length === 0
-        ? this.$router.push({name: 'order_container_list'})
+        ? this.$router.push({name: 'order_wagon_list'})
         : this.setStationOptions(data)
   },
 }
@@ -205,6 +204,8 @@ export default {
 
 <template>
 
+  {{ currentOrder }}
+
   <custom_wizard wizard_header="Update order" :steps="steps" v-if="hasData">
     <template v-slot:content-step1-body>
       <div class="row g-3">
@@ -212,7 +213,7 @@ export default {
         <div class="col-md-4">
           <label class="form-label">Order number</label>
           <input :value="currentOrder.order_number" type="number" class="form-control"
-                 placeholder="Order number may not be updated">
+                 placeholder="Order number may not be updated" disabled>
         </div>
 
         <div class="col-md-4">

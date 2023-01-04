@@ -25,7 +25,7 @@ export const actions = {
     },
     async updateCurrentUpdating({commit}, order_data) {
         let order = order_data['order']
-        let order_typee = order_data['type']
+        let update_order_type = order_data['type']
 
         let order_payment_status = order.payment_status.toLowerCase()
 
@@ -44,8 +44,8 @@ export const actions = {
             payment_status: order_payment_status,
             shipper: order.shipper,
             consignee: order.consignee,
-            departure_id: order.departure.id,
-            destination_id: order.destination.id,
+            departure_id: order.departure_id,
+            destination_id: order.destination_id,
             border_crossing: order.border_crossing,
             conditions_of_carriage: order.conditions_of_carriage,
             rolling_stock: order.rolling_stock,
@@ -58,28 +58,30 @@ export const actions = {
 
         let return_response = ''
 
-        if (order_typee === 'wagon') {
-            let product = order_data['product']
+        if (update_order_type === 'wagon') {
+            let product_id = order_data['product']
+            let quantity = order_data['quantity']
             let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/wagon_order/update/${order.order_number}/`, {
                 method: "PUT",
                 body: JSON.stringify({
                     order: thisorder,
-                    sending_type: "single",
-                    product_id: product.value
+                    product_id: product_id,
+                    quantity: quantity
                 }),
                 headers: {
                     "Content-Type": "application/json",
                 }
             });
             return_response = response
-        } else if (order_typee === 'container') {
-            let product = order_data['product']
+        } else if (update_order_type === 'container') {
+            let product_id = order_data['product']
+            let sending_type = order_data['sending_type']
             let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${order.order_number}/edit/`, {
                 method: "PUT",
                 body: JSON.stringify({
                     order: thisorder,
-                    sending_type: "single",
-                    product_id: product.value
+                    sending_type: sending_type,
+                    product_id: product_id
                 }),
                 headers: {
                     "Content-Type": "application/json",
