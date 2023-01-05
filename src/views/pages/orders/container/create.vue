@@ -44,8 +44,8 @@ export default {
         payment_status: "",
         shipper: "",
         consignee: "",
-        departure_id: 1,
-        destination_id: 1,
+        departure_id: "",
+        destination_id: "",
         border_crossing: "",
         conditions_of_carriage: "",
         rolling_stock: "",
@@ -53,7 +53,7 @@ export default {
         destination_country: "",
         comment: "",
         manager: this.$store.state.user.id,
-        customer: null,
+        customer: "",
         counterparties: [
           {
             category_id: [],
@@ -88,6 +88,8 @@ export default {
         options: []
       },
       loading: false,
+
+      invalidFields: [],
     }
   },
   components: {
@@ -218,69 +220,89 @@ export default {
       return this.container_types.map(o => o.container_type).includes(ctr_type)
     },
     async createContainerOrder() {
-      let counterparties = []
 
-      this.order.counterparties.forEach(counterparty => {
-        counterparty.category_id.forEach(category => {
-          counterparties.push({
-            category_id: category.value,
-            counterparty_id: counterparty.counterparty_id.id,
-          })
+      if (!this.isValid()) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
         })
-      })
-      let order = {
-        ...this.order,
-      }
-      order.counterparties = counterparties
 
-      let ctr_types = []
-      this.container_types.forEach(container_type => {
-        let pre_costs = []
+        Toast.fire({
+          icon: 'warning',
+          title: `Fill all the fields (${this.invalidFields.length})`
+        })
+        return
+      } else {
+        let counterparties = []
 
-        container_type.container_preliminary_costs.forEach(pre_cost => {
-          pre_cost.category_id.forEach(category => {
-            pre_costs.push({
+        this.order.counterparties.forEach(counterparty => {
+          counterparty.category_id.forEach(category => {
+            counterparties.push({
               category_id: category.value,
-              counterparty_id: pre_cost.counterparty_id.id,
-              preliminary_cost: category.pre_cost
+              counterparty_id: counterparty.counterparty_id.id,
             })
           })
         })
-
-        let ctr_typesa = {
-          agreed_rate: container_type.agreed_rate,
-          quantity: container_type.quantity,
-          container_type: container_type.container_type,
-          container_preliminary_costs: pre_costs
+        let order = {
+          ...this.order,
         }
-        ctr_types.push(ctr_typesa)
-      })
+        order.counterparties = counterparties
 
-      let headers = new Headers();
-      headers.append("Content-Type", `application/json`);
+        let ctr_types = []
+        this.container_types.forEach(container_type => {
+          let pre_costs = []
 
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/create/`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          "order": order,
-          "product_id": this.products.selected.value,
-          "container_types": ctr_types,
-          "sending_type": this.sending_type,
+          container_type.container_preliminary_costs.forEach(pre_cost => {
+            pre_cost.category_id.forEach(category => {
+              pre_costs.push({
+                category_id: category.value,
+                counterparty_id: pre_cost.counterparty_id.id,
+                preliminary_cost: category.pre_cost
+              })
+            })
+          })
+
+          let ctr_typesa = {
+            agreed_rate: container_type.agreed_rate,
+            quantity: container_type.quantity,
+            container_type: container_type.container_type,
+            container_preliminary_costs: pre_costs
+          }
+          ctr_types.push(ctr_typesa)
         })
-      })
 
-      await Swal.fire({
-        position: "center",
-        icon: response.ok ? "success" : "error",
-        title: response.ok ? "Order created successfully" : "Order create failed",
-        showConfirmButton: false,
-        timer: 3000,
-      });
+        let headers = new Headers();
+        headers.append("Content-Type", `application/json`);
 
-      if (response.ok) await this.$router.push({name: "order_container_list"})
+        let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/create/`, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            "order": order,
+            "product_id": this.products.selected.value,
+            "container_types": ctr_types,
+            "sending_type": this.sending_type,
+          })
+        })
+
+        await Swal.fire({
+          position: "center",
+          icon: response.ok ? "success" : "error",
+          title: response.ok ? "Order created successfully" : "Order create failed",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+
+        if (response.ok) await this.$router.push({name: "order_container_list"})
+      }
     },
-
 
     async getAutoCompleteOrders() {
       let response = null
@@ -349,6 +371,53 @@ export default {
         }
       }
 
+    },
+
+    isValid() {
+      this.invalidFields = []
+      let exseptions = ['lot_number', 'border_crossing', 'comment']
+
+      for (const [key, val] of Object.entries(this.order)) {
+        if (val === "" && !exseptions.includes(key)) {
+          this.invalidFields.push(key)
+        }
+      }
+
+      if (this.products.selected === null) {
+        this.invalidFields.push('product')
+      } else {
+        this.invalidFields = this.invalidFields.filter(field => field !== 'product')
+      }
+
+      this.container_types.forEach(ctr_type => {
+        let c = JSON.parse(JSON.stringify(ctr_type))
+
+        if (c.agreed_rate === "") {
+          if (!this.invalidFields.includes('agreed_rate')) this.invalidFields.push('agreed_rate')
+        } else {
+          this.invalidFields = this.invalidFields.filter(field => field !== 'agreed_rate')
+        }
+
+        if (c.quantity === "") {
+          if (!this.invalidFields.includes('quantity')) this.invalidFields.push('quantity')
+        } else {
+          this.invalidFields = this.invalidFields.filter(field => field !== 'quantity')
+        }
+
+        c.container_preliminary_costs.forEach(pre_cost => {
+          if (pre_cost.category_id.length === 0 || pre_cost.counterparty_id === 1) {
+            if (!this.invalidFields.includes('counterparty')) this.invalidFields.push('counterparty')
+          } else {
+            if (pre_cost.category_id.map(i => i.pre_cost).includes('')) {
+              if (!this.invalidFields.includes('counterparty')) this.invalidFields.push('counterparty')
+            } else {
+              this.invalidFields = this.invalidFields.filter(field => field !== 'counterparty')
+            }
+          }
+        })
+      })
+
+      return this.invalidFields.length === 0
     }
   },
   watch: {
@@ -377,6 +446,9 @@ export default {
 </script>
 
 <template>
+  {{ container_types }}
+  <br><br>
+  {{ order.counterparties }}
   <div class="row">
     <div class="col-xl-12 pb-3">
       <custom_wizard wizard_header="Create Order"
@@ -687,9 +759,13 @@ export default {
             <div class="col-lg-6 px-1" v-for="ctr_type in container_types" :key="ctr_type">
               <div class="card border-1">
                 <div class="card-header">
-                  <button type="button"
-                          @click="addOrRemoveContainerType( ctr_type.container_type,`${ isInContainerTypes(ctr_type.container_type) ? 'remove' : 'add' }`)"
-                          class="btn-close float-end fs-11" aria-label="Close"></button>
+                  <button
+                      type="button"
+                      @click="addOrRemoveContainerType(
+                              ctr_type.container_type,
+                              `${ isInContainerTypes(ctr_type.container_type) ? 'remove' : 'add' }`
+                          )"
+                      class="btn-close float-end fs-11" aria-label="Close"></button>
                   <h6 class="card-title mb-0">Order type: {{ ctr_type.container_type }}</h6>
                 </div>
                 <div class="card-footer border-bottom">
@@ -718,19 +794,6 @@ export default {
                                  :placeholder="category.label" v-model="category.pre_cost">
                         </b-list-group-item>
                       </b-list-group>
-                      <!--                      <b-list-group class="bg-light p-2 py-1" v-else>-->
-                      <!--                        <h6 class="my-0 p-2">-->
-                      <!--                          {{-->
-                      <!--                            counterparty.counterparty_id.name === undefined ||-->
-                      <!--                            counterparty.counterparty_id.name === null-->
-                      <!--                                ? 'Counterparty name' : counterparty.counterparty_id.name-->
-                      <!--                          }}-->
-                      <!--                        </h6>-->
-                      <!--                        <b-list-group-item class="my-1 border-0 p-0 ps-2 bg-transparent">-->
-                      <!--                          <span class="text-primary px-2">-</span>-->
-                      <!--                          <span class="text-muted">Please, select countery</span>-->
-                      <!--                        </b-list-group-item>-->
-                      <!--                      </b-list-group>-->
                     </div>
                   </div>
                 </div>

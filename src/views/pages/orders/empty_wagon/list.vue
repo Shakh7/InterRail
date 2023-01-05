@@ -249,7 +249,7 @@ export default {
       <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square"
                          class="c_icon mx-2 c_icon_hoverable"/>
 
-      <font-awesome-icon @click="deleteOrderConfirmation(slotProps.row)"
+      <font-awesome-icon @click="deleteOrderConfirmation(slotProps.row.order)"
                          icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"/>
     </template>
 
