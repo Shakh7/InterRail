@@ -26,13 +26,13 @@ export default {
   },
   data() {
     return {
-      title: "Invoice List",
+      title: "Applications",
       items: [{
-        text: "Velzon",
+        text: "Home",
         href: "/",
       },
         {
-          text: "Invoice List",
+          text: "Applications List",
           active: true,
         },
       ],
@@ -334,14 +334,11 @@ export default {
       <div class="card" id="invoiceList">
         <div class="card-header border-0">
           <div class="d-flex align-items-center">
-            <h5 class="card-title mb-0 flex-grow-1">Invoices</h5>
+            <h5 class="card-title mb-0 flex-grow-1">Applications</h5>
             <div class="flex-shrink-0">
-              <button class="btn btn-soft-danger me-1">
-                <i class="ri-delete-bin-2-line"></i>
-              </button>
-              <router-link to="/invoices/create" class="btn btn-danger">
+              <router-link to="/invoices/create" class="btn btn-success">
                 <i class="ri-add-line align-bottom me-1"></i>
-                Create Invoice
+                Create Application
               </router-link>
             </div>
           </div>
