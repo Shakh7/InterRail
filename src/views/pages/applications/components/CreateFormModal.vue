@@ -38,8 +38,8 @@
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="numberInput" class="form-label">Number</label>
-                    <input type="number" class="form-control" placeholder="Enter application number" id="numberInput">
+                    <label for="prefixInput" class="form-label">Prefix</label>
+                    <input type="number" class="form-control" placeholder="Prefix" id="prefixInput">
                   </div>
                 </div>
                 <div class="col-3">
@@ -372,26 +372,26 @@ export default {
       });
 
       // Step number click
-      var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
-      tabButtons.forEach(function (button, i) {
-        button.setAttribute("data-position", i);
-        button.addEventListener("click", function () {
-          var getProgreebar = button.getAttribute("data-progressbar");
-          if (getProgreebar) {
-            var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
-            var current = i;
-            var percent = (current / totallength) * 100;
-            document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
-          }
-          (form.querySelectorAll(".custom-nav .done").length > 0) ?
-              form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
-                doneTab.classList.remove('done');
-              }) : '';
-          for (var j = 0; j <= i; j++) {
-            tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
-          }
-        });
-      });
+      // var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
+      // tabButtons.forEach(function (button, i) {
+      //   button.setAttribute("data-position", i);
+      //   button.addEventListener("click", function () {
+      //     var getProgreebar = button.getAttribute("data-progressbar");
+      //     if (getProgreebar) {
+      //       var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
+      //       var current = i;
+      //       var percent = (current / totallength) * 100;
+      //       document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
+      //     }
+      //     (form.querySelectorAll(".custom-nav .done").length > 0) ?
+      //         form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
+      //           doneTab.classList.remove('done');
+      //         }) : '';
+      //     for (var j = 0; j <= i; j++) {
+      //       tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
+      //     }
+      //   });
+      // });
     });
   }
 }
