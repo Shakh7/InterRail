@@ -270,7 +270,7 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                     <input type="number" class="form-control" placeholder="Enter country" id="countryInput">
                   </div>
                 </div>
-
+<!---->
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="borderCrossing" class="form-label">Customer</label>
