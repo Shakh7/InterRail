@@ -15,6 +15,7 @@ import appConfig from "../../../../app.config";
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
 import Lottie from "@/components/widgets/lottie.vue";
+import createFormModal from "./components/CreateFormModal.vue";
 
 export default {
   page: {
@@ -278,7 +279,8 @@ export default {
     // FileTextIcon,
     // CheckSquareIcon,
     // ClockIcon,
-    // XOctagonIcon
+    // XOctagonIcon,
+    createFormModal
   },
 };
 </script>
@@ -336,10 +338,7 @@ export default {
           <div class="d-flex align-items-center">
             <h5 class="card-title mb-0 flex-grow-1">Applications</h5>
             <div class="flex-shrink-0">
-              <router-link to="/invoices/create" class="btn btn-success">
-                <i class="ri-add-line align-bottom me-1"></i>
-                Create Application
-              </router-link>
+              <createFormModal/>
             </div>
           </div>
         </div>
@@ -439,16 +438,16 @@ export default {
                   <td class="date"><small class="text-muted">Wagon</small></td>
                   <td class="invoice_amount">File</td>
                   <td class="status">
-<!--                    <span class="badge text-uppercase" :class="{-->
-<!--                        'badge-soft-success':item.status=='Paid',-->
-<!--                        'badge-soft-warning':item.status=='Unpaid',-->
-<!--                        'badge-soft-danger':item.status=='Cancel',-->
-<!--                        'badge-soft-primary':item.status=='Refund',-->
-<!--                      }">{{ item.status }}</span>-->
+                    <!--                    <span class="badge text-uppercase" :class="{-->
+                    <!--                        'badge-soft-success':item.status=='Paid',-->
+                    <!--                        'badge-soft-warning':item.status=='Unpaid',-->
+                    <!--                        'badge-soft-danger':item.status=='Cancel',-->
+                    <!--                        'badge-soft-primary':item.status=='Refund',-->
+                    <!--                      }">{{ item.status }}</span>-->
                     <span class="badge text-uppercase badge-soft-success">45</span>
                   </td>
                   <td class="status">
-                    <span >Manager</span>
+                    <span>Manager</span>
                   </td>
                   <td>
                     <div class="dropdown">
