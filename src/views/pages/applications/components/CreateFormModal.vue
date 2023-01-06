@@ -273,7 +273,7 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="borderCrossing" class="form-label">Border crossing</label>
+                    <label for="borderCrossing" class="form-label">Customer</label>
                     <Multiselect
                         class="form-control"
                         :searchable="true"

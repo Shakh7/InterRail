@@ -339,6 +339,7 @@ export default {
             <h5 class="card-title mb-0 flex-grow-1">Applications</h5>
             <div class="flex-shrink-0">
               <createFormModal/>
+<!--              -->
             </div>
           </div>
         </div>
