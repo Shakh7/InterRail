@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  interrail_admin:
+    image: ${registry:-interrail}/interrail_admin:${tag:-latest}
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=80
+      - VUE_APP_URL=${VUE_APP_URL}
+      - VUE_APP_ORDER_URL=${VUE_APP_ORDER_URL}
+      - VUE_APP_USERS_URL=${VUE_APP_USERS_URL}
+      - VUE_APP_I18N_LOCALE=${VUE_APP_I18N_LOCALE}
+      - VUE_APP_I18N_FALLBACK_LOCALE=${VUE_APP_I18N_FALLBACK_LOCALE}
+      - VUE_APP_DEFAULT_AUTH=${VUE_APP_DEFAULT_AUTH}
+    ports:
+      - 3000:80
