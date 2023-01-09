@@ -1,7 +1,7 @@
 <template>
   <!-- Default Modals -->
   <b-button variant="success" @click="modalShow = !modalShow">Create application</b-button>
-  <b-modal v-model="modalShow" hide-footer title="Modal Heading" class="v-modal-custom" size="lg">
+  <b-modal v-model="modalShow" hide-footer title="CREATE APPLICATION FORM" class="v-modal-custom" size="lg">
 
     <div class="form-steps mb-0">
       <form action="#">
@@ -44,29 +44,42 @@
                 </div>
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="forwarderSelect" class="form-label">Forwarder</label>
-                    <select id="forwarderSelect" class="form-select mb-3" aria-label=".form-select-lg example">
-                      <option selected>Forwarder</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
+                    <label for="forwarderSelect" class="form-label">
+                      Forwarder <span class="text-danger">*</span>
+                    </label>
+                    <Multiselect
+                        class="form-control"
+                        v-model="forwarders.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="forwarders.options"
+                        placeholder="Forwarder"
+                        :object="true"
+                        label="name"
+                    />
                   </div>
                 </div>
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="forwarderSelect" class="form-label">Sending type</label>
-                    <select id="forwarderSelect" class="form-select mb-3" aria-label=".form-select-lg example">
-                      <option selected>Sending type</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
+                    <label for="forwarderSelect" class="form-label">
+                      Sending type <span class="text-danger">*</span>
+                    </label>
+                    <Multiselect
+                        class="form-control"
+                        :searchable="true"
+                        mode="multiple"
+                        :hideSelected="false"
+                        :closeOnSelect="false"
+                        :options="['Single', 'Block train']"
+                        placeholder="Sending type"
+                    />
                   </div>
                 </div>
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="applicationDate" class="form-label">Date</label>
+                    <label for="applicationDate" class="form-label">
+                      Date <span class="text-danger">*</span>
+                    </label>
                     <input type="text" v-maska="'##/##/####'" placeholder="Type date" class="form-control"
                            id="applicationDate">
                   </div>
@@ -74,66 +87,26 @@
 
                 <div class="col-6">
                   <div class="mb-3">
-                    <label for="shipperName" class="form-label">Shipper</label>
+                    <label for="shipperName" class="form-label">
+                      Shipper <span class="text-danger">*</span>
+                    </label>
                     <input type="text" class="form-control" placeholder="Enter shipper name" id="shipperName">
                   </div>
                 </div>
 
                 <div class="col-6">
                   <div class="mb-3">
-                    <label for="consigneeName" class="form-label">Consignee</label>
+                    <label for="consigneeName" class="form-label">
+                      Consignee <span class="text-danger">*</span>
+                    </label>
                     <input type="text" class="form-control" placeholder="Enter consignee name" id="consigneeName">
                   </div>
                 </div>
 
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label for="departureName" class="form-label">Departure</label>
-                    <input type="text" class="form-control" placeholder="Departure name" id="departureName">
-                  </div>
-                </div>
+                <SelectStations :ratio="[4, 2, 4,2]" @onSelect="onStationSelect"/>
 
-                <div class="col-2">
-                  <div class="mb-3">
-                    <label for="departureCode" class="form-label">Code</label>
-                    <input type="text" class="form-control" placeholder="Code" id="departureCode">
-                  </div>
-                </div>
+                <SelectProduct :ratio="[6, 3, 3]" @onSelect="onProductSelect"/>
 
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label for="destinationName" class="form-label">Destination</label>
-                    <input type="text" class="form-control" placeholder="Destination name" id="destinationName">
-                  </div>
-                </div>
-
-                <div class="col-2">
-                  <div class="mb-3">
-                    <label for="destinationCode" class="form-label">Code</label>
-                    <input type="text" class="form-control" placeholder="Code" id="destinationCode">
-                  </div>
-                </div>
-
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label for="productName" class="form-label">Product</label>
-                    <input type="email" class="form-control" placeholder="Product" id="productName">
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="mb-3">
-                    <label for="productHcCode" class="form-label">HC code</label>
-                    <input type="text" class="form-control" placeholder="HC code" id="productHcCode">
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="mb-3">
-                    <label for="productETCNG" class="form-label">ETCNG</label>
-                    <input type="text" class="form-control" placeholder="ETCNG" id="productETCNG">
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -329,19 +302,45 @@ nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label
 
 <script>
 import Multiselect from "@vueform/multiselect";
+import SelectProduct from '../../../../components/custom/SelectProduct.vue'
+import SelectStations from '../../../../components/custom/SelectStations.vue'
+import OrdersApi from "../../../../api/orders/orders_api.js";
 
 export default {
   name: "createFormModal",
   data() {
     return {
-      modalShow: false
+      modalShow: false,
+      forwarders: {
+        selected: null,
+        options: []
+      }
     }
   },
-  components: {
-    Multiselect
+  methods: {
+    onProductSelect(product_id) {
+      console.log(product_id)
+    },
+    onStationSelect(station_obj) {
+      console.log(station_obj)
+    },
+    async getCounterpartyList() {
+      let orders = new OrdersApi()
+      this.forwarders.options = (await orders.getCounterpartyList()).results.map(item => {
+        return {
+          value: item.id,
+          name: item.name
+        }
+      })
+    },
   },
-  mounted() {
-
+  components: {
+    Multiselect,
+    SelectProduct,
+    SelectStations
+  },
+  async mounted() {
+    await this.getCounterpartyList()
     document.querySelectorAll(".form-steps").forEach(function (form) {
 
       // next tab
@@ -372,31 +371,27 @@ export default {
       });
 
       // Step number click
-      // var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
-      // tabButtons.forEach(function (button, i) {
-      //   button.setAttribute("data-position", i);
-      //   button.addEventListener("click", function () {
-      //     var getProgreebar = button.getAttribute("data-progressbar");
-      //     if (getProgreebar) {
-      //       var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
-      //       var current = i;
-      //       var percent = (current / totallength) * 100;
-      //       document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
-      //     }
-      //     (form.querySelectorAll(".custom-nav .done").length > 0) ?
-      //         form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
-      //           doneTab.classList.remove('done');
-      //         }) : '';
-      //     for (var j = 0; j <= i; j++) {
-      //       tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
-      //     }
-      //   });
-      // });
+      var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
+      tabButtons.forEach(function (button, i) {
+        button.setAttribute("data-position", i);
+        button.addEventListener("click", function () {
+          var getProgreebar = button.getAttribute("data-progressbar");
+          if (getProgreebar) {
+            var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
+            var current = i;
+            var percent = (current / totallength) * 100;
+            document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
+          }
+          (form.querySelectorAll(".custom-nav .done").length > 0) ?
+              form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
+                doneTab.classList.remove('done');
+              }) : '';
+          for (var j = 0; j <= i; j++) {
+            tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
+          }
+        });
+      });
     });
   }
 }
 </script>
-
-<style scoped>
-
-</style>

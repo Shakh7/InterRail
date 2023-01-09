@@ -446,9 +446,7 @@ export default {
 </script>
 
 <template>
-  {{ container_types }}
-  <br><br>
-  {{ order.counterparties }}
+
   <div class="row">
     <div class="col-xl-12 pb-3">
       <custom_wizard wizard_header="Create Order"
