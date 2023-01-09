@@ -107,7 +107,7 @@
                   </div>
                 </div>
 
-                <SelectStations :ratio="[4, 2, 4,2]" @onSelect="onStationSelect"/>
+                <SelectStations :ratio="[3, 3, 3, 3]" @onSelect="onStationSelect"/>
 
                 <SelectProduct :ratio="[6, 3, 3]" @onSelect="onProductSelect"/>
 
