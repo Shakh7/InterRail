@@ -132,18 +132,23 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                 <div class="col-6">
                   <div class="mb-3">
                     <label for="loadingTypeSelect" class="form-label">Loading type</label>
-                    <select id="loadingTypeSelect" class="form-select mb-3" aria-label=".form-select-lg example">
-                      <option selected>Loading type</option>
-                      <option value="container">Container</option>
-                      <option value="wagon">Wagon</option>
-                    </select>
+                    <Multiselect
+                        class="form-control"
+                        :searchable="true"
+                        mode="single"
+                        :hideSelected="false"
+                        :closeOnSelect="false"
+                        :options="['Container', 'Wagon']"
+                        placeholder="Loading type"
+                        @input="$event === null ? form.loading_type = '' : form.loading_type = $event"
+                    />
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="numberInput" class="form-label">Quantity</label>
-                    <input type="number" class="form-control" placeholder="Enter application number" id="numberInput">
+                    <label for="quantityInput" class="form-label">Quantity</label>
+                    <input type="number" class="form-control" placeholder="Enter quantity" id="quantityInput">
                   </div>
                 </div>
 
@@ -157,14 +162,14 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="paidTelegram" class="form-label">Paid telegram</label>
-                    <input type="number" class="form-control" placeholder="Paid telegram" id="paidTelegram">
+                    <input type="text" class="form-control" placeholder="Paid telegram" id="paidTelegram">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="containers-wagons" class="form-label">Containers/Wagons</label>
-                    <input type="number" class="form-control" placeholder="Containers/wagons" id="containers-wagons">
+                    <label for="containersWagons" class="form-label">Containers/Wagons</label>
+                    <input type="text" class="form-control" placeholder="Containers/wagons" id="containersWagons">
                   </div>
                 </div>
 
@@ -237,14 +242,14 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="countryInput" class="form-label">Country</label>
-                    <input type="number" class="form-control" placeholder="Enter country" id="countryInput">
+                    <input type="text" class="form-control" placeholder="Enter country" id="countryInput">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="countryInput" class="form-label">Country</label>
-                    <input type="number" class="form-control" placeholder="Enter country" id="countryInput">
+                    <input type="text" class="form-control" placeholder="Enter country" id="countryInput">
                   </div>
                 </div>
 
