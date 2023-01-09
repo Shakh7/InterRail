@@ -16,6 +16,7 @@ import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
 import Lottie from "@/components/widgets/lottie.vue";
 import createFormModal from "./components/CreateFormModal.vue";
+import store from "../../../state/store.js";
 
 export default {
   page: {
@@ -105,34 +106,7 @@ export default {
           suffix: "k"
         },
       ],
-      invoiceList: [
-        {
-          id: 1,
-          invoiceId: "#VL25000351",
-          img: require("@/assets/images/users/avatar-2.jpg"),
-          name: "Diana Kohler",
-          email: "dianakohler@velzon.com",
-          country: "Brazil",
-          date: "06 Apr, 2021",
-          time: "09:58PM",
-          amount: "$875",
-          status: "Paid",
-          statusClass: "success",
-        },
-        {
-          id: 2,
-          invoiceId: "#VL25000352",
-          img: require("@/assets/images/users/avatar-3.jpg"),
-          name: "James Morris",
-          email: "jamesmorris@velzon.com",
-          country: "Germany",
-          date: "17 Dec, 2021",
-          time: "1:24AM",
-          amount: "$451.00",
-          status: "Unpaid",
-          statusClass: "warning",
-        }
-      ],
+      applicationList: [],
       defaultOptions: {
         animationData: animationData
       },
@@ -152,6 +126,35 @@ export default {
     // XOctagonIcon,
     createFormModal
   },
+  methods: {
+    async getApplications() {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/list/`)
+      let response = await request.json()
+      this.applicationList = response.results
+    },
+    async downloadFile(url) {
+      fetch(url)
+          .then(resp => resp.blob())
+          .then(blobobject => {
+            const blob = window.URL.createObjectURL(blobobject);
+            const anchor = document.createElement('a');
+            anchor.style.display = 'none';
+            anchor.href = blob;
+            anchor.download = url.toString().split('/')[url.toString().split('/').length - 1];
+            document.body.appendChild(anchor);
+            anchor.click();
+            window.URL.revokeObjectURL(blob);
+          })
+          .catch(() => alert('An error in downloadin gthe file sorry'));
+    },
+    getAccount(id) {
+      let user = store.state.users_list.filter(user => parseInt(user.id) === parseInt(id))[0]
+      return user === undefined ? 'Unknown' : user.full_name
+    },
+  },
+  async mounted() {
+    await this.getApplications();
+  }
 };
 </script>
 
@@ -255,65 +258,82 @@ export default {
           <div>
             <div class="table-responsive table-card">
               <table class="table align-middle table-nowrap" id="invoiceTable">
-                <thead class="text-muted">
+                <thead class="text-muted text-center">
                 <tr>
-                  <th scope="col" style="width: 50px;">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                    </div>
-                  </th>
-                  <th class="sort text-uppercase" data-sort="invoice_id">Forwarder</th>
-                  <th class="sort text-uppercase" data-sort="customer_name">Client</th>
+                  <!--                  <th scope="col" style="width: 50px;">-->
+                  <!--                    <div class="form-check">-->
+                  <!--                      <input class="form-check-input" type="checkbox" id="checkAll" value="option">-->
+                  <!--                    </div>-->
+                  <!--                  </th>-->
+                  <th class="sort text-uppercase" data-sort="invoice_id">Number</th>
+                  <th class="sort text-uppercase" data-sort="customer_name">Forwarder</th>
                   <th class="sort text-uppercase" data-sort="email">Departure</th>
                   <th class="sort text-uppercase" data-sort="country">Destination</th>
-                  <th class="sort text-uppercase" data-sort="date">Type</th>
-                  <th class="sort text-uppercase" data-sort="invoice_amount">File</th>
-                  <th class="sort text-uppercase" data-sort="status">Quantity</th>
+                  <th class="sort text-uppercase" data-sort="date">File</th>
+                  <th class="sort text-uppercase" data-sort="invoice_amount">Date</th>
+                  <th class="sort text-uppercase" data-sort="status">Client</th>
                   <th class="sort text-uppercase" data-sort="status">Manager</th>
                   <th class="sort text-uppercase" data-sort="action">Action</th>
                 </tr>
                 </thead>
-                <tbody class="list form-check-all">
-                <tr v-for="(item, index) of invoiceList" :key="index">
-                  <th scope="row">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
-                    </div>
-                  </th>
+                <tbody class="list form-check-all text-center">
+                <tr v-for="(item, index) of applicationList" :key="index">
+                  <!--                  <th scope="row">-->
+                  <!--                    <div class="form-check">-->
+                  <!--                      <input class="form-check-input" type="checkbox" name="chk_child" value="option1">-->
+                  <!--                    </div>-->
+                  <!--                  </th>-->
                   <td class="id">
-                    <router-link to="/invoices/detail" class="fw-medium link-primary">
-                      СП OOO «ШОШТРАНС»
+                    <router-link to="#" class="fw-medium link-primary">
+                      <h5>
+                        <span class="badge badge-soft-primary">
+                          {{ item.number }}
+                        </span>
+                      </h5>
                     </router-link>
                   </td>
-                  <td class="customer_name">
-                    <div class="d-flex align-items-center" v-if="item.img">
-                      CLASSIC
-                    </div>
-                    <div v-if="!item.img" class="d-flex align-items-center">
-                      <div class="flex-shrink-0 avatar-xs me-2">
-                        <div class="avatar-title bg-soft-success text-success rounded-circle fs-13">
-                          {{ item.name.charAt(0) }}
-                        </div>
+                  <!--                  <td class="customer_name">-->
+                  <!--                    <div class="d-flex align-items-center" v-if="item.img">-->
+                  <!--                      CLASSIC-->
+                  <!--                    </div>-->
+                  <!--                    <div v-if="!item.img" class="d-flex align-items-center">-->
+                  <!--                      <div class="flex-shrink-0 avatar-xs me-2">-->
+                  <!--                        <div class="avatar-title bg-soft-success text-success rounded-circle fs-13">-->
+                  <!--                          {{ item.name.charAt(0) }}-->
+                  <!--                        </div>-->
 
-                      </div>
-                      {{ item.name }}
-                    </div>
+                  <!--                      </div>-->
+                  <!--                      {{ item.name }}-->
+                  <!--                    </div>-->
+                  <!--                  </td>-->
+                  <td class="email">{{ item.forwarder.name }}</td>
+                  <td class="country">{{ item.departure.name }}</td>
+                  <td class="country">{{ item.destination.name }}</td>
+                  <td class="invoice_amount">
+                    <span v-if="item.file === null" class="text-danger">-</span>
+
+                    <span v-if="item.file !== null" @click="downloadFile(item.file)" class="text-danger">
+                        <font-awesome-icon
+                            icon="fa-solid fa-file-zipper"
+                            class="c_icon_hoverable text-secondary"
+                        />
+                    </span>
+
                   </td>
-                  <td class="email">Чукурсай</td>
-                  <td class="country">Мустаклик</td>
-                  <td class="date"><small class="text-muted">Wagon</small></td>
-                  <td class="invoice_amount">File</td>
                   <td class="status">
-<!--                                        <span class="badge text-uppercase" :class="{-->
-<!--                                            'badge-soft-success':item.status=='Paid',-->
-<!--                                            'badge-soft-warning':item.status=='Unpaid',-->
-<!--                                            'badge-soft-danger':item.status=='Cancel',-->
-<!--                                            'badge-soft-primary':item.status=='Refund',-->
-<!--                                          }">{{ item.status }}</span>-->
-                    <span class="badge text-uppercase badge-soft-success">45</span>
+                    <!--                                        <span class="badge text-uppercase" :class="{-->
+                    <!--                                            'badge-soft-success':item.status=='Paid',-->
+                    <!--                                            'badge-soft-warning':item.status=='Unpaid',-->
+                    <!--                                            'badge-soft-danger':item.status=='Cancel',-->
+                    <!--                                            'badge-soft-primary':item.status=='Refund',-->
+                    <!--                                          }">{{ item.status }}</span>-->
+                    <span class="text-primary fw-medium">{{ item.date }}</span>
                   </td>
                   <td class="status">
-                    <span>Manager</span>
+                    <span>{{ getAccount(item.customer) }}</span>
+                  </td>
+                  <td class="status">
+                    <span>{{ getAccount(item.manager) }}</span>
                   </td>
                   <td>
                     <div class="dropdown">
@@ -323,8 +343,7 @@ export default {
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-
-                          <router-link class="dropdown-item" :to="'/invoices/detail/'+item._id">
+                          <router-link class="dropdown-item" :to="'#'">
                             <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
                           </router-link>
                         </li>
@@ -334,7 +353,7 @@ export default {
                             class="ri-download-2-line align-bottom me-2 text-muted"></i> Download</a></li>
                         <li class="dropdown-divider"></li>
                         <li>
-                          <a class="dropdown-item remove-item-btn" @click="deletedata(item)">
+                          <a class="dropdown-item remove-item-btn">
                             <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
                           </a>
                         </li>
@@ -344,7 +363,7 @@ export default {
                 </tr>
                 </tbody>
               </table>
-              <div class="noresult" style="display: none" :class="{'d-block': invoiceList.length == 0}">
+              <div class="noresult" style="display: none" :class="{'d-block': applicationList.length == 0}">
                 <div class="text-center">
                   <lottie class="avatar-xl" colors="primary:#121331,secondary:#08a88a" :options="defaultOptions"
                           :height="75" :width="75"/>

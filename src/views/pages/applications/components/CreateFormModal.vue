@@ -344,8 +344,6 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
       </form>
     </div>
 
-    {{ form }}
-
     <!--    <div class="modal-footer v-modal-footer p-0">-->
     <!--      <b-button type="button" variant="light" @click="modalShow = false">Close-->
     <!--      </b-button>-->
@@ -404,6 +402,7 @@ export default {
   },
   methods: {
     async createApplication() {
+      this.form.prefix = this.forwarders.selected.prefix
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
         method: 'POST',
         headers: {
