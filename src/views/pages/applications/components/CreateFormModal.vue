@@ -38,8 +38,8 @@
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="prefixInput" class="form-label">Prefix</label>
-                    <input v-model="form.prefix" type="number" class="form-control" placeholder="Prefix"
-                           id="prefixInput">
+                    <input type="text" class="form-control" placeholder="Prefix"
+                           id="prefixInput" disabled :value="forwarderPrefix">
                   </div>
                 </div>
                 <div class="col-3">
@@ -59,13 +59,12 @@
                         value="id"
                         @input="$event === null ? form.forwarder_id = 0 : form.forwarder_id = $event.value"
                     />
-
                   </div>
                 </div>
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="forwarderSelect" class="form-label">
-                      Sending type <span class="text-danger">*</span>
+                      Loading type <span class="text-danger">*</span>
                     </label>
                     <Multiselect
                         class="form-control"
@@ -73,9 +72,9 @@
                         mode="single"
                         :hideSelected="false"
                         :closeOnSelect="false"
-                        :options="['Single', 'Block train']"
-                        placeholder="Sending type"
-                        @input="$event === null ? form.sending_type = '' : form.sending_type = $event"
+                        :options="['Container', 'Wagon']"
+                        placeholder="Loading type"
+                        @input="$event === null ? form.loading_type = '' : form.loading_type = $event"
                     />
                   </div>
                 </div>
@@ -84,7 +83,7 @@
                     <label for="applicationDate" class="form-label">
                       Date <span class="text-danger">*</span>
                     </label>
-                    <input type="text" v-maska="'##/##/####'" placeholder="Type date" class="form-control"
+                    <input v-model="form.date" type="date" placeholder="Type date" class="form-control"
                            id="applicationDate">
                   </div>
                 </div>
@@ -94,7 +93,8 @@
                     <label for="shipperName" class="form-label">
                       Shipper <span class="text-danger">*</span>
                     </label>
-                    <input type="text" class="form-control" placeholder="Enter shipper name" id="shipperName">
+                    <input v-model="form.shipper" type="text" class="form-control" placeholder="Enter shipper name"
+                           id="shipperName">
                   </div>
                 </div>
 
@@ -103,13 +103,14 @@
                     <label for="consigneeName" class="form-label">
                       Consignee <span class="text-danger">*</span>
                     </label>
-                    <input type="text" class="form-control" placeholder="Enter consignee name" id="consigneeName">
+                    <input v-model="form.consignee" type="text" class="form-control" placeholder="Enter consignee name"
+                           id="consigneeName">
                   </div>
                 </div>
 
                 <SelectStations :ratio="[3, 3, 3, 3]" @onSelect="onStationSelect"/>
 
-                <SelectProduct :ratio="[6, 3, 3]" @onSelect="onProductSelect"/>
+                <SelectProduct :ratio="[6, 3, 3]" @onSelect="form.product_id = $event"/>
 
               </div>
             </div>
@@ -131,16 +132,16 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
 
                 <div class="col-6">
                   <div class="mb-3">
-                    <label for="loadingTypeSelect" class="form-label">Loading type</label>
+                    <label for="loadingTypeSelect" class="form-label">Sending type</label>
                     <Multiselect
                         class="form-control"
                         :searchable="true"
                         mode="single"
                         :hideSelected="false"
                         :closeOnSelect="false"
-                        :options="['Container', 'Wagon']"
-                        placeholder="Loading type"
-                        @input="$event === null ? form.loading_type = '' : form.loading_type = $event"
+                        :options="['Одиночная', 'КП']"
+                        placeholder="Sending type"
+                        @input="$event === null ? form.sending_type = '' : form.sending_type = $event"
                     />
                   </div>
                 </div>
@@ -148,64 +149,96 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="quantityInput" class="form-label">Quantity</label>
-                    <input type="number" class="form-control" placeholder="Enter quantity" id="quantityInput">
+                    <input v-model="form.quantity" type="number" class="form-control" placeholder="Enter quantity"
+                           id="quantityInput">
                   </div>
                 </div>
 
-                <div class="col-3">
+                <div v-if="form.loading_type === 'Wagon'" class="col-3">
                   <div class="mb-3">
                     <label for="weightInput" class="form-label">Weight</label>
-                    <input type="number" class="form-control" placeholder="Enter weight" id="weightInput">
+                    <input v-model="form.weight" type="number" class="form-control" placeholder="Enter weight"
+                           id="weightInput">
+                  </div>
+                </div>
+
+                <div v-else class="col-3">
+                  <div class="mb-3">
+                    <label for="weightInput" class="form-label">Container type</label>
+                    <Multiselect
+                        class="form-control"
+                        :searchable="true"
+                        mode="single"
+                        :hideSelected="false"
+                        :closeOnSelect="false"
+                        :options="['20', '20HC', '40', '40HC', '45']"
+                        placeholder="Container type"
+                        @input="$event === null ? form.container_type = '' : form.container_type = $event"
+                    />
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="paidTelegram" class="form-label">Paid telegram</label>
-                    <input type="text" class="form-control" placeholder="Paid telegram" id="paidTelegram">
+                    <input v-model="form.paid_telegram" type="text" class="form-control" placeholder="Paid telegram"
+                           id="paidTelegram">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="containersWagons" class="form-label">Containers/Wagons</label>
-                    <input type="text" class="form-control" placeholder="Containers/wagons" id="containersWagons">
+                    <input v-model="form.containers_or_wagons" type="text" class="form-control"
+                           placeholder="Containers/wagons" id="containersWagons">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="rollingStock-1" class="form-label">Rolling stock</label>
-                    <select id="rollingStock-1" class="form-select mb-3" aria-label=".form-select-lg example">
-                      <option selected>Rolling stock</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                    </select>
+                    <Multiselect
+                        class="form-control"
+                        :searchable="true"
+                        mode="single"
+                        placeholder="Rolling stock"
+                        :hideSelected="false"
+                        :closeOnSelect="false"
+                        :options="['A', 'B']"
+                        @input="$event === null ? form.rolling_stock_1 = '' : form.rolling_stock_1 = $event"
+                    />
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="rollingStock-2" class="form-label">Rolling stock</label>
-                    <select id="rollingStock-2" class="form-select mb-3" aria-label=".form-select-lg example">
-                      <option selected>Rolling stock</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                    </select>
+                    <Multiselect
+                        class="form-control"
+                        :searchable="true"
+                        mode="single"
+                        placeholder="Rolling stock"
+                        :hideSelected="false"
+                        :closeOnSelect="false"
+                        :options="['A', 'B']"
+                        @input="$event === null ? form.rolling_stock_2 = '' : form.rolling_stock_2 = $event"
+                    />
                   </div>
                 </div>
 
                 <div class="col-6">
                   <div class="mb-3">
                     <label for="periodInput" class="form-label">Period</label>
-                    <input type="text" class="form-control" placeholder="Enter period" id="periodInput">
+                    <input v-model="form.period" type="text" class="form-control" placeholder="Enter period"
+                           id="periodInput">
                   </div>
                 </div>
 
                 <div class="col-6">
                   <div class="mb-3">
                     <label for="conditionsCarriage" class="form-label">Conditions of carriage</label>
-                    <input type="text" class="form-control" placeholder="Conditions of carriage"
+                    <input v-model="form.condition_of_carriage" type="text" class="form-control"
+                           placeholder="Conditions of carriage"
                            id="conditionsCarriage">
                   </div>
                 </div>
@@ -213,14 +246,16 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                 <div class="col-6">
                   <div class="mb-3">
                     <label for="agreedRate" class="form-label">Agreed rate</label>
-                    <input type="number" class="form-control" placeholder="Enter agreed rate" id="agreedRate">
+                    <input v-model="form.agreed_rate" type="number" class="form-control" placeholder="Enter agreed rate"
+                           id="agreedRate">
                   </div>
                 </div>
 
                 <div class="col-6">
                   <div class="mb-3">
                     <label for="borderCrossing" class="form-label">Border crossing</label>
-                    <input type="text" class="form-control" placeholder="Border crossing" id="borderCrossing">
+                    <input v-model="form.border_crossing" type="text" class="form-control" placeholder="Border crossing"
+                           id="borderCrossing">
                   </div>
                 </div>
 
@@ -233,42 +268,47 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                         mode="multiple"
                         :hideSelected="false"
                         :closeOnSelect="false"
-                        :options="['A', 'B', 'C']"
+                        :options="territories"
                         placeholder="Choose territories"
+                        :object="true"
+                        @input="form.territories = $event.map(territory => {
+                          return { id: territory.value, name: territory.label}
+                        })"
                     />
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="countryInput" class="form-label">Country</label>
-                    <input type="text" class="form-control" placeholder="Enter country" id="countryInput">
+                    <label for="countryInput1" class="form-label">Country</label>
+                    <input v-model="form.departure_country" type="text" class="form-control"
+                           placeholder="Departure country" id="countryInput1">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="countryInput" class="form-label">Country</label>
-                    <input type="text" class="form-control" placeholder="Enter country" id="countryInput">
+                    <label for="countryInput2" class="form-label">Country</label>
+                    <input v-model="form.destination_country" type="text" class="form-control"
+                           placeholder="Destination country" id="countryInput2">
                   </div>
                 </div>
 
                 <div class="col-3">
                   <div class="mb-3">
-                    <label for="borderCrossing" class="form-label">Customer</label>
+                    <label class="form-label">Customer</label>
                     <Multiselect
                         class="form-control"
                         :searchable="true"
                         mode="single"
                         :hideSelected="false"
-                        :closeOnSelect="false"
-                        :options="['A', 'B', 'C']"
+                        :closeOnSelect="true"
+                        :options="clientsComputed"
                         placeholder="Choose territories"
+                        @input="$event === null ? form.customer = '' : form.customer = $event"
                     />
                   </div>
                 </div>
-
-
               </div>
             </div>
 
@@ -277,8 +317,11 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                       data-previous="steparrow-gen-info-tab"><i
                   class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back to General
               </button>
-              <button type="button" class="btn btn-success btn-label right ms-auto nexttab
-nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Submit
+              <button @click="createApplication()" type="button"
+                      class="btn btn-success btn-label right ms-auto nexttabnexttab"
+                      data-nexttab="pills-experience-tab">
+                <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                Submit
               </button>
             </div>
 
@@ -301,6 +344,8 @@ nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label
       </form>
     </div>
 
+    {{ form }}
+
     <!--    <div class="modal-footer v-modal-footer p-0">-->
     <!--      <b-button type="button" variant="light" @click="modalShow = false">Close-->
     <!--      </b-button>-->
@@ -320,17 +365,18 @@ export default {
   name: "createFormModal",
   data() {
     return {
+      store: store,
       modalShow: false,
       forwarders: {
         selected: null,
         options: []
       },
+      territories: [],
       form: {
+        quantity: null,
         prefix: '',
-        number: 0,
-        period: '',
-        quantity: '',
         date: '',
+        period: '',
         sending_type: '',
         shipper: '',
         consignee: '',
@@ -339,15 +385,16 @@ export default {
         border_crossing: '',
         departure_country: '',
         destination_country: '',
-        rolling_stock_1: '',
+        rolling_stock_1: "string",
         rolling_stock_2: '',
         paid_telegram: '',
         departure_id: 0,
         destination_id: 0,
+        containers_or_wagons: '',
         product_id: 0,
         loading_type: '',
         container_type: '',
-        weight: "",
+        weight: '',
         territories: [],
         forwarder_id: 0,
         manager: store.state.user.id,
@@ -356,21 +403,61 @@ export default {
     }
   },
   methods: {
-    onProductSelect(product_id) {
-      console.log(product_id)
+    async createApplication() {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application'
+        },
+        body: JSON.stringify(this.form)
+      })
+      let response = await request.json()
+      console.log(response)
     },
     onStationSelect(station_obj) {
-      console.log(station_obj)
+      if (station_obj.option === 'departure') {
+        this.form.departure_id = station_obj.value
+      } else {
+        this.form.destination_id = station_obj.value
+      }
     },
     async getCounterpartyList() {
       let orders = new OrdersApi()
       this.forwarders.options = (await orders.getCounterpartyList()).results.map(item => {
         return {
           value: item.id,
-          name: item.name
+          name: item.name,
+          prefix: item.name.split(' ').map(([v]) => v).join('').toUpperCase() + item.id.toString()[0] + '_'
         }
       })
     },
+    async getTerritory() {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/core/territories/`)
+      let response = await request.json()
+      this.territories = response.results.map(t => {
+        return {
+          value: t.id,
+          label: t.name
+        }
+      })
+    },
+  },
+  computed: {
+    forwarderPrefix: {
+      get() {
+        return this.forwarders.selected === null ? '' : this.forwarders.selected.prefix
+      }
+    },
+    clientsComputed: {
+      get() {
+        return this.store.state.users_list.filter(i => i.role === 'client').map(user => {
+          return {
+            value: user.id,
+            label: user.full_name
+          }
+        })
+      }
+    }
   },
   components: {
     Multiselect,
@@ -430,6 +517,7 @@ export default {
         });
       });
     });
+    await this.getTerritory()
   }
 }
 </script>

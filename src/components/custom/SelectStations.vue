@@ -12,7 +12,7 @@
         placeholder="Departure"
         @search-change="getOptions($event, 'departure')"
         :object="true"
-        @select="onOptionSelect($event, 'departure')"
+        @input="onOptionSelect($event, 'departure')"
     />
   </div>
 
@@ -30,7 +30,7 @@
         @search-change="getOptions($event, 'departure')"
         :object="true"
         label="code"
-        @select="onOptionSelect($event, 'departure')"
+        @input="onOptionSelect($event, 'departure')"
     />
   </div>
 
@@ -47,7 +47,7 @@
         placeholder="Destination"
         @search-change="getOptions($event, 'destination')"
         :object="true"
-        @select="onOptionSelect($event, 'destination')"
+        @input="onOptionSelect($event, 'destination')"
     />
   </div>
 
@@ -65,7 +65,7 @@
         @search-change="getOptions($event, 'destination')"
         :object="true"
         label="code"
-        @select="onOptionSelect($event, 'destination')"
+        @input="onOptionSelect($event, 'destination')"
     />
   </div>
 
@@ -126,7 +126,7 @@ export default {
     onOptionSelect(event, option_type) {
       this.$emit('onSelect', {
         option: option_type,
-        value: event.value
+        value: event === null ? 0 : event.value
       })
     }
   },

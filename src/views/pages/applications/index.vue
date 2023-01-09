@@ -45,9 +45,6 @@ export default {
         dateFormat: "d M, Y",
       },
       date: null,
-      page: 1,
-      perPage: 9,
-      pages: [],
       value: null,
       searchQuery: null,
       invoiceWidgets: [
@@ -227,14 +224,12 @@ export default {
               </div>
               <!--end col-->
               <div class="col-xxl-3 col-sm-4">
-
                 <flat-pickr v-model="date" :config="config" class="form-control bg-light border-light"
                             placeholder="Select date"></flat-pickr>
               </div>
               <!--end col-->
               <div class="col-xxl-3 col-sm-4">
                 <div class="input-light">
-
                   <Multiselect class="form-control" v-model="value" :close-on-select="true" :searchable="true"
                                :create-option="true" :options="[
                             { value: 'all', label: 'all' },
@@ -243,10 +238,8 @@ export default {
                             { value: 'Cancel', label: 'Cancel' },
                             { value: 'Refund', label: 'Refund' },
                           ]"/>
-
                 </div>
               </div>
-              <!--end col-->
 
               <div class="col-xxl-1 col-sm-4">
                 <button type="button" class="btn btn-primary w-100">

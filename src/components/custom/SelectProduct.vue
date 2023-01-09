@@ -12,7 +12,7 @@
         placeholder="Product"
         @search-change="getOptions($event)"
         :object="true"
-        @select="onOptionSelect($event)"
+        @input="onOptionSelect($event)"
     />
   </div>
 
@@ -30,7 +30,7 @@
         @search-change="getOptions($event)"
         :object="true"
         label="hc_code"
-        @select="onOptionSelect($event)"
+        @input="onOptionSelect($event)"
     />
   </div>
 
@@ -48,7 +48,7 @@
         @search-change="getOptions($event)"
         :object="true"
         label="etcng"
-        @select="onOptionSelect($event)"
+        @input="onOptionSelect($event)"
     />
   </div>
 
@@ -90,7 +90,7 @@ export default {
 
     },
     onOptionSelect(event) {
-      this.$emit('onSelect', event.value)
+      this.$emit('onSelect', event === null ? 0 : event.value)
     }
   },
   computed: {
