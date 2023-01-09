@@ -296,8 +296,6 @@ nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label
       </form>
     </div>
 
-    {{ form }}
-
     <!--    <div class="modal-footer v-modal-footer p-0">-->
     <!--      <b-button type="button" variant="light" @click="modalShow = false">Close-->
     <!--      </b-button>-->
