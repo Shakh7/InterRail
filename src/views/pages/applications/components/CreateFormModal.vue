@@ -6,7 +6,6 @@
     <div class="form-steps mb-0">
       <form action="#">
         <div class="step-arrow-nav mb-4">
-
           <ul class="nav nav-pills custom-nav nav-justified" role="tablist">
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="steparrow-gen-info-tab" data-bs-toggle="pill"
@@ -39,7 +38,8 @@
                 <div class="col-3">
                   <div class="mb-3">
                     <label for="prefixInput" class="form-label">Prefix</label>
-                    <input type="number" class="form-control" placeholder="Prefix" id="prefixInput">
+                    <input v-model="form.prefix" type="number" class="form-control" placeholder="Prefix"
+                           id="prefixInput">
                   </div>
                 </div>
                 <div class="col-3">
@@ -56,7 +56,10 @@
                         placeholder="Forwarder"
                         :object="true"
                         label="name"
+                        value="id"
+                        @input="$event === null ? form.forwarder_id = 0 : form.forwarder_id = $event.value"
                     />
+
                   </div>
                 </div>
                 <div class="col-3">
@@ -67,11 +70,12 @@
                     <Multiselect
                         class="form-control"
                         :searchable="true"
-                        mode="multiple"
+                        mode="single"
                         :hideSelected="false"
                         :closeOnSelect="false"
                         :options="['Single', 'Block train']"
                         placeholder="Sending type"
+                        @input="$event === null ? form.sending_type = '' : form.sending_type = $event"
                     />
                   </div>
                 </div>
@@ -292,6 +296,8 @@ nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label
       </form>
     </div>
 
+    {{ form }}
+
     <!--    <div class="modal-footer v-modal-footer p-0">-->
     <!--      <b-button type="button" variant="light" @click="modalShow = false">Close-->
     <!--      </b-button>-->
@@ -305,6 +311,7 @@ import Multiselect from "@vueform/multiselect";
 import SelectProduct from '../../../../components/custom/SelectProduct.vue'
 import SelectStations from '../../../../components/custom/SelectStations.vue'
 import OrdersApi from "../../../../api/orders/orders_api.js";
+import store from "../../../../state/store.js";
 
 export default {
   name: "createFormModal",
@@ -314,6 +321,34 @@ export default {
       forwarders: {
         selected: null,
         options: []
+      },
+      form: {
+        prefix: '',
+        number: 0,
+        period: '',
+        quantity: '',
+        date: '',
+        sending_type: '',
+        shipper: '',
+        consignee: '',
+        condition_of_carriage: '',
+        agreed_rate: '',
+        border_crossing: '',
+        departure_country: '',
+        destination_country: '',
+        rolling_stock_1: '',
+        rolling_stock_2: '',
+        paid_telegram: '',
+        departure_id: 0,
+        destination_id: 0,
+        product_id: 0,
+        loading_type: '',
+        container_type: '',
+        weight: "",
+        territories: [],
+        forwarder_id: 0,
+        manager: store.state.user.id,
+        customer: 0
       }
     }
   },
