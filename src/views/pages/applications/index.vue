@@ -17,6 +17,7 @@ import animationData1 from "@/components/widgets/gsqxdxog.json";
 import Lottie from "@/components/widgets/lottie.vue";
 import createFormModal from "./components/CreateFormModal.vue";
 import store from "../../../state/store.js";
+import Swal from "sweetalert2";
 
 export default {
   page: {
@@ -151,6 +152,52 @@ export default {
       let user = store.state.users_list.filter(user => parseInt(user.id) === parseInt(id))[0]
       return user === undefined ? 'Unknown' : user.full_name
     },
+
+    async confirmApplicationDelete(id, appNumber) {
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `You are about to delete application ${appNumber}`,
+        text: 'Deleting your application will remove all of its information from our database.',
+        showDenyButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Yes, Delete It',
+        denyButtonText: 'Cancel',
+        cancelButtonColor: 'transparent',
+        focusConfirm: false,
+        inputLabel: `Please type Application${appNumber} to confirm`,
+        input: 'email',
+        inputPlaceholder: `Application${appNumber}`,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value === 'Application' + appNumber) {
+              resolve(this.deleteApplication(id))
+            } else {
+              resolve('Application number did not match :)')
+            }
+          })
+        }
+      });
+    },
+
+    async deleteApplication(id) {
+      fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/delete/${id}`, {
+        method: 'DELETE',
+      }).then(response => {
+        this.getApplications()
+        Swal.fire({
+          position: "center",
+          icon: response.ok ? "success" : "error",
+          title: response.ok ? "Application Deleted" : "Application Delete Failed",
+          text: response.ok ? "Application has been deleted successfully" : "Application could not be deleted",
+          showConfirmButton: true,
+          confirmButtonText: 'Ok',
+          cancelButtonColor: 'transparent',
+          focusConfirm: false,
+        });
+      })
+
+    }
   },
   async mounted() {
     await this.getApplications();
@@ -336,33 +383,42 @@ export default {
                     <span>{{ getAccount(item.manager) }}</span>
                   </td>
                   <td>
-                    <div class="dropdown">
-                      <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                        <i class="ri-more-fill align-middle"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                          <router-link class="dropdown-item" :to="'#'">
-                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                          </router-link>
+                    <font-awesome-icon icon="fa-solid fa-pen-to-square"
+                                       class="c_icon me-1 c_icon_hoverable"/>
 
-                        </li>
-                        <li>
-                          <a class="dropdown-item"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                            Edit
-                          </a>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:void(0);"><i
-                            class="ri-download-2-line align-bottom me-2 text-muted"></i> Download</a></li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                          <a class="dropdown-item remove-item-btn">
-                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
+                    <span class="border-start border-dark ps-1">
+                      <font-awesome-icon @click="confirmApplicationDelete(item.id, item.number)"
+                                         icon="fa-solid fa-trash"
+                                         class="c_icon c_icon_hoverable text-danger"/>
+                    </span>
+
+                    <!--                    <div class="dropdown">-->
+                    <!--                      <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown"-->
+                    <!--                              aria-expanded="false">-->
+                    <!--                        <i class="ri-more-fill align-middle"></i>-->
+                    <!--                      </button>-->
+                    <!--                      <ul class="dropdown-menu dropdown-menu-end">-->
+                    <!--                        <li>-->
+                    <!--                          <router-link class="dropdown-item" :to="'#'">-->
+                    <!--                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View-->
+                    <!--                          </router-link>-->
+
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                          <a class="dropdown-item"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>-->
+                    <!--                            Edit-->
+                    <!--                          </a>-->
+                    <!--                        </li>-->
+                    <!--                        <li><a class="dropdown-item" href="javascript:void(0);"><i-->
+                    <!--                            class="ri-download-2-line align-bottom me-2 text-muted"></i> Download</a></li>-->
+                    <!--                        <li class="dropdown-divider"></li>-->
+                    <!--                        <li>-->
+                    <!--                          <a class="dropdown-item remove-item-btn">-->
+                    <!--                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete-->
+                    <!--                          </a>-->
+                    <!--                        </li>-->
+                    <!--                      </ul>-->
+                    <!--                    </div>-->
                   </td>
                 </tr>
                 </tbody>

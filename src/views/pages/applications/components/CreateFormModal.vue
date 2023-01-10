@@ -116,9 +116,10 @@
             </div>
 
             <div class="d-flex align-items-start gap-3 mt-4">
-              <button type="button" class="btn btn-success btn-label right ms-auto nexttab
-nexttab" data-nexttab="steparrow-description-info-tab"><i
-                  class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Go to more info
+              <button @click="GoNextTab('steparrow-description-info-tab')" type="button"
+                      class="btn btn-success btn-label right ms-auto nexttab">
+                <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                Go to more info
               </button>
             </div>
 
@@ -317,9 +318,8 @@ nexttab" data-nexttab="steparrow-description-info-tab"><i
                       data-previous="steparrow-gen-info-tab"><i
                   class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back to General
               </button>
-              <button @click="createApplication()" type="button"
-                      class="btn btn-success btn-label right ms-auto nexttabnexttab"
-                      data-nexttab="pills-experience-tab">
+              <button @click="createApplication('pills-experience-tab')" type="button"
+                      class="btn btn-success btn-label right ms-auto nexttab">
                 <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
                 Submit
               </button>
@@ -401,17 +401,19 @@ export default {
     }
   },
   methods: {
-    async createApplication() {
-      this.form.prefix = this.forwarders.selected.prefix
-      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application'
-        },
-        body: JSON.stringify(this.form)
-      })
-      let response = await request.json()
-      console.log(response)
+    async createApplication(nextTab) {
+      // this.form.prefix = this.forwarders.selected.prefix
+      //
+      // let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify(this.form)
+      // })
+      // let response = await request.json()
+      // console.log(response)
+      this.GoNextTab(nextTab)
     },
     onStationSelect(station_obj) {
       if (station_obj.option === 'departure') {
@@ -440,6 +442,63 @@ export default {
         }
       })
     },
+    GoNextTab(nextTab) {
+      // let nextTab = e.target.getAttribute('data-nexttab');
+      document.getElementById(nextTab).click();
+    },
+    handleWizard() {
+      document.querySelectorAll(".form-steps").forEach(function (form) {
+
+        // next tab
+        form.querySelectorAll(".nexttab").forEach(function () {
+          var tabEl = form.querySelectorAll('button[data-bs-toggle="pill"]');
+          tabEl.forEach(function (item) {
+            item.addEventListener('show.bs.tab', function (event) {
+              event.target.classList.add('done');
+            });
+          });
+          // nextButton.addEventListener("click", function () {
+          //   var nextTab = nextButton.getAttribute('data-nexttab');
+          //   document.getElementById(nextTab).click();
+          // });
+        });
+
+        //Pervies tab
+        form.querySelectorAll(".previestab").forEach(function (prevButton) {
+
+          prevButton.addEventListener("click", function () {
+            var prevTab = prevButton.getAttribute('data-previous');
+            var totalDone = prevButton.closest("form").querySelectorAll(".custom-nav .done").length;
+            for (var i = totalDone - 1; i < totalDone; i++) {
+              (prevButton.closest("form").querySelectorAll(".custom-nav .done")[i]) ? prevButton.closest("form").querySelectorAll(".custom-nav .done")[i].classList.remove('done') : '';
+            }
+            document.getElementById(prevTab).click();
+          });
+        });
+
+        // Step number click
+        var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
+        tabButtons.forEach(function (button, i) {
+          button.setAttribute("data-position", i);
+          button.addEventListener("click", function () {
+            var getProgreebar = button.getAttribute("data-progressbar");
+            if (getProgreebar) {
+              var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
+              var current = i;
+              var percent = (current / totallength) * 100;
+              document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
+            }
+            (form.querySelectorAll(".custom-nav .done").length > 0) ?
+                form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
+                  doneTab.classList.remove('done');
+                }) : '';
+            for (var j = 0; j <= i; j++) {
+              tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
+            }
+          });
+        });
+      });
+    }
   },
   computed: {
     forwarderPrefix: {
@@ -465,57 +524,7 @@ export default {
   },
   async mounted() {
     await this.getCounterpartyList()
-    document.querySelectorAll(".form-steps").forEach(function (form) {
-
-      // next tab
-      form.querySelectorAll(".nexttab").forEach(function (nextButton) {
-        var tabEl = form.querySelectorAll('button[data-bs-toggle="pill"]');
-        tabEl.forEach(function (item) {
-          item.addEventListener('show.bs.tab', function (event) {
-            event.target.classList.add('done');
-          });
-        });
-        nextButton.addEventListener("click", function () {
-          var nextTab = nextButton.getAttribute('data-nexttab');
-          document.getElementById(nextTab).click();
-        });
-      });
-
-      //Pervies tab
-      form.querySelectorAll(".previestab").forEach(function (prevButton) {
-
-        prevButton.addEventListener("click", function () {
-          var prevTab = prevButton.getAttribute('data-previous');
-          var totalDone = prevButton.closest("form").querySelectorAll(".custom-nav .done").length;
-          for (var i = totalDone - 1; i < totalDone; i++) {
-            (prevButton.closest("form").querySelectorAll(".custom-nav .done")[i]) ? prevButton.closest("form").querySelectorAll(".custom-nav .done")[i].classList.remove('done') : '';
-          }
-          document.getElementById(prevTab).click();
-        });
-      });
-
-      // Step number click
-      var tabButtons = form.querySelectorAll('button[data-bs-toggle="pill"]');
-      tabButtons.forEach(function (button, i) {
-        button.setAttribute("data-position", i);
-        button.addEventListener("click", function () {
-          var getProgreebar = button.getAttribute("data-progressbar");
-          if (getProgreebar) {
-            var totallength = document.getElementById("custom-progress-bar").querySelectorAll("li").length - 1;
-            var current = i;
-            var percent = (current / totallength) * 100;
-            document.getElementById("custom-progress-bar").querySelector('.progress-bar').style.width = percent + "%";
-          }
-          (form.querySelectorAll(".custom-nav .done").length > 0) ?
-              form.querySelectorAll(".custom-nav .done").forEach(function (doneTab) {
-                doneTab.classList.remove('done');
-              }) : '';
-          for (var j = 0; j <= i; j++) {
-            tabButtons[j].classList.contains('active') ? tabButtons[j].classList.remove('done') : tabButtons[j].classList.add('done');
-          }
-        });
-      });
-    });
+    this.handleWizard()
     await this.getTerritory()
   }
 }
