@@ -348,8 +348,11 @@ export default {
                           </router-link>
 
                         </li>
-                        <li><a class="dropdown-item"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                          Edit</a></li>
+                        <li>
+                          <a class="dropdown-item"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                            Edit
+                          </a>
+                        </li>
                         <li><a class="dropdown-item" href="javascript:void(0);"><i
                             class="ri-download-2-line align-bottom me-2 text-muted"></i> Download</a></li>
                         <li class="dropdown-divider"></li>
