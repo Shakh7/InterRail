@@ -346,6 +346,7 @@ export default {
                           <router-link class="dropdown-item" :to="'#'">
                             <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
                           </router-link>
+
                         </li>
                         <li><a class="dropdown-item"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                           Edit</a></li>
