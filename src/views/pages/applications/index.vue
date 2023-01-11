@@ -16,6 +16,7 @@ import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
 import Lottie from "@/components/widgets/lottie.vue";
 import createFormModal from "./components/CreateFormModal.vue";
+import PreviewModal from "./components/PreviewModal.vue";
 import store from "../../../state/store.js";
 import Swal from "sweetalert2";
 
@@ -45,6 +46,9 @@ export default {
         altFormat: "M j, Y",
         altInput: true,
         dateFormat: "d M, Y",
+      },
+      previewModal: {
+        show: true,
       },
       date: null,
       value: null,
@@ -125,7 +129,8 @@ export default {
     // CheckSquareIcon,
     // ClockIcon,
     // XOctagonIcon,
-    createFormModal
+    createFormModal,
+    PreviewModal
   },
   methods: {
     async getApplications() {
@@ -258,7 +263,7 @@ export default {
           <div class="d-flex align-items-center">
             <h5 class="card-title mb-0 flex-grow-1">Applications</h5>
             <div class="flex-shrink-0">
-              <createFormModal/>
+              <createFormModal @created="getApplications()"/>
             </div>
           </div>
         </div>
@@ -463,4 +468,7 @@ export default {
 
     </div>
   </div>
+
+
+  <PreviewModal :modalShow="previewModal.show"/>
 </template>
