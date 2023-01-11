@@ -42,84 +42,84 @@
     </section>
 
     <section>
-      <!-- Bordered Tables -->
       <table class="table table-bordered border-dark border-2 table-nowrap">
         <tbody>
         <tr>
-          <td class="w-50 py-1">Период перевозки</td>
+          <td class="w-50 py-1 fw-bolder">Период перевозки</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Вид отправки</td>
+          <td class="w-50 py-1 fw-bolder">Вид отправки</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Станция отправления</td>
+          <td class="w-50 py-1 fw-bolder">Станция отправления</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Станция назначения</td>
+          <td class="w-50 py-1 fw-bolder">Станция назначения</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Грузоотправитель</td>
+          <td class="w-50 py-1 fw-bolder">Грузоотправитель</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Получатель</td>
+          <td class="w-50 py-1 fw-bolder">Получатель</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Страна назначения</td>
+          <td class="w-50 py-1 fw-bolder">Страна назначения</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Наименование груза,
+          <td class="w-50 py-1 fw-bolder">Наименование груза,
             Коды ГНГ и ЕТСНГ
           </td>
           <td class="w-50 py-1">000</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Количество
+          <td class="w-50 py-1 fw-bolder">Количество
           </td>
           <td class="w-50 py-1">11111</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Вид вагона/принадлежность подвижного <br>
+          <td class="w-50 py-1 fw-bolder">Вид вагона/принадлежность подвижного <br>
             состава/принадлежность контейнера
           </td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Вес/Фут</td>
+          <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Номера вагонов/контейнеров</td>
+          <td class="w-50 py-1 fw-bolder">Номера вагонов/контейнеров</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Запрашиваемые территории</td>
+          <td class="w-50 py-1 fw-bolder">Запрашиваемые территории</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Условия перевозки</td>
+          <td class="w-50 py-1 fw-bolder">Условия перевозки</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Пограничные переходы</td>
+          <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Проплатная телеграмма</td>
+          <td class="w-50 py-1 fw-bolder">Проплатная телеграмма</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         <tr>
-          <td class="w-50 py-1">Согласованная ставка</td>
+          <td class="w-50 py-1 fw-bolder">Согласованная ставка</td>
           <td class="w-50 py-1">Lanora Sandoval</td>
         </tr>
         </tbody>
       </table>
+
     </section>
 
     <section class="row justify-content-center">
