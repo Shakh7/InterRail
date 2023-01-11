@@ -222,7 +222,8 @@ export default [
         meta: {title: "Applications", authRequired: true, isVisableInMenu: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
         children: [
-            {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),}
+            {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
+            {path: 'update/:id', name: 'application_update', component: () => import("../views/pages/applications/update.vue"),}
         ],
     },
 

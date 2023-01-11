@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes === undefined ? 'col-4' : 'col-' + classes[0]">
+  <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[0]">
     <label class="form-label">
       Product <span class="text-danger">*</span>
     </label>
@@ -16,7 +16,7 @@
     />
   </div>
 
-  <div :class="classes === undefined ? 'col-4' : 'col-' + classes[1]">
+  <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[1]">
     <label class="form-label">
       Hc code <span class="text-danger">*</span>
     </label>
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import CoreApi from "../../api/core/core_api.js";
 

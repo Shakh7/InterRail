@@ -1,10 +1,10 @@
 <template>
-  <div :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[0]">
+  <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[0]">
     <label for="departure" class="form-label">
       Departure <span class="text-danger">*</span>
     </label>
     <Multiselect
-        class="form-control"
+        class="form-control-sm"
         v-model="departure.selected"
         :searchable="true"
         :hideSelected="true"
@@ -34,7 +34,7 @@
     />
   </div>
 
-  <div :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[2]">
+  <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[2]">
     <label for="destination" class="form-label">
       Destination <span class="text-danger">*</span>
     </label>
@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import CoreApi from "../../api/core/core_api.js";
 

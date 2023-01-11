@@ -394,8 +394,10 @@ export default {
                     <span>{{ getAccount(item.manager) }}</span>
                   </td>
                   <td>
-                    <font-awesome-icon icon="fa-solid fa-pen-to-square"
-                                       class="c_icon me-1 c_icon_hoverable"/>
+                    <router-link class="text-dark" :to="{ name: 'application_update', params: { id: item.id } }">
+                      <font-awesome-icon icon="fa-solid fa-pen-to-square"
+                                         class="c_icon me-1 c_icon_hoverable"/>
+                    </router-link>
 
                     <span class="border-start border-dark ps-1">
                       <font-awesome-icon @click="confirmApplicationDelete(item.id, item.number)"
