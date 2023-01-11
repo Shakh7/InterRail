@@ -14,7 +14,6 @@ import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config";
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-import Lottie from "@/components/widgets/lottie.vue";
 import createFormModal from "./components/CreateFormModal.vue";
 import PreviewModal from "./components/PreviewModal.vue";
 import store from "../../../state/store.js";
@@ -47,8 +46,9 @@ export default {
         altInput: true,
         dateFormat: "d M, Y",
       },
+      isLoading: false,
       previewModal: {
-        show: true,
+        data: {}
       },
       date: null,
       value: null,
@@ -123,7 +123,6 @@ export default {
   components: {
     PageHeader,
     Multiselect,
-    lottie: Lottie,
     flatPickr,
     // FileTextIcon,
     // CheckSquareIcon,
@@ -137,6 +136,7 @@ export default {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/list/`)
       let response = await request.json()
       this.applicationList = response.results
+      this.isLoading = false;
     },
     async downloadFile(url) {
       fetch(url)
@@ -202,9 +202,14 @@ export default {
         });
       })
 
-    }
+    },
+
+    showPreview(application) {
+      this.previewModal.data = application
+    },
   },
   async mounted() {
+    this.isLoading = true;
     await this.getApplications();
   }
 };
@@ -307,7 +312,7 @@ export default {
           </form>
         </div>
         <div class="card-body">
-          <div>
+          <div v-if="!isLoading">
             <div class="table-responsive table-card">
               <table class="table align-middle table-nowrap" id="invoiceTable">
                 <thead class="text-muted text-center">
@@ -336,13 +341,14 @@ export default {
                   <!--                    </div>-->
                   <!--                  </th>-->
                   <td class="id">
-                    <router-link to="#" class="fw-medium link-primary">
-                      <h5>
+                    <h5 @click="showPreview(item)" data-bs-toggle="modal"
+                        data-bs-target="#previewModal" class="fw-medium link-primary"
+                        style="cursor: pointer"
+                    >
                         <span class="badge badge-soft-primary">
                           {{ item.number }}
                         </span>
-                      </h5>
-                    </router-link>
+                    </h5>
                   </td>
                   <!--                  <td class="customer_name">-->
                   <!--                    <div class="d-flex align-items-center" v-if="item.img">-->
@@ -428,39 +434,12 @@ export default {
                 </tr>
                 </tbody>
               </table>
-              <div class="noresult" style="display: none" :class="{'d-block': applicationList.length == 0}">
-                <div class="text-center">
-                  <lottie class="avatar-xl" colors="primary:#121331,secondary:#08a88a" :options="defaultOptions"
-                          :height="75" :width="75"/>
-                  <h5 class="mt-2">Sorry! No Result Found</h5>
-                  <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
-                    orders for you search.</p>
-                </div>
-              </div>
             </div>
           </div>
 
-          <!-- Modal -->
-          <div class="modal fade flip" id="deleteOrder" tabindex="-1" aria-labelledby="deleteOrderLabel"
-               aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-body p-5 text-center">
-                  <lottie class="avatar-xl" colors="primary:#405189,secondary:#f06548" :options="defaultOptions1"
-                          :height="90" :width="90"/>
-                  <div class="mt-4 text-center">
-                    <h4>You are about to delete a order ?</h4>
-                    <p class="text-muted fs-15 mb-4">Deleting your order will remove all of
-                      your information from our database.</p>
-                    <div class="hstack gap-2 justify-content-center remove">
-                      <button class="btn btn-link link-success fw-medium text-decoration-none"
-                              data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close
-                      </button>
-                      <button class="btn btn-danger" id="delete-record">Yes, Delete It</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div v-if="isLoading">
+            <div class="text-center">
+              <h5 class="mt-2">Loading...</h5>
             </div>
           </div>
         </div>
@@ -470,5 +449,5 @@ export default {
   </div>
 
 
-  <PreviewModal :modalShow="previewModal.show"/>
+  <PreviewModal :application="previewModal.data"/>
 </template>
