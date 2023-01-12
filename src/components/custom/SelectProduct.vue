@@ -1,6 +1,6 @@
 <template>
   <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[0]">
-    <label class="form-label">
+    <label class="form-label" :class="errorColor">
       Product <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -17,7 +17,7 @@
   </div>
 
   <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[1]">
-    <label class="form-label">
+    <label class="form-label" :class="errorColor">
       Hc code <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -35,7 +35,7 @@
   </div>
 
   <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[2]">
-    <label class="form-label">
+    <label class="form-label" :class="errorColor">
       Etcng <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -71,7 +71,13 @@ export default {
     }
   },
   props: {
-    ratio: Array
+    ratio: Array,
+    current_product: {
+      type: Object,
+      default: () => {
+      },
+      required: false
+    },
   },
   methods: {
     async getOptions(query) {
@@ -91,7 +97,7 @@ export default {
 
     },
     onOptionSelect(event) {
-      this.$emit('onSelect', event === null ? 0 : event.value)
+      this.$emit('onSelect', event === null ? null : event)
     }
   },
   computed: {
@@ -99,11 +105,32 @@ export default {
       get() {
         return this.ratio
       }
+    },
+    current_prod: {
+      get() {
+        return this.current_product
+      }
+    },
+    errorColor: {
+      get() {
+        return this.products.selected === null && this.current_product ? 'text-danger' : ''
+      }
     }
   },
   components: {
     Multiselect
   },
+  mounted() {
+    if (this.current_product) {
+      this.products.options = [{
+        value: this.current_prod.id,
+        label: this.current_prod.name,
+        hc_code: this.current_prod['hc_code'],
+        etcng: this.current_prod['etcng_code'],
+      }]
+      this.products.selected = this.products.options[0]
+    }
+  }
 }
 
 </script>

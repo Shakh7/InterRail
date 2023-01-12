@@ -110,7 +110,7 @@
 
                 <SelectStations :ratio="[3, 3, 3, 3]" @onSelect="onStationSelect"/>
 
-                <SelectProduct :ratio="[6, 3, 3]" @onSelect="form.product_id = $event"/>
+                <SelectProduct :ratio="[6, 3, 3]" @onSelect="form.product_id = $event.value"/>
 
               </div>
             </div>
@@ -331,12 +331,27 @@
             <div class="text-center">
 
               <div class="avatar-md mt-5 mb-4 mx-auto">
-                <div class="avatar-title bg-light text-success display-4 rounded-circle">
-                  <i class="ri-checkbox-circle-fill"></i>
+                <div class="avatar-title bg-light display-4 rounded-circle"
+                     :class="{
+                        'text-success': createInfo.isSuccess,
+                        'text-danger': !createInfo.isSuccess
+                    }">
+                  <i :class="{
+                    'ri-checkbox-circle-fill': createInfo.isSuccess,
+                    'ri-error-warning-line': !createInfo.isSuccess
+                    }"></i>
                 </div>
               </div>
-              <h5>Well Done !</h5>
-              <p class="text-muted">You have Successfully Signed Up</p>
+              <h5>
+                {{ createInfo.isSuccess === true ? 'Well Done !' : 'Ooops..' }}
+              </h5>
+              <p class="text-muted">
+                {{
+                  createInfo.isSuccess === true
+                      ? `Your application has been created with number ${createInfo.number}`
+                      : 'Something went wrong'
+                }}
+              </p>
             </div>
           </div>
 
@@ -360,11 +375,16 @@ import OrdersApi from "../../../../api/orders/orders_api.js";
 import store from "../../../../state/store.js";
 
 export default {
+  emits: ['created'],
   name: "createFormModal",
   data() {
     return {
       store: store,
       modalShow: false,
+      createInfo: {
+        number: null,
+        isSuccess: false,
+      },
       forwarders: {
         selected: null,
         options: []
@@ -402,24 +422,26 @@ export default {
   },
   methods: {
     async createApplication(nextTab) {
-      // this.form.prefix = this.forwarders.selected.prefix
-      //
-      // let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(this.form)
-      // })
-      // let response = await request.json()
-      // console.log(response)
+      this.form.prefix = this.forwarders.selected.prefix
+
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.form)
+      })
+      let response = await request.json()
+      this.createInfo.isSuccess = request.ok
+      this.createInfo.number = response['application_number']
+      this.$emit('created', response.number)
       this.GoNextTab(nextTab)
     },
     onStationSelect(station_obj) {
       if (station_obj.option === 'departure') {
-        this.form.departure_id = station_obj.value
+        this.form.departure_id = station_obj.value.value
       } else {
-        this.form.destination_id = station_obj.value
+        this.form.destination_id = station_obj.value.value
       }
     },
     async getCounterpartyList() {

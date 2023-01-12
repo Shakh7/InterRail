@@ -110,7 +110,7 @@
               </tr>
               <tr>
                 <td class="w-50 py-1 fw-bolder">Запрашиваемые территории</td>
-                <td class="w-50 py-1">{{ data.territories.map(t => t.name).join('') }}</td>
+                <td class="w-50 py-1">{{ data.territories.map(t => t.name).join(', ') }}</td>
               </tr>
               <tr>
                 <td class="w-50 py-1 fw-bolder">Условия перевозки</td>

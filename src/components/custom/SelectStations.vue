@@ -1,6 +1,6 @@
 <template>
   <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[0]">
-    <label for="departure" class="form-label">
+    <label for="departure" class="form-label" :class="errorDepColor">
       Departure <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -17,7 +17,7 @@
   </div>
 
   <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[1]">
-    <label for="departure_code" class="form-label">
+    <label for="departure_code" class="form-label" :class="errorDepColor">
       Code <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -35,7 +35,7 @@
   </div>
 
   <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[2]">
-    <label for="destination" class="form-label">
+    <label for="destination" class="form-label" :class="errorDesColor">
       Destination <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -52,7 +52,7 @@
   </div>
 
   <div class="mb-3" :class="classes === undefined ? 'col-md-3' : 'col-md-' + classes[3]">
-    <label for="destination_code" class="form-label">
+    <label for="destination_code" class="form-label" :class="errorDesColor">
       Code <span class="text-danger">*</span>
     </label>
     <Multiselect
@@ -92,7 +92,19 @@ export default {
     }
   },
   props: {
-    ratio: Array
+    ratio: Array,
+    current_departure: {
+      type: Object,
+      default: () => {
+      },
+      required: false
+    },
+    current_destination: {
+      type: Object,
+      default: () => {
+      },
+      required: false
+    },
   },
   methods: {
     async getOptions(query, option_type) {
@@ -127,7 +139,7 @@ export default {
     onOptionSelect(event, option_type) {
       this.$emit('onSelect', {
         option: option_type,
-        value: event === null ? 0 : event.value
+        value: event === null ? null : event
       })
     }
   },
@@ -136,11 +148,39 @@ export default {
       get() {
         return this.ratio
       }
+    },
+    errorDepColor: {
+      get() {
+        return this.departure.selected === null && this.current_departure ? 'text-danger' : ''
+      }
+    },
+    errorDesColor: {
+      get() {
+        return this.destination.selected === null && this.current_destination ? 'text-danger' : ''
+      }
     }
   },
   components: {
     Multiselect
   },
+  mounted() {
+    if (this.current_departure !== undefined) {
+      this.departure.options = [{
+        value: this.current_departure.id,
+        label: this.current_departure.name,
+        code: this.current_departure.code
+      }] // set options
+      this.departure.selected = this.departure.options[0] // set the selected option
+    }
+    if (this.current_destination !== undefined) {
+      this.destination.options = [{
+        value: this.current_destination.id,
+        label: this.current_destination.name,
+        code: this.current_destination.code
+      }] // set options
+      this.destination.selected = this.destination.options[0] // set the selected option
+    }
+  }
 }
 
 </script>

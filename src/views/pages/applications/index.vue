@@ -1,10 +1,4 @@
 <script>
-// import {
-//   FileTextIcon,
-//   CheckSquareIcon,
-//   ClockIcon,
-//   XOctagonIcon
-// } from "@zhuowenli/vue-feather-icons";
 import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 import flatPickr from "vue-flatpickr-component";
@@ -19,6 +13,12 @@ import PreviewModal from "./components/PreviewModal.vue";
 import store from "../../../state/store.js";
 import Swal from "sweetalert2";
 
+import SwiperCore, {Thumbs, Pagination, Navigation} from "swiper";
+import {Swiper, SwiperSlide} from "swiper/vue";
+import "swiper/swiper-bundle.css";
+
+SwiperCore.use([Thumbs, Pagination, Navigation]);
+
 export default {
   page: {
     title: "Invoice List",
@@ -30,10 +30,11 @@ export default {
   data() {
     return {
       title: "Applications",
-      items: [{
-        text: "Home",
-        href: "/",
-      },
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
         {
           text: "Applications List",
           active: true,
@@ -53,64 +54,7 @@ export default {
       date: null,
       value: null,
       searchQuery: null,
-      invoiceWidgets: [
-        {
-          id: 1,
-          label: "Invoices Sent",
-          percentage: "+89.24 %",
-          percentageClass: "success",
-          icon: "ri-arrow-right-up-line",
-          counter: "559.25",
-          badge: "2,258",
-          caption: "Invoices sent",
-          feaIcon: "file-text",
-          decimals: 1,
-          prefix: "$",
-          suffix: "k"
-        },
-        {
-          id: 2,
-          label: "Paid Invoices",
-          percentage: "+8.09 %",
-          percentageClass: "danger",
-          icon: "ri-arrow-right-down-line",
-          counter: "409.66",
-          badge: "1,958",
-          caption: "Paid by clients",
-          feaIcon: "check-square",
-          decimals: 2,
-          prefix: "$",
-          suffix: "k"
-        },
-        {
-          id: 3,
-          label: "Unpaid Invoices",
-          percentage: "+9.01 %",
-          percentageClass: "danger",
-          icon: "ri-arrow-right-down-line",
-          counter: "136.98",
-          badge: "338",
-          caption: "Unpaid by clients",
-          feaIcon: "clock",
-          decimals: 2,
-          prefix: "$",
-          suffix: "k"
-        },
-        {
-          id: 4,
-          label: "Cancelled Invoices",
-          percentage: "+7.55 %",
-          percentageClass: "success",
-          icon: "ri-arrow-right-up-line",
-          counter: "84.2",
-          badge: "502",
-          caption: "Cancelled by clients",
-          feaIcon: "x-octagon",
-          decimals: 1,
-          prefix: "$",
-          suffix: "k"
-        },
-      ],
+      applicationWidgets: [],
       applicationList: [],
       defaultOptions: {
         animationData: animationData
@@ -129,7 +73,9 @@ export default {
     // ClockIcon,
     // XOctagonIcon,
     createFormModal,
-    PreviewModal
+    PreviewModal,
+    Swiper,
+    SwiperSlide,
   },
   methods: {
     async getApplications() {
@@ -137,6 +83,10 @@ export default {
       let response = await request.json()
       this.applicationList = response.results
       this.isLoading = false;
+    },
+    async getApplicationWidgetsData() {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/statistic/`)
+      this.applicationWidgets = (await request.json())['applications']
     },
     async downloadFile(url) {
       fetch(url)
@@ -210,6 +160,7 @@ export default {
   },
   async mounted() {
     this.isLoading = true;
+    await this.getApplicationWidgetsData();
     await this.getApplications();
   }
 };
@@ -260,6 +211,53 @@ export default {
   <!--      </div>&lt;!&ndash; end card &ndash;&gt;-->
   <!--    </div>&lt;!&ndash; end col &ndash;&gt;-->
   <!--  </div>-->
+
+  <swiper
+      class="default-swiper rounded"
+      :loop="false"
+      :grabCursor="true"
+      :slidesPerView="4"
+      :spaceBetween="15"
+  >
+    <swiper-slide v-for="widget in applicationWidgets" :key="widget.id">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+              <h5 class="fs-15 fw-semibold text-capitalize">{{ widget['forwarder__name'] }}</h5>
+              <p class="text-muted">Empty applications</p>
+            </div>
+
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize text-warning"
+                  :class="{
+                      'text-success': widget.filled >= widget.not_filled,
+                      'text-danger': widget.not_filled > widget.filled}"
+              >
+                {{ widget.filled + widget.not_filled }}
+              </h5>
+              <p class="text-muted">{{
+                  widget.not_filled
+                }}</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 4px">
+          <div :class="{
+                      'bg-success': widget.filled >= widget.not_filled,
+                      'bg-danger': widget.not_filled > widget.filled}"
+               class="progress-bar rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+
+    </swiper-slide>
+  </swiper>
+
 
   <div class="row">
     <div class="col-lg-12">
