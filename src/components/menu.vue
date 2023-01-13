@@ -152,43 +152,43 @@ export default {
 
     <template v-if="layoutType === 'vertical'">
 
-<!--      <ul class="navbar-nav h-100" id="navbar-nav">-->
+      <!--      <ul class="navbar-nav h-100" id="navbar-nav">-->
 
-<!--        <div v-for="route in routes" :key="route.path">-->
-<!--          <div v-if="route.meta.isVisableInMenu && route.meta.permissions.includes(user.role)">-->
-<!--            <li class="menu-title">-->
-<!--              <span data-key="t-orders-menu"> {{ route.name }}</span>-->
-<!--            </li>-->
+      <!--        <div v-for="route in routes" :key="route.path">-->
+      <!--          <div v-if="route.meta.isVisableInMenu && route.meta.permissions.includes(user.role)">-->
+      <!--            <li class="menu-title">-->
+      <!--              <span data-key="t-orders-menu"> {{ route.name }}</span>-->
+      <!--            </li>-->
 
-<!--            <li class="nav-item" v-if="route.children !== undefined">-->
-<!--              <a class="nav-link menu-link" :href="'#sidebar' + route.name" data-bs-toggle="collapse" role="button"-->
-<!--                 aria-expanded="false" :aria-controls="'sidebar' + route.name">-->
-<!--                <i class="ri-honour-line  ri-list-ordered"></i>-->
-<!--                <span data-key="t-orders" class="text-capitalize">{{ route.name }}</span>-->
-<!--              </a>-->
-<!--              <div class="collapse menu-dropdown" :id="'sidebar' + route.name">-->
-<!--                <ul class="nav nav-sm flex-column">-->
-<!--                  <div v-for="child in route.children" :key="child">-->
-<!--                    <li class="nav-item text-capitalize" v-if="child.hide === undefined">-->
-<!--                      <router-link :to="route.path + child.path" class="nav-link custom-abc"-->
-<!--                                   data-key="t-analytics">-->
-<!--                        {{ child.name.split('_').join(" ") }}-->
-<!--                      </router-link>-->
-<!--                    </li>-->
-<!--                  </div>-->
-<!--                </ul>-->
-<!--              </div>-->
-<!--            </li>-->
+      <!--            <li class="nav-item" v-if="route.children !== undefined">-->
+      <!--              <a class="nav-link menu-link" :href="'#sidebar' + route.name" data-bs-toggle="collapse" role="button"-->
+      <!--                 aria-expanded="false" :aria-controls="'sidebar' + route.name">-->
+      <!--                <i class="ri-honour-line  ri-list-ordered"></i>-->
+      <!--                <span data-key="t-orders" class="text-capitalize">{{ route.name }}</span>-->
+      <!--              </a>-->
+      <!--              <div class="collapse menu-dropdown" :id="'sidebar' + route.name">-->
+      <!--                <ul class="nav nav-sm flex-column">-->
+      <!--                  <div v-for="child in route.children" :key="child">-->
+      <!--                    <li class="nav-item text-capitalize" v-if="child.hide === undefined">-->
+      <!--                      <router-link :to="route.path + child.path" class="nav-link custom-abc"-->
+      <!--                                   data-key="t-analytics">-->
+      <!--                        {{ child.name.split('_').join(" ") }}-->
+      <!--                      </router-link>-->
+      <!--                    </li>-->
+      <!--                  </div>-->
+      <!--                </ul>-->
+      <!--              </div>-->
+      <!--            </li>-->
 
-<!--            <li class="nav-item" v-else>-->
-<!--              <router-link class="nav-link menu-link" to="/rates/">-->
-<!--                <i class="ri-honour-line  ri-list-ordered"></i>-->
-<!--                <span data-key="t-orders"> {{ route.children }}</span>-->
-<!--              </router-link>-->
-<!--            </li>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </ul>-->
+      <!--            <li class="nav-item" v-else>-->
+      <!--              <router-link class="nav-link menu-link" to="/rates/">-->
+      <!--                <i class="ri-honour-line  ri-list-ordered"></i>-->
+      <!--                <span data-key="t-orders"> {{ route.children }}</span>-->
+      <!--              </router-link>-->
+      <!--            </li>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </ul>-->
 
       <ul class="navbar-nav h-100" id="navbar-nav">
 
@@ -221,39 +221,6 @@ export default {
         </div>
         <!-- end Users management Menu -->
 
-
-        <!-- start SMGS Menu -->
-        <!-- <li class="menu-title">
-          <span data-key="t-users-management"> SMGS {{$store.state.user.role}}</span>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
-            aria-expanded="false" aria-controls="sidebarApps">
-            <i class="ri-apps-2-line"></i>
-            <span data-key="t-apps"> SMGS </span>
-          </a>
-          <div class="collapse menu-dropdown" id="sidebarApps">
-            <ul class="nav nav-sm flex-column">
-              <li class="nav-item">
-                <router-link to="/smgs/create/" class="nav-link" data-key="t-create">
-                  Create
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link to="/smgs/update/" class="nav-link" data-key="t-update">
-                  Update
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link to="/smgs/list/" class="nav-link" data-key="t-update">
-                  List
-                </router-link>
-              </li>
-            </ul>
-          </div>
-        </li> -->
-        <!-- end SMGS Menu -->
-
         <li class="menu-title">
           <span data-key="t-orders-menu"> Codes </span>
         </li>
@@ -264,7 +231,6 @@ export default {
             <span data-key="t-orders">Applications</span>
           </router-link>
         </li>
-
 
 
         <li class="menu-title">
@@ -382,15 +348,15 @@ export default {
           </a>
         </li>
 
-        <!--        <li class="menu-title">-->
-        <!--          <span data-key="t-orders-menu"> Services </span>-->
-        <!--        </li>-->
-        <!--        <li class="nav-item">-->
-        <!--          <router-link class="nav-link menu-link" to="/smgs/list/">-->
-        <!--            <font-awesome-icon icon="fa-solid fa-print"/>-->
-        <!--            <span data-key="t-orders">SMGS printing</span>-->
-        <!--          </router-link>-->
-        <!--        </li>-->
+        <li class="menu-title">
+          <span data-key="t-orders-menu"> Services </span>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link menu-link" to="/smgs/list/">
+            <font-awesome-icon icon="fa-solid fa-print"/>
+            <span data-key="t-orders">SMGS printing</span>
+          </router-link>
+        </li>
 
       </ul>
     </template>
