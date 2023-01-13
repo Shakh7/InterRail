@@ -164,7 +164,6 @@ export default {
 
       let data = await result.json()
       this.apiData = data['results']
-      console.log(this.apiData)
       this.paginate.count = data['count']
 
       this.isFetchingData = false

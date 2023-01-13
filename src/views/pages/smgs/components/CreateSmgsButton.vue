@@ -4,6 +4,7 @@ import readXlsxFile from "read-excel-file";
 import axios from "axios";
 import Swal from "sweetalert2";
 import store from '../../../../state/store.js'
+
 export default {
   name: 'CreateSmgsButton',
   emits: {
@@ -268,18 +269,15 @@ export default {
     async submitTrainSmgs() {
       this.uploadStatus.totalItemsToBeUploaded = this.excel.data.englishVersion.length
 
-      Array.from(this.excel.data.englishVersion).forEach(async (item) => {
-        let response = await fetch('https://fastapi-smgs.herokuapp.com/api/v1/smgs/', {
+      this.excel.data.englishVersion.forEach((item) => {
+        fetch(`${process.env.VUE_APP_SMGS_URL}/smgs/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(item)
-        })
-
-        let data = await response.json()
-
-        await this.countUploadedItems(data)
+        }).then(response => response.json())
+            .then(data => this.countUploadedItems(data));
       })
     },
 
@@ -291,7 +289,7 @@ export default {
         this.train.id === null ? this.train.id = data.train.id : 0
         try {
 
-          let userId =  await fetch(`https://fastapi-smgs.herokuapp.com/api/v1/train/${this.train.id}`, {
+          let userId = await fetch(`${process.env.VUE_APP_SMGS_URL}/train/${this.train.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
@@ -307,7 +305,7 @@ export default {
           var formData = new FormData();
           formData.append("file", this.dropZone.files[0]);
           axios
-              .post(`http://fastapi-smgs.herokuapp.com/api/v1/train/uploadfile/?pk=${this.train.id}`, formData, {
+              .post(`${process.env.VUE_APP_SMGS_URL}/train/uploadfile/?pk=${this.train.id}`, formData, {
                 headers: {
                   "Content-Type": "multipart/form-data",
                 },

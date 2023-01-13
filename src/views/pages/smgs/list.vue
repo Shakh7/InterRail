@@ -29,7 +29,7 @@ export default {
     return {
       title: "Orders",
       date: null,
-      url: `${process.env.VUE_APP_SMGS_URL}/smgs/`,
+      url: `${process.env.VUE_APP_SMGS_URL}/train/`,
       defaultOptions: {
         animationData: animationData1,
       },
@@ -153,7 +153,7 @@ export default {
     async getSmgsList() {
       this.isLoading = true
       let response = await fetch(
-          `${process.env.VUE_APP_SMGS_URL}/smgs/?limit=100&skip=0`
+          `${process.env.VUE_APP_SMGS_URL}/train/?limit=100&skip=0`
       );
       let trainList = await response.json();
 
@@ -177,149 +177,31 @@ export default {
       let fileLink = document.createElement("a");
 
       if (fileType === "draft" || fileType === "original") {
-        fileLink.href = `${process.env.SMGS_URL}/trainzip/${id}?smgs_type=${fileType}`;
+        fileLink.href = `${process.env.VUE_APP_SMGS_URL}/trainzip/${id}?smgs_type=${fileType}`;
       } else {
-        fileLink.href = `${process.env.SMGS_URL}/trainzip/${id}`;
+        fileLink.href = `${process.env.VUE_APP_SMGS_URL}/trainzip/${id}`;
       }
       fileLink.setAttribute("download", "import-excel-template");
       document.body.appendChild(fileLink);
 
       fileLink.click();
     },
+
+    async downloadExcel(url) {
+      let BASE_URL = 'https://smgs.interrail.uz'
+      let a = document.createElement('a')
+      a.href = BASE_URL + url
+      a.click()
+      a.remove()
+    },
   },
   async mounted() {
-    await this.getSmgsList();
+    // await this.getSmgsList();
   },
 };
 </script>
 
 <template>
-
-  <!--  <div class="row">-->
-  <!--    <div class="col-lg-12">-->
-  <!--      <div class="card" id="smgsList">-->
-  <!--        <div class="card-header border-0">-->
-  <!--          <div class="d-flex align-items-center">-->
-  <!--            <h5 class="card-title mb-0 flex-grow-1">Applications</h5>-->
-  <!--            <div class="flex-shrink-0">-->
-  <!--              <CreateSmgsButton-->
-  <!--                  @onExcelFileReceived="onExcelFileReceived"-->
-  <!--                  @onCreateTrainFinished="getSmgsList"-->
-  <!--                  :previewConfirmed="excelPreview.confirmed"-->
-  <!--              />-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--        <div class="card-body bg-soft-light border border-dashed border-start-0 border-end-0">-->
-  <!--          <form>-->
-  <!--            <div class="row g-3">-->
-  <!--              <div class="col-xxl-5 col-sm-12">-->
-  <!--                <div class="search-box">-->
-  <!--                  <input type="text" class="form-control search bg-light border-light"-->
-  <!--                         placeholder="Search for customer, email, country, status or something...">-->
-  <!--                  <i class="ri-search-line search-icon"></i>-->
-  <!--                </div>-->
-  <!--              </div>-->
-  <!--              &lt;!&ndash;end col&ndash;&gt;-->
-  <!--              <div class="col-xxl-3 col-sm-4">-->
-  <!--                <flat-pickr v-model="date" :config="config" class="form-control bg-light border-light"-->
-  <!--                            placeholder="Select date"></flat-pickr>-->
-  <!--              </div>-->
-  <!--              &lt;!&ndash;end col&ndash;&gt;-->
-  <!--              <div class="col-xxl-3 col-sm-4">-->
-  <!--                <div class="input-light">-->
-  <!--                  <Multiselect class="form-control" :close-on-select="true" :searchable="true"-->
-  <!--                               :create-option="true" :options="[-->
-  <!--                            { value: 'all', label: 'all' },-->
-  <!--                            { value: 'Unpaid', label: 'Unpaid' },-->
-  <!--                            { value: 'Paid', label: 'Paid' },-->
-  <!--                            { value: 'Cancel', label: 'Cancel' },-->
-  <!--                            { value: 'Refund', label: 'Refund' },-->
-  <!--                          ]"/>-->
-  <!--                </div>-->
-  <!--              </div>-->
-
-  <!--              <div class="col-xxl-1 col-sm-4">-->
-  <!--                <button type="button" class="btn btn-primary w-100">-->
-  <!--                  <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters-->
-  <!--                </button>-->
-  <!--              </div>-->
-  <!--              &lt;!&ndash;end col&ndash;&gt;-->
-  <!--            </div>-->
-  <!--            &lt;!&ndash;end row&ndash;&gt;-->
-  <!--          </form>-->
-  <!--        </div>-->
-  <!--        <div class="card-body">-->
-  <!--          <div v-if="!isLoading">-->
-  <!--            <div class="table-responsive table-card">-->
-  <!--              <table class="table align-middle table-nowrap" id="invoiceTable">-->
-  <!--                <thead class="text-muted text-center">-->
-  <!--                <tr>-->
-  <!--                  &lt;!&ndash;                  <th scope="col" style="width: 50px;">&ndash;&gt;-->
-  <!--                  &lt;!&ndash;                    <div class="form-check">&ndash;&gt;-->
-  <!--                  &lt;!&ndash;                      <input class="form-check-input" type="checkbox" id="checkAll" value="option">&ndash;&gt;-->
-  <!--                  &lt;!&ndash;                    </div>&ndash;&gt;-->
-  <!--                  &lt;!&ndash;                  </th>&ndash;&gt;-->
-  <!--                  <th class="sort text-uppercase" data-sort="invoice_id">Number</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="customer_name">Forwarder</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="email">Departure</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="country">Destination</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="date">File</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="invoice_amount">Date</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="status">Client</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="status">Manager</th>-->
-  <!--                  <th class="sort text-uppercase" data-sort="action">Action</th>-->
-  <!--                </tr>-->
-  <!--                </thead>-->
-  <!--                <tbody class="list form-check-all text-center">-->
-  <!--                <tr v-for="item of table.original" :key="item">-->
-  <!--                  <td class="email">C</td>-->
-  <!--                  <td class="country">B</td>-->
-  <!--                  <td class="country">A</td>-->
-  <!--                  <td class="invoice_amount">-->
-
-  <!--                    <span class="text-danger">-->
-  <!--                        <font-awesome-icon-->
-  <!--                            icon="fa-solid fa-file-zipper"-->
-  <!--                            class="c_icon_hoverable text-secondary"-->
-  <!--                        />-->
-  <!--                    </span>-->
-
-  <!--                  </td>-->
-  <!--                  <td class="status">-->
-  <!--                    &lt;!&ndash;                                        <span class="badge text-uppercase" :class="{&ndash;&gt;-->
-  <!--                    &lt;!&ndash;                                            'badge-soft-success':item.status=='Paid',&ndash;&gt;-->
-  <!--                    &lt;!&ndash;                                            'badge-soft-warning':item.status=='Unpaid',&ndash;&gt;-->
-  <!--                    &lt;!&ndash;                                            'badge-soft-danger':item.status=='Cancel',&ndash;&gt;-->
-  <!--                    &lt;!&ndash;                                            'badge-soft-primary':item.status=='Refund',&ndash;&gt;-->
-  <!--                    &lt;!&ndash;                                          }">{{ item.status }}</span>&ndash;&gt;-->
-  <!--                    <span class="text-primary fw-medium">Status</span>-->
-  <!--                  </td>-->
-  <!--                  <td>-->
-  <!--                    <font-awesome-icon icon="fa-solid fa-pen-to-square"-->
-  <!--                                       class="c_icon me-1 c_icon_hoverable"/>-->
-
-  <!--                    <span class="border-start border-dark ps-1">-->
-  <!--                      <font-awesome-icon icon="fa-solid fa-trash"-->
-  <!--                                         class="c_icon c_icon_hoverable text-danger"/>-->
-  <!--                    </span>-->
-  <!--                  </td>-->
-  <!--                </tr>-->
-  <!--                </tbody>-->
-  <!--              </table>-->
-  <!--            </div>-->
-  <!--          </div>-->
-
-  <!--          <div v-if="isLoading">-->
-  <!--            <div class="text-center">-->
-  <!--              <h5 class="mt-2">Loading...</h5>-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--      </div>-->
-
-  <!--    </div>-->
-  <!--  </div>-->
 
   <CustomTable
       name="SMGS TABLE"
@@ -380,12 +262,11 @@ export default {
 
     <template v-slot:excel="slotProps">
       <span v-if="slotProps.row.excel_file === null">---</span>
-      <span>
+      <span v-if="slotProps.row.excel_file">
                         <font-awesome-icon
-                            v-if="slotProps.row.excel_file"
                             icon="fa-solid fa-file-excel p-0 m-0"
                             class="excel_file c_icon_hoverable"
-                            @click="downloadFile(slotProps.row.id, 'excel')"
+                            @click="downloadExcel(slotProps.row.excel_file)"
                         />
                       </span>
     </template>

@@ -44,14 +44,13 @@ export default {
                                             {{th === null? 'Empty' : th}}
                                         </template>
                                     </VTooltip>
-                                    <!-- {{th === null ? '?' : th.toString().slice(0,1)}} -->
                                 </th>
                             </tr>
-                            <tr class="text-center">
-                                <th v-for="th in excelData[0]" :key="th">
-                                    <input class="w-100 form-control py-0" type="text" :placeholder="th">
-                                </th>
-                            </tr>
+<!--                            <tr class="text-center">-->
+<!--                                <th v-for="th in excelData[0]" :key="th">-->
+<!--                                    <input class="w-100 form-control py-0" type="text" :placeholder="th">-->
+<!--                                </th>-->
+<!--                            </tr>-->
                         </thead>
                         <tbody>
                             <tr v-for="tr in excelData.slice(1, excelData.length)" :key="tr" class="text-center">

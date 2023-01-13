@@ -42,7 +42,7 @@ export default {
         },
 
         deleteTrain(trainId) {
-            fetch(`https://fastapi-smgs.herokuapp.com/api/v1/train/${trainId}`, {
+            fetch(`${process.env.VUE_APP_SMGS_URL}/v1/train/${trainId}`, {
                 method: 'DELETE',
             }).then(response => {
                 console.log(response)

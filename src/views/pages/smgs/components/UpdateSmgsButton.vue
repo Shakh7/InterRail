@@ -20,6 +20,6 @@ export default {
 <template>
     <a href="#UpdateSmgsModal" data-bs-toggle="modal" class="text-dark px-1 mx-1" 
         @click="onUpdateBtnClicked">
-        <font-awesome-icon icon="fa-regular fa-pen-to-square" class="c_icon_hoverable c_icon " />
+        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="c_icon_hoverable c_icon " />
     </a>
 </template>
