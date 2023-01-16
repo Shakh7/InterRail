@@ -194,9 +194,11 @@ export default {
       a.click()
       a.remove()
     },
-  },
-  async mounted() {
-    // await this.getSmgsList();
+
+    getAccount(id) {
+      let user = this.store.state.users_list.find((account) => account.id === id)
+      return user ? user.full_name : 'Unknown'
+    },
   },
 };
 </script>
@@ -279,7 +281,7 @@ export default {
                 <span>{{
                     slotProps.row.user_id === store.state.user.id
                         ? store.state.user.full_name
-                        : slotProps.row.user_id
+                        : getAccount(slotProps.row.user_id)
                   }}</span>
     </template>
 
