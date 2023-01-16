@@ -37,7 +37,8 @@ export default {
       paginate: {
         current: 1,
         count: 0
-      }
+      },
+      isFetchingData: false
     }
   },
   props: {
@@ -88,47 +89,6 @@ export default {
     pagination
   },
   computed: {
-    searchedTable() {
-      // let searchableFields = this.headers.filter(header => header.searchable === true).map(header => header.field)
-      // let data = this.rows
-      let searchResults = this.apiData
-      //
-      // if (this.search.length > 0) {
-      //   Array.from(data).forEach(item => {
-      //     for (let [key, value] of Object.entries(item)) {
-      //       if (value !== null) {
-      //         let expectedValue = value.toString().toLowerCase()
-      //         let query = this.search.toString().trim().toLowerCase()
-      //         if (searchableFields.includes(key)) {
-      //           if (expectedValue.includes(query)) {
-      //             searchResults.includes(item) === false ? searchResults.push(item) : 0
-      //           }
-      //         }
-      //       }
-      //     }
-      //   })
-      // } else {
-      //   searchResults = data
-      // }
-      //
-      // if (this.date !== null) {
-      //   let dates = this.date.split('to')
-      //   searchResults = searchResults.filter(item => {
-      //     let itemDate = new Date(item.date)
-      //     if (dates.length === 1) {
-      //       return dates[0].trim() === item.date
-      //     } else {
-      //       let startDate = new Date(dates[0].trim())
-      //       let endDate = new Date(dates[1].trim())
-      //       return itemDate >= startDate && itemDate <= endDate
-      //     }
-      //   })
-      //
-      //   return searchResults
-      // }
-
-      return searchResults;
-    },
     getFilterableFields() {
       let fields = []
       let filterable = this.headers.filter(header => header.filterable === true).map(header => header.field.toString().trim().toUpperCase())
@@ -185,14 +145,28 @@ export default {
       let item = this.table.selected.filter(item => item.id === id)
       return item.length > 0
     },
-    async getData() {
-      let result = store.state.user.role === 'admin'
-          ? await fetch(this.url + `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`)
-          : await fetch(this.url + `?offset=${0}&limit=${30}&manager=${store.state.user.id}`)
+    async getData(search) {
+      let fetchUrl = ''
+
+      this.isFetchingData = true
+
+      if (search) {
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?search=${search}&limit=${this.pagination.perPage}`
+            : `${this.url}?manager=${store.state.user.id}&search=${search}&limit=${this.pagination.perPage}`
+      } else {
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`
+            : `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
+      }
+
+      let result = await fetch(fetchUrl)
 
       let data = await result.json()
       this.apiData = data['results']
       this.paginate.count = data['count']
+
+      this.isFetchingData = false
     },
     async pageChange(page) {
       this.paginate.current = Math.ceil(page)
@@ -201,6 +175,15 @@ export default {
   },
   async mounted() {
     await this.getData()
+  },
+  watch: {
+    search(value) {
+      if (value.trim().length >= 1) {
+        this.getData(this.search.trim())
+      } else {
+        this.getData()
+      }
+    }
   }
 }
 </script>
@@ -289,6 +272,7 @@ export default {
                   </th>
                 </tr>
                 </thead>
+                <!-- IF DATA EXISTS -->
                 <tbody v-if="apiData.length > 0" class="list form-check-all">
                 <tr v-for="r in apiData" :key="r">
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
@@ -304,7 +288,9 @@ export default {
                   </td>
                 </tr>
                 </tbody>
-                <tbody v-else-if="rows.length === 0 && isLoading">
+
+                <!-- IF LOADING -->
+                <tbody v-else-if="(rows.length === 0 && isLoading) || isFetchingData">
                 <tr v-for="i in 5" :key="i">
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
                     <div class="form-check">
@@ -316,6 +302,8 @@ export default {
                   </td>
                 </tr>
                 </tbody>
+
+                <!-- IF LOADED AND NO DATA -->
                 <tbody v-else-if="rows.length === 0 && !isLoading">
                 <tr class="text-center border-white">
                   <td v-if="selectable === true" :colspan="headers.length">
@@ -338,11 +326,12 @@ export default {
                   </td>
                 </tr>
                 </tbody>
+
               </table>
             </div>
           </div>
         </div>
-        <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0">
+        <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0 & search.trim().length === 0">
           <div class="d-flex justify-content-end py-0 w-100">
             <pagination
                 :page_count="paginate.count"

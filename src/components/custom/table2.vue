@@ -150,14 +150,14 @@ export default {
 
       this.isFetchingData = true
 
-      if (store.state.user.role === 'admin') {
-        fetchUrl = this.url + `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`
-      } else {
-        fetchUrl = this.url + `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
-      }
-
       if (search) {
-        fetchUrl += `&search=${search}`
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?search=${search}&limit=${this.pagination.perPage}`
+            : `${this.url}?manager=${store.state.user.id}&search=${search}&limit=${this.pagination.perPage}`
+      } else {
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`
+            : `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
       }
 
       let result = await fetch(fetchUrl)
@@ -178,7 +178,7 @@ export default {
   },
   watch: {
     search(value) {
-      if (value.trim() >= 1) {
+      if (value.trim().length >= 1) {
         this.getData(this.search.trim())
       } else {
         this.getData()
@@ -331,7 +331,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0">
+        <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0 & search.trim().length === 0">
           <div class="d-flex justify-content-end py-0 w-100">
             <pagination
                 :page_count="paginate.count"

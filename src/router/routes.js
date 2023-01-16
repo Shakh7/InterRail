@@ -223,7 +223,11 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
-            {path: 'update/:id', name: 'application_update', component: () => import("../views/pages/applications/update.vue"),}
+            {
+                path: 'update/:id',
+                name: 'application_update',
+                component: () => import("../views/pages/applications/update.vue"),
+            }
         ],
     },
 
@@ -266,7 +270,8 @@ export default [
         component: () => import("../layouts/layout.vue"),
         redirect: {name: "smgs_list"},
         children: [
-            {path: 'list/', name: 'smgs_list', component: () => import("../views/pages/smgs/list.vue"),}
+            {path: 'list/', name: 'smgs_list', component: () => import("../views/pages/smgs/list.vue"),},
+            {path: 'update/:id', name: 'smgs_update', component: () => import("../views/pages/smgs/update.vue"),},
         ],
     },
 

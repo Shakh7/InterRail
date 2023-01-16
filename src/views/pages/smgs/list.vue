@@ -7,7 +7,7 @@ import UpdateSmgsModal from "./modal/UpdateSmgsModal.vue";
 import UploadPreview from "./components/ExcelPreviewModal.vue";
 import store from '../../../state/store'
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-import UpdateSmgsButton from "./components/UpdateSmgsButton.vue";
+// import UpdateSmgsButton from "./components/UpdateSmgsButton.vue";
 import DeleteSmgsButton from "./components/DeleteSmgsButton.vue";
 import CustomTable from "../../../components/custom/table2.vue";
 
@@ -124,7 +124,7 @@ export default {
   components: {
     CustomTable,
     DeleteSmgsButton,
-    UpdateSmgsButton,
+    // UpdateSmgsButton,
 
     // SmgsModalBody,
     UploadPreview,
@@ -285,15 +285,15 @@ export default {
 
     <template v-slot:actions="slotProps">
 
-      <UpdateSmgsButton
-          @onUpdateBtnClicked="setUpdateTrainData"
-          :train="{ id: slotProps.row.id, name: slotProps.row.name }"
-      />
+      <router-link :to="{name: 'smgs_update', params: {id: slotProps.row.id }}" class="text-dark px-1 mx-1">
+        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="c_icon_hoverable c_icon "/>
+      </router-link>
 
       <DeleteSmgsButton
           :train="{ id: slotProps.row.id, name: slotProps.row.name }"
           @onTrainDeleted="getSmgsList"
       />
+
     </template>
 
   </CustomTable>
