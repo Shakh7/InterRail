@@ -296,7 +296,7 @@ export default {
 
       <DeleteSmgsButton
           :train="{ id: slotProps.row.id, name: slotProps.row.name }"
-          @onTrainDeleted="getSmgsList"
+          @onTrainDeleted="this.getUpdate = !this.getUpdate"
       />
 
     </template>
