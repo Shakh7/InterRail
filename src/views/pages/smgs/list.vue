@@ -118,7 +118,9 @@ export default {
         dateFormat: "d M, Y",
       },
 
-      isLoading: true
+      isLoading: true,
+
+      getUpdate: false,
     };
   },
   components: {
@@ -214,12 +216,13 @@ export default {
       :url="url"
       :isLoading="false"
       :pagination="pagination"
+      :getUpdate="getUpdate"
   >
 
     <template #top-right>
       <CreateSmgsButton
           @onExcelFileReceived="onExcelFileReceived"
-          @onCreateTrainFinished="getSmgsList"
+          @onCreateTrainFinished="this.getUpdate = !this.getUpdate"
           :previewConfirmed="excelPreview.confirmed"
       />
     </template>

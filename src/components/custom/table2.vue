@@ -79,6 +79,10 @@ export default {
       type: Object,
       default: () => {
       }
+    },
+    getUpdate: {
+      type: Boolean,
+      default: () => false
     }
   },
   components: {
@@ -183,6 +187,9 @@ export default {
       } else {
         this.getData()
       }
+    },
+    getUpdate() {
+      this.getData()
     }
   }
 }
