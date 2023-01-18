@@ -1,4 +1,7 @@
 <template>
+
+  <PageHeader :items="items" title="Application"></PageHeader>
+
   <div class="row justify-content-around m-auto" v-if="data !== null" style="max-width: 1400px">
     <div class="col-8">
       <div class="card card-body">
@@ -76,6 +79,22 @@
               </td>
             </tr>
             <tr>
+              <td class="w-50 py-1 fw-bolder">Станция отправления</td>
+              <td class="w-50 py-1">
+                <div v-if="data.departure">
+                  <h6 class="text-dark my-0">{{ data.departure.name + ' (' + data.departure.code + ')' }}</h6>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="w-50 py-1 fw-bolder">Станция назначения</td>
+              <td class="w-50 py-1">
+                <div v-if="data.destination">
+                  <h6 class="text-dark my-0">{{ data.destination.name + ' (' + data.destination.code + ')' }}</h6>
+                </div>
+              </td>
+            </tr>
+            <tr>
               <td class="w-50 py-1 fw-bolder">Грузоотправитель</td>
               <td class="w-50 py-1">
                 <input class="form-control form-control-sm" typeof="text" v-model="data.shipper">
@@ -97,6 +116,16 @@
               <td class="w-50 py-1 fw-bolder">Страна назначения</td>
               <td class="w-50 py-1">
                 <input class="form-control form-control-sm" typeof="text" v-model="data.destination_country">
+              </td>
+            </tr>
+            <tr>
+              <td class="w-50 py-1 fw-bolder">Наименование груза, Коды ГНГ и ЕТСНГ</td>
+              <td class="w-50 py-1">
+                <div class="text-dark" v-if="data.product">
+                  <h6>{{ data.product.name }}</h6>
+                  <h6>ГНГ - {{ data.product.hc_code }}</h6>
+                  <h6 class="my-0">ЕТСНГ - {{ data.product.etcng_code }}</h6>
+                </div>
               </td>
             </tr>
             <tr>
@@ -189,6 +218,67 @@
           </table>
         </section>
 
+        <section class="row justify-content-center">
+          <div class="col-11 my-3 px-0 mb-4">
+            <div class="text-dark fw-light">
+              <span class="fs-5"> В случае отсутствия кодов, просим Вас предоставить <span class="fw-bold">коды</span> на следующую перевозку: </span>
+            </div>
+          </div>
+          <div class="col-11 px-0 mb-5">
+            <div class="d-flex flex-row justify-content-between align-items-end">
+              <div>
+                <span class="fs-5">С уважением,</span>
+                <h5 class="text-dark fw-bolder my-0">Глава представительства</h5>
+              </div>
+              <div>
+                <h5 class="text-dark fw-bolder my-0">Сулейманов Д.А.</h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-11 px-0 mt-5">
+            <div class="d-flex flex-row justify-content-between align-items-end">
+              <div>
+                <h6 class="lh-base" style="font-size: 10px">
+                  Wir arbeiten ausschliesslich <br>
+                  aufgrund unserer Transport- <br>
+                  übernahmebedingungen.
+                </h6>
+              </div>
+              <div>
+                <h6 class="lh-base" style="font-size: 10px">
+                  Credit Suisse <br>
+                  CH-9001 St. Gallen <br>
+                  SWIFT: CHRESCHZZ90A
+                </h6>
+              </div>
+
+              <div>
+                <h6 class="lh-base" style="font-size: 10px">
+                  USD CH05 0483 5044 2540 8200 0 <br>
+                  CHF CH39 0483 5044 2540 8100 0 <br>
+                  EUR CH75 0483 5044 2540 8200 1
+                </h6>
+              </div>
+
+              <div>
+                <h6 class="lh-base" style="font-size: 10px">
+                  Tel.: +41 71 227 15 40 <br>
+                  Fax: +41 71 227 15 30 <br>
+                  E-Mail: info@interrail.ag
+                </h6>
+              </div>
+
+              <div>
+                <h6 class="lh-base" style="font-size: 10px">
+                  Website <br>
+                  www.interrail.ag
+                </h6>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
     <div class="col-3">
@@ -205,7 +295,7 @@
         <SelectProduct
             :ratio="[12,12,12]"
             :current_product="data.product"
-            @onSelect="$event ? data.product = {id: $event.value, name: $event.label, hc_code: $event.hc_code, etcng_code: $event.etcng} : null"
+            @onSelect="$event ? data.product = {id: $event.value, name: $event.label, hc_code: $event.hc_code, etcng_code: $event.etcng} : data.product = null"
         />
       </div>
 
@@ -225,11 +315,22 @@ import SelectProduct from "../../../components/custom/SelectProduct.vue";
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
+import PageHeader from "../../../components/page-header.vue";
 
 export default {
   name: "update",
   data() {
     return {
+      items: [
+        {
+          text: "Home",
+          href: "/",
+        },
+        {
+          text: "Applications update",
+          active: true,
+        },
+      ],
       application: null,
       isLoading: false,
       forwarders: {
@@ -283,16 +384,18 @@ export default {
     },
     onStationSelect(event) {
       if (event.option === 'departure') {
-        if (event.value === null) return
+        if (event.value === null) return this.data.departure = null
         this.data.departure = {
           id: event.value.value,
-          name: event.value.label
+          name: event.value.label,
+          code: event.value.code,
         }
       } else {
-        if (event.value === null) return
+        if (event.value === null) return this.data.destination = null
         this.data.destination = {
           id: event.value.value,
-          name: event.value.label
+          name: event.value.label,
+          code: event.value.code,
         }
       }
     },
@@ -327,7 +430,7 @@ export default {
         showCloseButton: false,
         confirmButtonText: 'Ok',
       })
-    }
+    },
   },
   computed: {
     forwarderPrefix: {
@@ -339,12 +442,13 @@ export default {
       get() {
         return this.application
       }
-    }
+    },
   },
   components: {
     SelectStations,
     SelectProduct,
-    Multiselect
+    Multiselect,
+    PageHeader
   },
   async mounted() {
     this.isLoading = true
