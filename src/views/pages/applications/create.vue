@@ -2,7 +2,7 @@
 
   <PageHeader :items="items" title="Application"></PageHeader>
 
-  <div class="row justify-content-around m-auto" v-if="data !== null" style="max-width: 1400px">
+  <div class="row justify-content-around m-auto" style="max-width: 1400px">
     <div class="col-8">
       <div class="card card-body">
         <section class="row justify-content-between align-items-start mt-0">
@@ -26,16 +26,9 @@
           <div class="col-12 my-3 mb-0">
             <div class="d-flex flex-row justify-content-between align-items-end">
               <div>
-                <h6 class="text-dark fw-bold mb-0 mb-2">
-                  Исх. №{{ forwarderPrefix + data.number }}
-                </h6>
 
                 <div class="position-relative">
-                  <input v-model="data.date" type="date" placeholder="date" class="form-control form-control-sm">
-                  <span v-if="application.date !== data.date"
-                        class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-success p-1">
-                    <span class="visually-hidden"> -- Modified field -- </span>
-                  </span>
+                  <input v-model="form.date" type="date" placeholder="date" class="form-control form-control">
                 </div>
 
               </div>
@@ -48,7 +41,7 @@
                     :options="forwarders.options"
                     placeholder="Forwarder"
                     :object="true"
-                    @input="$event ? data.forwarder = { id: $event.value, name: $event.label, is_used_for_code: $event.is_used_for_code } : data.forwarder = null"
+                    @input="$event ? form.forwarder_id = $event.value : form.forwarder_id = null"
                 />
               </div>
             </div>
@@ -66,73 +59,83 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
               <td class="w-50 py-1">
-                <Multiselect v-model="data.period" :caret="false" :options="['Январь', 'февраль', 'Март','Апрель','Май',
+                <Multiselect v-model="form.period" :caret="false" :options="['Январь', 'февраль', 'Март','Апрель','Май',
                 'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
-                             style="max-height: 28px"/>
+                             style="min-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид отправки</td>
               <td class="w-50 py-1">
-                <Multiselect v-model="data.sending_type" :caret="false" :options="['Одиночная', 'КП']"
+                <Multiselect v-model="form.sending_type" :caret="false" :options="['Одиночная', 'КП']"
+                             style="max-height: 28px"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="w-50 py-1 fw-bolder">Тип погрузки</td>
+              <td class="w-50 py-1">
+                <Multiselect v-model="form.loading_type" :options="['Container', 'Wagon']" :caret="false"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Станция отправления</td>
               <td class="w-50 py-1">
-                <div v-if="data.departure">
-                  <h6 class="text-dark my-0">{{ data.departure.name + ' (' + data.departure.code + ')' }}</h6>
+                <div v-if="form.departure_id">
+                  <h6 class="text-dark my-0">{{ form.departure_id.name }} ({{ form.departure_id.code }})</h6>
                 </div>
+                <span v-else>--</span>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Станция назначения</td>
               <td class="w-50 py-1">
-                <div v-if="data.destination">
-                  <h6 class="text-dark my-0">{{ data.destination.name + ' (' + data.destination.code + ')' }}</h6>
+                <div v-if="form.destination_id">
+                  <h6 class="text-dark my-0">{{ form.destination_id.name }} ({{ form.destination_id.code }})</h6>
                 </div>
+                <span v-else>--</span>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Грузоотправитель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.shipper">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.shipper">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Получатель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.consignee">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.consignee">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна отправления</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.departure_country">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.departure_country">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна назначения</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.destination_country">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.destination_country">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Наименование груза, Коды ГНГ и ЕТСНГ</td>
               <td class="w-50 py-1">
-                <div class="text-dark" v-if="data.product">
-                  <h6>{{ data.product.name }}</h6>
-                  <h6>ГНГ - {{ data.product.hc_code }}</h6>
-                  <h6 class="my-0">ЕТСНГ - {{ data.product.etcng_code }}</h6>
+                <div class="text-dark" v-if="form.product_id">
+                  <h6>{{ form.product_id.name }}</h6>
+                  <h6>ГНГ - {{ form.product_id.hc_code }}</h6>
+                  <h6 class="my-0">ЕТСНГ - {{ form.product_id.etcng_code }}</h6>
                 </div>
+                <span v-else>--</span>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Количество
               </td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.quantity">
+                <input class="form-control form-control-sm" type="number" v-model="form.quantity">
               </td>
             </tr>
             <tr>
@@ -142,33 +145,33 @@
               <td class="w-50 py-1">
                 <div class="row justify-content-between align-items-center w-100 m-auto px-0">
                   <div class="col-xl-6 pe-1 ps-0 py-0">
-                    <Multiselect v-model="data.rolling_stock_1" :options="['A', 'B']" :caret="false"
+                    <Multiselect v-model="form.rolling_stock_1" :options="['A', 'B']" :caret="false"
                                  style="max-height: 28px;"/>
                   </div>
                   <div class="col-xl-6 ps-1 pe-0 py-0">
-                    <Multiselect v-model="data.rolling_stock_2" :options="['A', 'B']" :caret="false"
+                    <Multiselect v-model="form.rolling_stock_2" :options="['A', 'B']" :caret="false"
                                  style="max-height: 28px"/>
                   </div>
                 </div>
               </td>
             </tr>
-            <tr v-if="data.loading_type === 'Weight'">
+            <tr v-if="form.loading_type === 'Container'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" type="number" v-model="data.weight">
+                <Multiselect v-model="form.container_type" :options="['20', '40']" :caret="false"
+                             style="max-height: 28px"/>
               </td>
             </tr>
-            <tr v-if="data.loading_type === 'Container'">
+            <tr v-else>
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <Multiselect v-model="data.container_type" :options="['20', '40']" :caret="false"
-                             style="max-height: 28px"/>
+                <input class="form-control form-control-sm" type="number" v-model="form.weight">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Номера вагонов/контейнеров</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.containers_or_wagons">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.containers_or_wagons">
               </td>
             </tr>
             <tr>
@@ -185,7 +188,7 @@
                     :object="true"
                     label="label"
                     :caret="false"
-                    @input="data.territories = $event.map(territory => {
+                    @input="form.territories = $event.map(territory => {
                           return { id: territory.value, name: territory.label}
                         })"
                     style="max-height: 28px"
@@ -199,19 +202,19 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.border_crossing">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.border_crossing">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Проплатная телеграмма</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.paid_telegram">
+                <input class="form-control form-control-sm" typeof="text" v-model="form.paid_telegram">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Согласованная ставка</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="number" v-model="data.agreed_rate">
+                <input class="form-control form-control-sm" typeof="number" v-model="form.agreed_rate">
               </td>
             </tr>
             </tbody>
@@ -282,19 +285,19 @@
       </div>
     </div>
     <div class="col-3">
+
       <div class="row bg-white rounded-2 mb-3 py-2 pb-3">
         <div class="col-12">
           <label>Customer</label>
           <span class="text-danger ms-1">*</span>
           <Multiselect
               class="form-control"
-              v-model="customer"
               :searchable="true"
               :hideSelected="true"
               :options="clients"
               placeholder="Client"
               :object="true"
-              @input="$event ? data.customer = $event.value : data.customer = null"
+              @input="$event ? form.customer = $event.value : form.customer = null"
           />
         </div>
       </div>
@@ -302,8 +305,6 @@
       <div class="row bg-white rounded-2 pt-2">
         <SelectStations
             :ratio="[12,12,12,12]"
-            :current_departure="data.departure"
-            :current_destination="data.destination"
             @onSelect="onStationSelect($event)"
         />
       </div>
@@ -311,29 +312,29 @@
       <div class="row bg-white rounded-2 pt-2 mt-3">
         <SelectProduct
             :ratio="[12,12,12]"
-            :current_product="data.product"
-            @onSelect="$event ? data.product = {id: $event.value, name: $event.label, hc_code: $event.hc_code, etcng_code: $event.etcng} : data.product = null"
+            @onSelect="$event ? form.product_id = {id: $event.value, name: $event.label, hc_code: $event.hc_code, etcng_code: $event.etcng} : form.product_id = null"
         />
       </div>
 
       <div class="row mt-3">
         <div class="col-12 px-0">
-          <b-button @click="updateApplication()" class="btn-success waves-effect waves-light w-100">Save</b-button>
+          <b-button @click="createApplication()" class="btn-success waves-effect waves-light w-100">Create</b-button>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import OrdersApi from "../../../api/orders/orders_api";
+import OrdersApi from "../../../api/orders/orders_api.js";
 import SelectStations from "../../../components/custom/SelectStations.vue";
 import SelectProduct from "../../../components/custom/SelectProduct.vue";
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
-import store from "../../../state/store";
+import store from "../../../state/store.js";
 
 export default {
   name: "update",
@@ -363,16 +364,40 @@ export default {
         selected: null,
         options: []
       },
-      customer: null
+
+
+      form: {
+        quantity: null,
+        prefix: '',
+        date: '',
+        period: '',
+        sending_type: '',
+        shipper: '',
+        consignee: '',
+        condition_of_carriage: '',
+        agreed_rate: '',
+        border_crossing: '',
+        departure_country: '',
+        destination_country: '',
+        rolling_stock_1: "string",
+        rolling_stock_2: '',
+        paid_telegram: '',
+        departure_id: 0,
+        destination_id: 0,
+        containers_or_wagons: '',
+        product_id: 0,
+        loading_type: '',
+        container_type: '',
+        weight: '',
+        territories: [],
+        forwarder_id: 0,
+        manager: store.state.user.id,
+        customer: 0
+      }
     }
   },
   methods: {
-    async getData() {
-      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/list/${this.$route.params.id}/`)
-      this.application = await request.json()
-      this.customer = this.clients.find(client => client.value === this.application.customer)
-      this.isLoading = false
-    },
+
     async getCounterpartyList() {
       let orders = new OrdersApi()
       let response = await orders.getCounterpartyList()
@@ -384,8 +409,8 @@ export default {
           prefix: item.name.split(' ').map(([v]) => v).join('').toUpperCase() + item.id.toString()[0] + '_'
         }
       })
-      this.forwarders.selected = this.forwarders.options.find(item => item.value === this.application.forwarder.id)
     },
+
     async getTerritory() {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/core/territories/`)
       let response = await request.json()
@@ -395,61 +420,57 @@ export default {
           label: t.name
         }
       })
-      this.territories.selected = this.data.territories.map(t => {
-        return {
-          value: t.id,
-          label: t.name
-        }
-      })
     },
+
     onStationSelect(event) {
       if (event.option === 'departure') {
-        if (event.value === null) return this.data.departure = null
-        this.data.departure = {
+        if (event.value === null) return this.form.departure_id = null
+        this.form.departure_id = {
           id: event.value.value,
           name: event.value.label,
           code: event.value.code,
         }
       } else {
-        if (event.value === null) return this.data.destination = null
-        this.data.destination = {
+        if (event.value === null) return this.form.destination_id = null
+        this.form.destination_id = {
           id: event.value.value,
           name: event.value.label,
           code: event.value.code,
         }
       }
     },
-    async updateApplication() {
+
+    async createApplication() {
       let data = {
-        ...this.data
+        ...this.form
       }
-      data.departure_id = data.departure.id
-      data.destination_id = data.destination.id
-      data.product_id = data.product.id
-      data.forwarder_id = data.forwarder.id
+      data.departure_id = data.departure_id.id
+      data.destination_id = data.destination_id.id
+      data.product_id = data.product_id.id
+      data.prefix = this.forwarders.selected.prefix
 
-      delete data.departure
-      delete data.destination
-      delete data.product
-      delete data.forwarder
-
-      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/update/${this.$route.params.id}`, {
-        method: 'PUT',
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       })
 
-      await this.getData()
+      let response = await request.json()
 
       await Swal.fire({
         icon: request.ok ? 'success' : 'error',
-        title: request.ok ? 'Updated successfully' : 'Update failed',
+        title: request.ok ? 'Application created successfully' : 'Create failed',
         showConfirmButton: true,
         showCloseButton: false,
         confirmButtonText: 'Ok',
+      }).then(() => {
+        if (request.ok) {
+          this.$router.push({name: 'application_update', params: {id: response.application_id}})
+        }
       })
+
     },
   },
   computed: {
@@ -482,7 +503,6 @@ export default {
   },
   async mounted() {
     this.isLoading = true
-    await this.getData()
     await this.getCounterpartyList()
     await this.getTerritory()
   }

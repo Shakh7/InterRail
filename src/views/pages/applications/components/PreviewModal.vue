@@ -194,7 +194,7 @@
           </section>
         </div>
       </div>
-      <div class="modal-content border-0 overflow-hidden" v-else>Loading..</div>
+      <div class="modal-content border-0 overflow-hidden p-4" v-else>Loading..</div>
     </div>
   </div>
 

@@ -224,10 +224,25 @@ export default [
         children: [
             {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
             {
+                path: 'create/',
+                name: 'application_create',
+                component: () => import("../views/pages/applications/create.vue"),
+            },
+            {
                 path: 'update/:id',
                 name: 'application_update',
                 component: () => import("../views/pages/applications/update.vue"),
             }
+        ],
+    },
+
+    {
+        path: "/codes",
+        name: "Codes",
+        meta: {title: "Codes", authRequired: true, isVisableInMenu: true, permissions: ['admin']},
+        component: () => import("../layouts/layout.vue"),
+        children: [
+            {path: '', name: 'codes_list', component: () => import("../views/pages/codes/index.vue"),},
         ],
     },
 
