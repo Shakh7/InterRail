@@ -92,6 +92,8 @@ export default {
       pagination: {
         perPage: 10,
       },
+
+      getUpdate: false
     };
   },
   methods: {
@@ -145,6 +147,7 @@ export default {
         method: 'DELETE',
       }).then(response => {
         if (response.ok) {
+          this.getUpdate = !this.getUpdate
           Swal.fire({
             position: 'center',
             icon: 'success',
@@ -152,7 +155,6 @@ export default {
             showConfirmButton: false,
             timer: 3000
           })
-          this.getOrders()
         } else {
           Swal.fire({
             position: 'center',
@@ -224,6 +226,7 @@ export default {
       :url="table.url"
       :isLoading="isLoading"
       :pagination="pagination"
+      :getUpdate="getUpdate"
   >
     <template v-slot:top-right>
       <div class="btn-group">

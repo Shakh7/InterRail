@@ -82,6 +82,7 @@ export default {
       pagination: {
         perPage: 10,
       },
+      getUpdate: false
     };
   },
   methods: {
@@ -130,6 +131,7 @@ export default {
         method: 'DELETE',
       }).then(response => {
         if (response.ok) {
+          this.getUpdate = !this.getUpdate
           Swal.fire({
             position: 'center',
             icon: 'success',
@@ -137,7 +139,6 @@ export default {
             showConfirmButton: false,
             timer: 3000
           })
-          this.getOrders()
         } else {
           Swal.fire({
             position: 'center',
@@ -211,6 +212,7 @@ export default {
       :isLoading="isLoading"
       :url="table.url"
       :pagination="pagination"
+      :getUpdate="getUpdate"
   >
     <template v-slot:top-right>
       <div class="btn-group">
@@ -239,7 +241,7 @@ export default {
       <font-awesome-icon @click="setToUpdateOrder(slotProps.row)" icon="fa-solid fa-pen-to-square"
                          class="c_icon mx-2 c_icon_hoverable"/>
       <font-awesome-icon icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"
-                         @click="deleteOrderConfirmation(slotProps.row)"/>
+                         @click="deleteOrderConfirmation(slotProps.row.order)"/>
     </template>
 
     <template v-slot:customer="slotProps">
