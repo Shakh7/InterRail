@@ -68,6 +68,11 @@ AOS.init({
     duration: 1000
 })
 
+import DataTable from 'datatables.net-vue3'
+import DataTablesLib from 'datatables.net';
+
+DataTable.use(DataTablesLib);
+
 createApp(App)
     .use(store)
     .use(router)
