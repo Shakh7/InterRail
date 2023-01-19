@@ -65,16 +65,16 @@
             <tbody>
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
-              <td class="w-50 py-1">
-                <Multiselect v-model="data.period" :caret="false" :options="['Январь', 'февраль', 'Март','Апрель','Май',
+              <td class="w-50 py-1 px-1">
+                <Multiselect class="border-0" v-model="data.period" :caret="false" :options="['Январь', 'февраль', 'Март','Апрель','Май',
                 'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид отправки</td>
-              <td class="w-50 py-1">
-                <Multiselect v-model="data.sending_type" :caret="false" :options="['Одиночная', 'КП']"
+              <td class="w-50 py-1 px-1">
+                <Multiselect class="border-0" v-model="data.sending_type" :caret="false" :options="['Одиночная', 'КП']"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -82,7 +82,7 @@
               <td class="w-50 py-1 fw-bolder">Станция отправления</td>
               <td class="w-50 py-1">
                 <div v-if="data.departure">
-                  <h6 class="text-dark my-0">{{ data.departure.name + ' (' + data.departure.code + ')' }}</h6>
+                  <h6 class="text-dark my-0 ps-2">{{ data.departure.name + ' (' + data.departure.code + ')' }}</h6>
                 </div>
               </td>
             </tr>
@@ -90,38 +90,38 @@
               <td class="w-50 py-1 fw-bolder">Станция назначения</td>
               <td class="w-50 py-1">
                 <div v-if="data.destination">
-                  <h6 class="text-dark my-0">{{ data.destination.name + ' (' + data.destination.code + ')' }}</h6>
+                  <h6 class="text-dark my-0 ps-2">{{ data.destination.name + ' (' + data.destination.code + ')' }}</h6>
                 </div>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Грузоотправитель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.shipper">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.shipper">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Получатель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.consignee">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.consignee">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна отправления</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.departure_country">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.departure_country">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна назначения</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.destination_country">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.destination_country">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Наименование груза, Коды ГНГ и ЕТСНГ</td>
               <td class="w-50 py-1">
-                <div class="text-dark" v-if="data.product">
+                <div class="text-dark ps-2" v-if="data.product">
                   <h6>{{ data.product.name }}</h6>
                   <h6>ГНГ - {{ data.product.hc_code }}</h6>
                   <h6 class="my-0">ЕТСНГ - {{ data.product.etcng_code }}</h6>
@@ -132,21 +132,21 @@
               <td class="w-50 py-1 fw-bolder">Количество
               </td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.quantity">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.quantity">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид вагона/принадлежность подвижного <br>
                 состава/принадлежность контейнера
               </td>
-              <td class="w-50 py-1">
+              <td class="w-50 py-1 px-1">
                 <div class="row justify-content-between align-items-center w-100 m-auto px-0">
-                  <div class="col-xl-6 pe-1 ps-0 py-0">
-                    <Multiselect v-model="data.rolling_stock_1" :options="['A', 'B']" :caret="false"
+                  <div class="col-xl-6 p-0">
+                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_1" :options="['A', 'B']" :caret="false"
                                  style="max-height: 28px;"/>
                   </div>
-                  <div class="col-xl-6 ps-1 pe-0 py-0">
-                    <Multiselect v-model="data.rolling_stock_2" :options="['A', 'B']" :caret="false"
+                  <div class="col-xl-6 p-0">
+                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_2" :options="['A', 'B']" :caret="false"
                                  style="max-height: 28px"/>
                   </div>
                 </div>
@@ -155,27 +155,27 @@
             <tr v-if="data.loading_type === 'Weight'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" type="number" v-model="data.weight">
+                <input class="form-control form-control-sm border-0" type="number" v-model="data.weight">
               </td>
             </tr>
             <tr v-if="data.loading_type === 'Container'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <Multiselect v-model="data.container_type" :options="['20', '40']" :caret="false"
+                <Multiselect class="border-0 rounded-0" v-model="data.container_type" :options="['20', '40']" :caret="false"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Номера вагонов/контейнеров</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.containers_or_wagons">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.containers_or_wagons">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Запрашиваемые территории</td>
-              <td class="w-50 py-1">
+              <td class="w-50 py-1 px-1">
                 <Multiselect
-                    class="form-control"
+                    class="form-control border-0 rounded-0"
                     v-model="territories.selected"
                     mode="multiple"
                     :hideSelected="false"
@@ -199,19 +199,19 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.border_crossing">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.border_crossing">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Проплатная телеграмма</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="data.paid_telegram">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.paid_telegram">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Согласованная ставка</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="number" v-model="data.agreed_rate">
+                <input class="form-control form-control-sm border-0" typeof="number" v-model="data.agreed_rate">
               </td>
             </tr>
             </tbody>
