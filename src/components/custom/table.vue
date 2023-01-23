@@ -153,11 +153,11 @@ export default {
       if (search) {
         fetchUrl = store.state.user.role === 'admin'
             ? `${this.url}?search=${search}&limit=${this.pagination.perPage}`
-            : `${this.url}?manager=${store.state.user.id}&search=${search}&limit=${this.pagination.perPage}`
+            : `${this.url}?search=${search}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
       } else {
         fetchUrl = store.state.user.role === 'admin'
             ? `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`
-            : `?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
+            : `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
       }
 
       let result = await fetch(fetchUrl)
@@ -178,7 +178,7 @@ export default {
   },
   watch: {
     search(value) {
-      if (value.trim().length >= 1) {
+      if (value.trim().length >= 2) {
         this.getData(this.search.trim())
       } else {
         this.getData()
@@ -290,7 +290,7 @@ export default {
                 </tbody>
 
                 <!-- IF LOADING -->
-                <tbody v-else-if="(rows.length === 0 && isLoading) || isFetchingData">
+                <tbody v-else-if="apiData.length === 0 && isFetchingData">
                 <tr v-for="i in 5" :key="i">
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
                     <div class="form-check">
@@ -304,7 +304,7 @@ export default {
                 </tbody>
 
                 <!-- IF LOADED AND NO DATA -->
-                <tbody v-else-if="rows.length === 0 && !isLoading">
+                <tbody v-else-if="apiData.length === 0 && !isFetchingData">
                 <tr class="text-center border-white">
                   <td v-if="selectable === true" :colspan="headers.length">
                     <lottie
