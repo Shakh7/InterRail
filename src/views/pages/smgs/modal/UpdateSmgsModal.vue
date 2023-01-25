@@ -1,5 +1,5 @@
 <script>
-import DropZone2 from "../../../../components/widgets/myDropZone.vue";
+import DropZone2 from "../../../../components/widgets/dropZone.vue";
 // import readXlsxFile from "read-excel-file";
 import Swal from "sweetalert2";
 import store from "../../../../state/store";
