@@ -100,7 +100,7 @@
                 </td>
               </tr>
               <tr >
-                <th scope="row">Client</th>
+                <th scope="row">Customer</th>
                 <td class="text-end">
                   <user :userId="code.customer" :avatar="true" avatarBgColor="success" ></user>
                 </td>
