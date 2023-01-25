@@ -222,7 +222,6 @@ export default {
       :headers="headers"
       :selectable="true"
       :searchable="true"
-      @page-change="pageChange"
       :url="table.url"
       :isLoading="isLoading"
       :pagination="pagination"

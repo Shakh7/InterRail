@@ -65,7 +65,7 @@ export default {
     ImportExportPie,
     Position,
     PageHeader,
-    skeleton
+    skeleton,
   },
   methods: {
     async getStatistics() {

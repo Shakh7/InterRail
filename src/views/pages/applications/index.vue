@@ -3,6 +3,7 @@
 import PageHeader from "../../../components/page-header.vue";
 import CustomTable from '../../../components/custom/table2.vue'
 import PreviewModal from "./components/PreviewModal.vue";
+import AddCodeModal from "./components/AddCodeModal.vue";
 import skeleton from "../../../components/custom/skeleton.vue";
 import user from '../../../components/custom/user.vue'
 
@@ -34,7 +35,7 @@ export default {
 
       isLoading: false,
 
-      previewModal: {
+      currentApplication: {
         data: {}
       },
 
@@ -48,58 +49,68 @@ export default {
             field: 'number',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Forwarder',
             field: 'forwarder',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Departure',
             field: 'departure',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Destination',
             field: 'destination',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'File',
             field: 'file',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Date',
             field: 'date',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Quantity',
             field: 'quantity',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Client',
             field: 'customer',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'Manager',
             field: 'manager',
             align: 'center',
             searchable: true,
+            visible: true
           },
           {
             label: 'actions',
             field: 'actions',
+            visible: true
           },
         ],
         pagination: {
@@ -115,6 +126,7 @@ export default {
     // ClockIcon,
     // XOctagonIcon,
     PreviewModal,
+    AddCodeModal,
     Swiper,
     SwiperSlide,
     CustomTable,
@@ -189,6 +201,12 @@ export default {
       })
 
     },
+
+    showAddCodeModal(application) {
+      this.currentApplication.data = application
+      let a = document.getElementById('addCodem')
+      a.click()
+    }
   },
   async mounted() {
     this.isLoading = true;
@@ -367,7 +385,7 @@ export default {
                 {{ widget.filled + widget.not_filled }}
               </h5>
               <p class="text-muted">{{
-                  widget.not_filled
+                widget.not_filled
                 }}</p>
             </div>
 
@@ -394,7 +412,6 @@ export default {
       :headers="table.headers"
       :selectable="true"
       :searchable="true"
-      @page-change="null"
       :isLoading="false"
       :pagination="table.pagination"
   >
@@ -406,7 +423,7 @@ export default {
     </template>
 
     <template v-slot:number="slotProps">
-      <h5 @click="this.previewModal.data = slotProps.row" data-bs-toggle="modal"
+      <h5 @click="this.currentApplication.data = slotProps.row" data-bs-toggle="modal"
           data-bs-target="#previewModal" class="fw-medium link-primary"
           style="cursor: pointer"
       >
@@ -440,9 +457,13 @@ export default {
     </template>
 
     <template v-slot:quantity="slotProps">
-      <h6 class="my-0">
-        <span class="badge badge-outline-success">
-          0/{{ slotProps.row.quantity }}
+      <h6 class="my-0" @click="showAddCodeModal(slotProps.row)">
+        <span class="badge" :class="{
+          'badge-outline-danger': slotProps.row.code_count > slotProps.row.quantity,
+          'badge-outline-success': slotProps.row.code_count === slotProps.row.quantity,
+          'badge-outline-warning': slotProps.row.code_count < slotProps.row.quantity,
+        }">
+          {{ slotProps.row.code_count }}/{{ slotProps.row.quantity }}
         </span>
       </h6>
     </template>
@@ -460,16 +481,45 @@ export default {
     </template>
 
     <template v-slot:actions="slotProps">
-      <router-link class="text-dark" :to="{ name: 'application_update', params: { id: slotProps.row.id } }">
-        <font-awesome-icon icon="fa-solid fa-pen-to-square"
-                           class="c_icon me-1 c_icon_hoverable"/>
-      </router-link>
-
-      <font-awesome-icon @click="confirmApplicationDelete(slotProps.row.id, slotProps.row.number)"
-                         icon="fa-solid fa-trash" class="c_icon c_icon_hoverable text-danger"/>
+      <div class="dropdown">
+        <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="ri-more-fill"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li class="dropdown-item cursor-pointer" @click="showAddCodeModal(slotProps.row)">
+            <i class="ri-add-fill align-bottom me-2 text-muted"></i>
+            Add codes
+          </li>
+          <li class="dropdown-item cursor-pointer">
+            <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
+            See codes
+          </li>
+          <li class="dropdown-divider"></li>
+          <li class="cursor-pointer">
+            <router-link class="text-dark dropdown-item"
+                         :to="{ name: 'application_update', params: { id: slotProps.row.id } }">
+              <font-awesome-icon icon="fa-solid fa-pen-to-square"
+                           class="c_icon me-2 fs-6"/>
+              Edit
+            </router-link>
+          </li>
+          <li>
+            <a class="dropdown-item cursor-pointer"
+               @click="confirmApplicationDelete(slotProps.row.id, slotProps.row.number)">
+              <font-awesome-icon icon="fa-solid fa-trash"
+                                 class="c_icon text-danger me-2 fs-6"
+              />
+              Delete</a>
+          </li>
+        </ul>
+      </div>
     </template>
 
   </CustomTable>
 
-  <PreviewModal :application="previewModal.data"/>
+  <PreviewModal :application="currentApplication.data"/>
+
+  <AddCodeModal :application="currentApplication.data"/>
+
 </template>

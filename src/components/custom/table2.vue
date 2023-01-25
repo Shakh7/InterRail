@@ -145,7 +145,7 @@ export default {
       get() {
         let customers = []
         this.apiData.forEach(item => {
-          if (!customers.map(manager => manager.value).includes(item.customer)) {
+          if (!customers.map(client => client.value).includes(item.customer)) {
             customers.push({
               value: item.customer,
               label: this.getAccountName(item.customer)

@@ -9,17 +9,8 @@ import store from "./state/store.js";
 import BootstrapVue3 from 'bootstrap-vue-3';
 import vClickOutside from "click-outside-vue3"
 import VueApexCharts from "vue3-apexcharts";
-import FloatingVue from 'floating-vue'
-
-FloatingVue.options.themes.tooltip.delay.show = 0
-FloatingVue.options.themes.tooltip.delay.hide = 10
-FloatingVue.options.instantMove = true
-
+import FloatingVue, {VTooltip} from 'floating-vue'
 import Maska from 'maska';
-
-import {
-    VTooltip,
-} from 'floating-vue'
 
 
 import VueFeather from 'vue-feather';
@@ -39,16 +30,20 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
 import {
+    faAngleDown,
+    faArrowUpRightFromSquare,
     faFileExcel,
-    faTrash,
     faFileZipper,
     faFolder,
+    faPenToSquare,
     faPrint,
     faTrain,
-    faPenToSquare,
-    faAngleDown,
-    faArrowUpRightFromSquare
+    faTrash
 } from '@fortawesome/free-solid-svg-icons'
+
+FloatingVue.options.themes.tooltip.delay.show = 0
+FloatingVue.options.themes.tooltip.delay.hide = 10
+FloatingVue.options.instantMove = true
 
 
 library.add(
@@ -67,11 +62,6 @@ AOS.init({
     easing: 'ease-out-back',
     duration: 1000
 })
-
-import DataTable from 'datatables.net-vue3'
-import DataTablesLib from 'datatables.net';
-
-DataTable.use(DataTablesLib);
 
 createApp(App)
     .use(store)

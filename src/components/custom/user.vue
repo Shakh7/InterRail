@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex align-items-center" v-if="avatar">
-    <div class="flex-shrink-0 avatar-xs me-2">
+  <div class="d-flex align-items-center justify-content-end" v-if="avatar">
+    <div class="flex-shrink-0 me-2" :class="'avatar-' + avatarSize">
       <div class="avatar-title rounded-circle"
            :class="'bg-soft-' + avatarBgColor + ' text-' + avatarBgColor">
         {{ user.full_name.split(' ').map(name => name[0]).join('') }}
@@ -30,11 +30,17 @@ export default {
       type: String,
       default: "success",
     },
+    avatarSize: {
+      type: String,
+      default: "xs",
+    },
   },
   computed: {
     user: {
       get() {
-        return store.state.users_list.find(user => user.id === this.userId);
+        return store.state.users_list.map(i => i.id).includes(this.userId)
+            ? store.state.users_list.find(user => user.id === this.userId)
+            : { full_name: "Unknown" };
       },
     },
   },

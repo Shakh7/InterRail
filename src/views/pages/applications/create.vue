@@ -2,7 +2,28 @@
 
   <PageHeader :items="items" title="Application"></PageHeader>
 
-  <div class="row justify-content-around m-auto" style="max-width: 1400px">
+  <div class="row justify-content-center mt-5" v-if="!allow_create">
+    <div class="col-md-4">
+      <!-- Warning Alert -->
+      <div class="card card-body text-center mt-5 py-5 px-4">
+        <div class="avatar-sm mx-auto mb-3">
+          <div
+              class="avatar-title bg-soft-danger text-danger fs-17 rounded"
+          >
+            <i class="ri-spam-line fs-3"></i>
+          </div>
+        </div>
+        <h4 class="card-title">Application create is not allowed</h4>
+        <p
+            class="card-text text-muted"
+        >We have found more than three applications with no codes attached. Please, fill these applications and come back again</p>
+        <router-link :to="{name: 'applications_list'}" class="btn btn-success">Go applications</router-link>
+      </div>
+    </div>
+  </div>
+
+
+  <div v-else class="row justify-content-around m-auto" style="max-width: 1400px">
     <div class="col-8">
       <div class="card card-body">
         <section class="row justify-content-between align-items-start mt-0">
@@ -58,23 +79,23 @@
             <tbody>
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
-              <td class="w-50 py-1">
-                <Multiselect v-model="form.period" :caret="false" :options="['Январь', 'февраль', 'Март','Апрель','Май',
+              <td class="w-50 py-1 ps-0">
+                <Multiselect class="border-0" v-model="form.period" :options="['Январь', 'февраль', 'Март','Апрель','Май',
                 'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
                              style="min-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид отправки</td>
-              <td class="w-50 py-1">
-                <Multiselect v-model="form.sending_type" :caret="false" :options="['Одиночная', 'КП']"
+              <td class="w-50 py-1 ps-0">
+                <Multiselect class="border-0" v-model="form.sending_type" :options="['Одиночная', 'КП']"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Тип погрузки</td>
-              <td class="w-50 py-1">
-                <Multiselect v-model="form.loading_type" :options="['Container', 'Wagon']" :caret="false"
+              <td class="w-50 py-1 ps-0">
+                <Multiselect class="border-0" v-model="form.loading_type" :options="['Container', 'Wagon']"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -99,25 +120,25 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Грузоотправитель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.shipper">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.shipper">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Получатель</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.consignee">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.consignee">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна отправления</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.departure_country">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.departure_country">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Страна назначения</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.destination_country">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.destination_country">
               </td>
             </tr>
             <tr>
@@ -135,7 +156,7 @@
               <td class="w-50 py-1 fw-bolder">Количество
               </td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" type="number" v-model="form.quantity">
+                <input class="form-control form-control-sm border-0" type="number" v-model="form.quantity">
               </td>
             </tr>
             <tr>
@@ -145,11 +166,11 @@
               <td class="w-50 py-1">
                 <div class="row justify-content-between align-items-center w-100 m-auto px-0">
                   <div class="col-xl-6 pe-1 ps-0 py-0">
-                    <Multiselect v-model="form.rolling_stock_1" :options="['A', 'B']" :caret="false"
+                    <Multiselect class="border-0" v-model="form.rolling_stock_1" :options="['A', 'B']"
                                  style="max-height: 28px;"/>
                   </div>
                   <div class="col-xl-6 ps-1 pe-0 py-0">
-                    <Multiselect v-model="form.rolling_stock_2" :options="['A', 'B']" :caret="false"
+                    <Multiselect class="border-0" v-model="form.rolling_stock_2" :options="['A', 'B']"
                                  style="max-height: 28px"/>
                   </div>
                 </div>
@@ -158,27 +179,27 @@
             <tr v-if="form.loading_type === 'Container'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <Multiselect v-model="form.container_type" :options="['20', '40']" :caret="false"
+                <Multiselect class="border-0" v-model="form.container_type" :options="['20', '40']"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr v-else>
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" type="number" v-model="form.weight">
+                <input class="form-control form-control-sm border-0" type="number" v-model="form.weight">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Номера вагонов/контейнеров</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.containers_or_wagons">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.containers_or_wagons">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Запрашиваемые территории</td>
               <td class="w-50 py-1">
                 <Multiselect
-                    class="form-control"
+                    class="form-control border-0"
                     v-model="territories.selected"
                     mode="multiple"
                     :hideSelected="false"
@@ -187,7 +208,6 @@
                     placeholder="Territories"
                     :object="true"
                     label="label"
-                    :caret="false"
                     @input="form.territories = $event.map(territory => {
                           return { id: territory.value, name: territory.label}
                         })"
@@ -202,19 +222,19 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.border_crossing">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.border_crossing">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Проплатная телеграмма</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="text" v-model="form.paid_telegram">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.paid_telegram">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Согласованная ставка</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm" typeof="number" v-model="form.agreed_rate">
+                <input class="form-control form-control-sm border-0" typeof="number" v-model="form.agreed_rate">
               </td>
             </tr>
             </tbody>
@@ -364,8 +384,7 @@ export default {
         selected: null,
         options: []
       },
-
-
+      allow_create: true,
       form: {
         quantity: null,
         prefix: '',
@@ -397,6 +416,11 @@ export default {
     }
   },
   methods: {
+
+    async checkCreatePermission() {
+      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/check_create_permission/`)
+      this.allow_create = await response.text() === 'True'
+    },
 
     async getCounterpartyList() {
       let orders = new OrdersApi()
@@ -503,6 +527,7 @@ export default {
   },
   async mounted() {
     this.isLoading = true
+    await this.checkCreatePermission()
     await this.getCounterpartyList()
     await this.getTerritory()
   }
