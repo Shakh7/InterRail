@@ -1,5 +1,6 @@
 <template>
-  <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[0]">
+
+  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-4' : 'col-lg-' + classes[0]">
     <label class="form-label" :class="errorColor">
       Product <span class="text-danger">*</span>
     </label>
@@ -16,9 +17,9 @@
     />
   </div>
 
-  <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[1]">
+  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-4' : 'col-lg-' + classes[1]">
     <label class="form-label" :class="errorColor">
-      Hc code <span class="text-danger">*</span>
+      Hs code <span class="text-danger">*</span>
     </label>
     <Multiselect
         class="form-control"
@@ -26,7 +27,7 @@
         :searchable="true"
         :hideSelected="true"
         :options="products.options"
-        placeholder="HC code"
+        placeholder="HS code"
         @search-change="getOptions($event)"
         :object="true"
         label="hc_code"
@@ -34,7 +35,7 @@
     />
   </div>
 
-  <div class="mb-3" :class="classes === undefined ? 'col-4' : 'col-' + classes[2]">
+  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-4' : 'col-lg-' + classes[2]">
     <label class="form-label" :class="errorColor">
       Etcng <span class="text-danger">*</span>
     </label>
@@ -78,6 +79,10 @@ export default {
       },
       required: false
     },
+    getUpdate: {
+      type: Boolean,
+      default: false
+    },
   },
   methods: {
     async getOptions(query) {
@@ -115,11 +120,12 @@ export default {
       get() {
         return this.products.selected === null && this.current_product ? 'text-danger' : ''
       }
-    }
+    },
   },
   components: {
     Multiselect
   },
+
   mounted() {
     if (this.current_product) {
       this.products.options = [{
@@ -129,6 +135,20 @@ export default {
         etcng: this.current_prod['etcng_code'],
       }]
       this.products.selected = this.products.options[0]
+    }
+  },
+  watch: {
+    current_product: {
+      handler(newValue) {
+        this.products.options = [{
+          value: newValue.id,
+          label: newValue.name,
+          hc_code: newValue['hc_code'],
+          etcng: newValue['etcng_code'],
+        }]
+        this.products.selected = this.products.options[0]
+      },
+      deep: true,
     }
   }
 }

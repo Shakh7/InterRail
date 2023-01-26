@@ -1,6 +1,7 @@
 <script>
 import CustomTable from '../../../components/custom/table2.vue'
 import CodePreviewModal from './components/PreviewModal.vue'
+import CodeUpdateModal from './components/UpdateModal.vue'
 import user from '../../../components/custom/user.vue'
 
 export default {
@@ -18,7 +19,7 @@ export default {
           },
           {
             label: 'FORWARDER',
-            field: 'forwarder',
+            field: 'forwarder_id',
             align: 'center',
             visible: true,
           },
@@ -92,17 +93,19 @@ export default {
           perPage: 50,
         },
       },
-      codePreviewData: {}
+      currentCode: {},
+      getUpdate: false
     }
   },
   components: {
     CustomTable,
     CodePreviewModal,
+    CodeUpdateModal,
     user
   },
   methods: {
-    codePreview(data) {
-      this.codePreviewData = data
+    setToCurrentCode(data) {
+      this.currentCode = data
     },
   },
 }
@@ -117,6 +120,7 @@ export default {
       :searchable="true"
       :isLoading="false"
       :pagination="table.pagination"
+      :getUpdate="getUpdate"
   >
     <template v-slot:application_number="slotProps">
       <h5 class="fw-medium link-primary my-0">
@@ -126,9 +130,9 @@ export default {
       </h5>
     </template>
 
-    <template v-slot:forwarder="slotProps">
+    <template v-slot:forwarder_id="slotProps">
       <span v-if="slotProps.row.forwarder === null" class="text-danger">--</span>
-      <span v-else>{{ slotProps.row.forwarder }}</span>
+      <span v-else>{{ slotProps.row.forwarder_id }}</span>
     </template>
 
     <template v-slot:order_number="slotProps">
@@ -139,7 +143,7 @@ export default {
     <template v-slot:number="slotProps">
       <span class="badge badge-outline-primary cursor-pointer" data-bs-toggle="modal"
             data-bs-target="#CodePreviewModal"
-            @click="codePreview(slotProps.row)">{{ slotProps.row.number }}</span>
+            @click="setToCurrentCode(slotProps.row)">{{ slotProps.row.number }}</span>
     </template>
 
     <template v-slot:status="slotProps">
@@ -147,7 +151,7 @@ export default {
         'bg-warning': slotProps.row.status === 'Checking',
         'bg-secondary': slotProps.row.status === 'Used',
         'bg-success': slotProps.row.status === 'Completed',
-        'bg-danger': slotProps.row.status === 'Completed',
+        'bg-danger': slotProps.row.status === 'Canceled',
       }">{{ slotProps.row.status }}</span>
     </template>
 
@@ -163,8 +167,13 @@ export default {
     <template v-slot:actions="slotProps">
 
       <div class="w-100 text-center">
-        <font-awesome-icon icon="fa-solid fa-pen-to-square"
-                           class="c_icon me-1 c_icon_hoverable"/>
+        <font-awesome-icon
+            data-bs-toggle="modal"
+            data-bs-target="#CodeUpdateModal"
+            icon="fa-solid fa-pen-to-square"
+            class="c_icon me-1 c_icon_hoverable"
+            @click="setToCurrentCode(slotProps.row)"
+        />
 
         <font-awesome-icon @click="alert(slotProps.row.id)" icon="fa-solid fa-trash"
                            class="c_icon c_icon_hoverable text-danger"
@@ -174,7 +183,9 @@ export default {
 
   </CustomTable>
 
-  <CodePreviewModal :codeData="codePreviewData"/>
+  <CodePreviewModal :codeData="currentCode"/>
+  <CodeUpdateModal :codeData="currentCode" @update="getUpdate = !getUpdate"/>
+
 </template>
 
 <style>

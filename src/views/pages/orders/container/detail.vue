@@ -210,16 +210,10 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-auto mt-md-0 mt-4">
-                  <div class="hstack gap-1 flex-wrap">
-
-                    <button type="button" class="btn avatar-xs mt-n1 p-0 favourite-btn active">
-                        <span class="avatar-title bg-transparent fs-15">
-                          <i class="ri-star-fill"></i>
-                        </span>
-                    </button>
-                    <button type="button" class="btn py-0 fs-16 text-body"><i class="ri-flag-line"></i></button>
-                  </div>
+                <div class="col-md-auto mt-md-0 mt-4" v-if="order.is_code_connected">
+                    <b-badge variant="secondary" class="badge-label fs-12">
+                      <i class="mdi mdi-circle-medium"></i> Codes
+                    </b-badge>
                 </div>
               </div>
             </div>
@@ -287,7 +281,8 @@
                     <tr v-for="(container, i) in ctr_type.expanses" :key="i">
                       <th class="text-center">{{ i + 1 }}</th>
                       <td class="text-center" style="max-width: 75px">
-                        <ContainerInput @update="this.fetchData()" :container_type_id="ctr_type.id" :container="container"/>
+                        <ContainerInput @update="this.fetchData()" :container_type_id="ctr_type.id"
+                                        :container="container"/>
                       </td>
                       <td class="text-center">${{ container.agreed_rate }}</td>
                       <td class="text-center" v-for="pre_cost in container.actual_costs"

@@ -1,9 +1,14 @@
 <template>
   <div id="CodePreviewModal" class="modal fade" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content border-0 overflow-hidden p-4">
+      <div class="modal-content border-0 overflow-hidden">
 
-        <div class="py-3 border-top border-bottom border-top-dashed border-bottom-dashed mb-4">
+        <div class="modal-header p-3">
+          <h5 class="modal-title">Code preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="py-3 px-4 bg-light border-top border-bottom border-top-dashed border-bottom-dashed mb-3">
           <div class="row justify-content-between gy-4">
             <div class="col-lg-3 col-sm-6 text-center">
               <div>
@@ -39,9 +44,9 @@
           </div>
         </div>
 
-        <form class="row justify-content-between">
+        <form class="row justify-content-between px-4">
           <div class="col-12 col-lg-6 pe-3 table-responsive">
-            <table class="table table-striped">
+            <table class="table">
 
               <tbody>
               <tr>
@@ -102,15 +107,15 @@
               <tr >
                 <th scope="row">Customer</th>
                 <td class="text-end">
-                  <user :userId="code.customer" :avatar="true" avatarBgColor="success" ></user>
+                  <user :userId="code.customer" avatarSize="xxs" :avatar="true" avatarBgColor="success" ></user>
                 </td>
               </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="col-12 col-lg-6 ps-3">
-            <table class="table table-striped">
+          <div class="col-12 col-lg-6 ps-3 table-responsive">
+            <table class="table">
               <tbody>
               <tr>
                 <th scope="row">Status</th>
@@ -119,7 +124,7 @@
                   'bg-warning': code.status === 'Checking',
                   'bg-secondary': code.status === 'Used',
                   'bg-success': code.status === 'Completed',
-                  'bg-danger': code.status === 'Completed',
+                  'bg-danger': code.status === 'Canceled',
               }">{{ code.status }}</span>
                 <span v-else class="text-danger">--</span></td>
               </tr>
@@ -154,22 +159,22 @@
               <tr>
                 <th scope="row">Rate</th>
                 <td class="text-end">
-                  <span v-if="code.rate">{{ code.rate }}</span>
-                <span v-else class="text-danger">0</span>
+                  <span v-if="code.rate">$ {{ code.rate }}</span>
+                <span v-else class="text-danger">$ 0</span>
                 </td>
               </tr>
               <tr>
                 <th scope="row">Add charges</th>
                 <td class="text-end">
-                  <span v-if="code.add_charges">{{ code.add_charges }}</span>
-                <span v-else class="text-danger">0</span>
+                  <span v-if="code.add_charges">$ {{ code.add_charges }}</span>
+                <span v-else class="text-danger">$ 0</span>
                 </td>
               </tr>
               <tr>
                 <th scope="row">Charges</th>
                 <td class="text-end">
-                  <span v-if="code.charges">{{ code.charges }}</span>
-                <span v-else class="text-danger">0</span>
+                  <span v-if="code.charges">$ {{ code.charges }}</span>
+                <span v-else class="text-danger">$ 0</span>
                 </td>
               </tr>
               </tbody>

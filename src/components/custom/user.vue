@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-items-center justify-content-end" v-if="avatar">
+  <div class="d-flex align-items-center" :class="'justify-content-' + align" v-if="avatar">
     <div class="flex-shrink-0 me-2" :class="'avatar-' + avatarSize">
       <div class="avatar-title rounded-circle"
            :class="'bg-soft-' + avatarBgColor + ' text-' + avatarBgColor">
@@ -8,9 +8,11 @@
     </div>
     {{ user.full_name }}
   </div>
+
   <span v-else>
     {{ user.full_name }}
   </span>
+
 </template>
 
 <script>
@@ -34,13 +36,17 @@ export default {
       type: String,
       default: "xs",
     },
+    align: {
+      type: String,
+      default: "end",
+    },
   },
   computed: {
     user: {
       get() {
         return store.state.users_list.map(i => i.id).includes(this.userId)
             ? store.state.users_list.find(user => user.id === this.userId)
-            : { full_name: "Unknown" };
+            : {full_name: "Unknown"};
       },
     },
   },
