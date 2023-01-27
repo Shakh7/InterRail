@@ -55,9 +55,13 @@
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Order number:</label>
                 </div>
-                <div class="col-lg-7">
-                  <input v-model="code.order_number" type="text" class="form-control form-control-sm border-0"
-                         placeholder="Order number">
+                <div class="col-lg-7 ps-1">
+                  <SelectOrder @onSelect="handleOrderSelect"
+                               :current_order="code.order_number.toString()"
+                               :loading_type="code.loading_type"
+                               placeholder="Order number"
+                               :classList="'border-0 pe-0'"
+                               styles="max-height: 28px"/>
                 </div>
               </div>
               <div class="row border-bottom py-2 align-items-center">
@@ -102,13 +106,10 @@
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Container number:</label>
                 </div>
-                <div class="col-lg-7" v-if="code.container.hasOwnProperty('name')">
-                  <input v-model="code.container.name" type="text" class="form-control form-control-sm border-0"
-                         placeholder="Container number">
-                </div>
-                <div class="col-lg-7" v-if="!code.container.hasOwnProperty('name')">
-                  <input v-model="code.container" type="text" class="form-control form-control-sm border-0"
-                         placeholder="Container number">
+                <div class="col-lg-7 ps-1">
+                  <Multiselect v-model="code.container_expanse_id" :options="containerList" :searchable="true" style="max-height: 28px"
+                               placeholder="Container" class="border-0 pe-0"
+                              @input="code.container_expanse_id = $event"/>
                 </div>
               </div>
               <div v-if="code.loading_type === 'Wagon'" class="row border-bottom py-2 align-items-center">
@@ -242,6 +243,7 @@ import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import CounterpartyApi from "../../../../api/counterparty/CounterpartyApi.js";
 import Swal from "sweetalert2";
+import SelectOrder from "../../../../components/custom/SelectOrder.vue";
 
 export default {
   emits: ['update'],
@@ -250,11 +252,13 @@ export default {
     user,
     SelectProduct,
     SelectStations,
-    Multiselect
+    Multiselect,
+    SelectOrder
   },
   data() {
     return {
       form: null,
+      order_numbers: [],
       statusOptions: [
         {value: 'Checking', label: 'Checking', color: 'warning'},
         {value: 'Used', label: 'Used', color: 'secondary'},
@@ -267,6 +271,7 @@ export default {
       ],
       territories: [],
       forwarders: [],
+      containerList: [],
     }
   },
   props: {
@@ -363,6 +368,27 @@ export default {
       }
     },
 
+    async handleOrderSelect(event) {
+      if (event !== null) {
+        this.code.order_number = event
+        await this.getContainerList(event)
+      } else {
+        this.containerList = []
+      }
+    },
+
+    async getContainerList(order_number) {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/containers/${order_number}/`)
+      let response = await request.json()
+      this.containerList = !request.ok
+          ? [] : response.filter(i => i.container_name !== null).map(container => {
+            return {
+              value: container.container_expanse_id,
+              label: container.container_name
+            }
+          })
+    }
+
   },
   computed: {
     code() {
@@ -391,7 +417,6 @@ export default {
         weight = this.code.weight === null
       } else {
         container_type = this.code.container_type === null || this.code.container_type === ''
-        container = this.code.container === ''
       }
 
       return forwarder || loading_type || container_type || container || weight || order_number
@@ -419,14 +444,21 @@ export default {
           status: val.status,
           weight: val.weight === null ? '' : val.weight,
           wagon_number: val.wagon_number,
-          container: val.container === null ? '' : val.container,
+
           rate: val.rate,
           charges: val.charges,
           add_charges: val.add_charges,
-          comment: val.comment === null ? ' ' : val.comment,
+          comment: val.comment,
           smgs_file: val.smgs_file,
           manager: val.manager,
           customer: val.customer,
+          container_expanse_id: val.container_expanse_id,
+          wagon_expanse_id: null,
+          wagon_empty_expanse_id: null,
+        }
+
+        if (this.form.order_number !== '') {
+          this.getContainerList(this.form.order_number)
         }
       },
       deep: true

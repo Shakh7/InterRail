@@ -3,10 +3,14 @@ class CounterpartyApi {
         this.BASE_API = process.env.VUE_APP_ORDER_URL + '/counterparty';
     }
 
-    async getCounterparties(limit, offset) {
+    async getCounterparties(search, limit, offset) {
         let data = []
 
         let url = `${this.BASE_API}/counterparties/`;
+
+        if (search) {
+            url += `?search=${search}`;
+        }
 
         if (limit && offset) {
             url += `?limit=${limit}&offset=${offset}`;
