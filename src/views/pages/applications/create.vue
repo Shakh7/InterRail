@@ -16,7 +16,8 @@
         <h4 class="card-title">Application create is not allowed</h4>
         <p
             class="card-text text-muted"
-        >We have found more than three applications with no codes attached. Please, fill these applications and come back again</p>
+        >We have found more than three applications with no codes attached. Please, fill these applications and come
+          back again</p>
         <router-link :to="{name: 'applications_list'}" class="btn btn-success">Go applications</router-link>
       </div>
     </div>
@@ -88,14 +89,14 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид отправки</td>
               <td class="w-50 py-1 ps-0">
-                <Multiselect class="border-0" v-model="form.sending_type" :options="['Одиночная', 'КП']"
+                <Multiselect class="border-0" v-model="form.sending_type" :options="sending_types"
                              style="max-height: 28px"/>
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Тип погрузки</td>
               <td class="w-50 py-1 ps-0">
-                <Multiselect class="border-0" v-model="form.loading_type" :options="['Container', 'Wagon']"
+                <Multiselect class="border-0" v-model="form.loading_type" :options="loading_types"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -176,7 +177,7 @@
                 </div>
               </td>
             </tr>
-            <tr v-if="form.loading_type === 'Container'">
+            <tr v-if="form.loading_type === 'container'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
                 <Multiselect class="border-0" v-model="form.container_type" :options="['20', '40']"
@@ -370,6 +371,15 @@ export default {
           active: true,
         },
       ],
+      loading_types: [
+        {value: 'container', label: 'Container'},
+        {value: 'wagon', label: 'Wagon'},
+        {value: 'wagon_empty', label: 'Wagon(empty)'},
+      ],
+      sending_types: [
+        {value: 'single', label: 'Одиночная'},
+        {value: 'block_train', label: 'КП'}
+      ],
       application: null,
       isLoading: false,
       forwarders: {
@@ -418,8 +428,9 @@ export default {
   methods: {
 
     async checkCreatePermission() {
-      let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/check_create_permission/`)
-      this.allow_create = await response.text() === 'True'
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/check_create_permission/`)
+      let response = await request.json()
+      this.allow_create = response['access']
     },
 
     async getCounterpartyList() {

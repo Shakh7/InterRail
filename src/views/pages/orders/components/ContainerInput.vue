@@ -13,6 +13,13 @@
          type="text" placeholder="Container"
          v-on:keyup.enter="saveContainer(ctr.id, 'empty')"
   >
+
+  <div v-if="ctr.container !== null && ctr.code !== null" class="y position-relative">
+    <span
+      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"> {{ ctr.code }}
+    </span>
+  </div>
+
 </template>
 
 <script>

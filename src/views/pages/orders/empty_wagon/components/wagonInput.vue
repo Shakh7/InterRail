@@ -3,6 +3,13 @@
          placeholder="Wagon number" v-on:keyup.enter="updateExpanse(id, new_wagon_name)" :class="response_status">
   <input v-else v-model="wagon_computed.name" class="form-control form-control-sm" type="text"
          placeholder="Wagon number" v-on:keyup.enter="updateExpanse(id, wagon_computed.name)" :class="response_status">
+
+  <div v-if="wagon_computed !== null && code !== ''" class="y position-relative">
+    <span
+      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"> {{ code }}
+    </span>
+  </div>
+
 </template>
 
 <script>
@@ -23,6 +30,9 @@ export default {
     },
     wagon: {
       type: Object,
+    },
+    code: {
+      type: String,
     },
   },
   computed: {

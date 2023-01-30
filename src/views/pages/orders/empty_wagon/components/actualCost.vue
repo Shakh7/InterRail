@@ -1,8 +1,12 @@
 <template>
-  <input v-on:keyup.enter="updateActualCost(cost.id, cost.actual_cost)" v-model="cost.actual_cost"
+  <input v-if="cost.code_cost === null" v-on:keyup.enter="updateActualCost(cost.id, cost.actual_cost)" v-model="cost.actual_cost"
          :class="response_status"
          class="form-control form-control-sm w-75 m-auto" type="text"
          placeholder="Agreed rate">
+  <input v-else :value="cost.code_cost"
+         class="form-control form-control-sm w-75 m-auto" type="text"
+         placeholder="Agreed rate" disabled>
+
 </template>
 
 <script>

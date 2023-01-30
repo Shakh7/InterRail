@@ -64,7 +64,7 @@ export default {
       if (query.trim().length <= 0) return;
       this.isLoading = true
       api.getOrderNumbers(
-          `?order_number=${query}&loading_type=${this.loading_type.toLowerCase()}`
+          `?order_number=${query}&loading_type=${this.loading_type}`
       ).then((response) => {
 
         this.selectedOrder = 0

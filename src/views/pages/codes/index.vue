@@ -3,6 +3,7 @@ import CustomTable from '../../../components/custom/table2.vue'
 import CodePreviewModal from './components/PreviewModal.vue'
 import CodeUpdateModal from './components/UpdateModal.vue'
 import user from '../../../components/custom/user.vue'
+import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
 export default {
   name: 'codes_list',
@@ -94,7 +95,8 @@ export default {
         },
       },
       currentCode: {},
-      getUpdate: false
+      getUpdate: false,
+      forwarders: []
     }
   },
   components: {
@@ -105,9 +107,25 @@ export default {
   },
   methods: {
     setToCurrentCode(data) {
+      data.forwarder = data.forwarder_id !== null
+          ? this.forwarders.filter(i => i.value === data.forwarder_id)[0]['label']
+          : null
       this.currentCode = data
     },
+    async getForwarders() {
+      let api = new CounterpartyApi()
+      let response = await api.getCounterparties()
+      this.forwarders = response.results.map(forwarder => {
+        return {
+          value: forwarder.id,
+          label: forwarder.name
+        }
+      })
+    },
   },
+  async mounted() {
+    await this.getForwarders()
+  }
 }
 </script>
 
@@ -132,7 +150,7 @@ export default {
 
     <template v-slot:forwarder_id="slotProps">
       <span v-if="slotProps.row.forwarder === null" class="text-danger">--</span>
-      <span v-else>{{ slotProps.row.forwarder_id }}</span>
+      <span v-else>{{ forwarders.filter(i => i.value === slotProps.row.forwarder_id)[0]['label'] }}</span>
     </template>
 
     <template v-slot:order_number="slotProps">

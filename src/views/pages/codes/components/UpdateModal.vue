@@ -92,7 +92,7 @@
                                style="max-height: 28px"/>
                 </div>
               </div>
-              <div v-if="code.loading_type === 'Container'" class="row border-bottom py-2 align-items-center">
+              <div v-if="code.loading_type === 'container'" class="row border-bottom py-2 align-items-center">
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Container type:</label>
                 </div>
@@ -102,22 +102,24 @@
                                style="max-height: 28px"/>
                 </div>
               </div>
-              <div v-if="code.loading_type === 'Container'" class="row py-2 align-items-center">
+              <div v-if="code.loading_type === 'container'" class="row py-2 align-items-center">
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Container number:</label>
                 </div>
                 <div class="col-lg-7 ps-1">
-                  <Multiselect v-model="code.container_expanse_id" :options="containerList" :searchable="true" style="max-height: 28px"
+                  <Multiselect v-model="code.container_expanse_id" :options="containerList" :searchable="true"
+                               style="max-height: 28px"
                                placeholder="Container" class="border-0 pe-0"
-                              @input="code.container_expanse_id = $event"/>
+                               @input="code.container_expanse_id = $event"/>
                 </div>
               </div>
-              <div v-if="code.loading_type === 'Wagon'" class="row border-bottom py-2 align-items-center">
+              <div v-if="code.loading_type === 'wagon' || code.loading_type === 'wagon(empty)'"
+                   class="row border-bottom py-2 align-items-center">
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Weight:</label>
                 </div>
                 <div class="col-lg-7">
-                  <input v-model="code.weight" type="text" class="form-control form-control-sm border-0"
+                  <input v-model="code.weight" type="number" class="form-control form-control-sm border-0"
                          placeholder="Weight">
                 </div>
               </div>
@@ -172,7 +174,33 @@
                          placeholder="Add charges">
                 </div>
               </div>
-              <div class="row border-bottom py-2 align-items-center">
+              <div v-if="code.loading_type === 'wagon'" class="row border-bottom py-2 align-items-center">
+                <div class="col-lg-5 py-2">
+                  <label class="form-label my-0">Wagon number:</label>
+                </div>
+                <div class="col-lg-7 ps-1">
+                  <Multiselect v-model="code.wagon_expanse_id" :options="wagonList"
+                               :searchable="true"
+                               style="max-height: 28px"
+                               placeholder="Wagon number" class="border-0 pe-0"
+                               @input="code.wagon_expanse_id = $event"/>
+                </div>
+              </div>
+
+              <div v-if="code.loading_type === 'wagon(empty)'" class="row border-bottom py-2 align-items-center">
+                <div class="col-lg-5 py-2">
+                  <label class="form-label my-0">Wagon number:</label>
+                </div>
+                <div class="col-lg-7 ps-1">
+                  <Multiselect v-model="code.wagon_empty_expanse_id" :options="wagonList"
+                               :searchable="true"
+                               style="max-height: 28px"
+                               placeholder="Wagon number" class="border-0 pe-0"
+                               @input="code.wagon_empty_expanse_id = $event"/>
+                </div>
+              </div>
+
+              <div v-else class="row border-bottom py-2 align-items-center">
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Wagon number:</label>
                 </div>
@@ -266,12 +294,14 @@ export default {
         {value: 'Canceled', label: 'Canceled', color: 'danger'},
       ],
       loadingTypeOptions: [
-        {value: 'Container', label: 'Container'},
-        {value: 'Wagon', label: 'Wagon'},
+        {value: 'container', label: 'Container'},
+        {value: 'wagon', label: 'Wagon'},
+        {value: 'wagon(empty)', label: 'Wagon(empty)'},
       ],
       territories: [],
       forwarders: [],
       containerList: [],
+      wagonList: [],
     }
   },
   props: {
@@ -296,8 +326,8 @@ export default {
       code.smgs_number = code.smgs_number === null ? ' ' : code.smgs_number
       code.charges = code.charges === '' ? 0 : code.charges
       code.add_charges = code.add_charges === '' ? 0 : code.add_charges
-
-      code.container_type = code.loading_type === 'wagon' ? '' : code.container_type
+      code.loading_type = code.loading_type === 'wagon(empty)' ? 'wagon_empty' : code.loading_type
+      code.container_type = code.loading_type === 'wagon' || code.loading_type === 'wagon_empty' ? '' : code.container_type
       code.weight = code.loading_type === 'container' ? '' : code.weight
 
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/list/${this.code.id}/edit/`, {
@@ -371,24 +401,54 @@ export default {
     async handleOrderSelect(event) {
       if (event !== null) {
         this.code.order_number = event
-        await this.getContainerList(event)
+        if (this.code.loading_type === 'container') {
+          await this.getContainerList(event)
+        } else if (this.code.loading_type === 'wagon') {
+          await this.getWagonList(event)
+        } else {
+          await this.getEmptyWagonList(event)
+        }
       } else {
         this.containerList = []
+        this.wagonList = []
       }
     },
 
     async getContainerList(order_number) {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/containers/${order_number}/`)
       let response = await request.json()
-      this.containerList = !request.ok
-          ? [] : response.filter(i => i.container_name !== null).map(container => {
+      this.containerList = request.ok
+          ? response['container'].filter(i => i.container_name !== null).map(container => {
             return {
               value: container.container_expanse_id,
               label: container.container_name
             }
-          })
+          }) : []
+    },
+    async getWagonList(order_number) {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/wagons/${order_number}/`)
+      let response = await request.json()
+      console.log(response)
+      this.wagonList = request.ok
+          ? response['wagons'].filter(i => i.wagon_name !== null).map(wagon => {
+            return {
+              value: wagon.wagon_expanse_id,
+              label: wagon.wagon_name
+            }
+          }) : []
+    },
+    async getEmptyWagonList(order_number) {
+      let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/empty_wagons/${order_number}/`)
+      let response = await request.json()
+      console.log(response)
+      this.wagonList = request.ok
+          ? response['wagons'].filter(i => i.wagon_name !== null).map(wagon => {
+            return {
+              value: wagon.wagon_expanse_id,
+              label: wagon.wagon_name
+            }
+          }) : []
     }
-
   },
   computed: {
     code() {
@@ -413,7 +473,7 @@ export default {
       let container = false
       let weight = ''
 
-      if (this.code.loading_type === 'Wagon') {
+      if (this.code.loading_type === 'wagon' || this.code.loading_type === 'wagon(empty)') {
         weight = this.code.weight === null
       } else {
         container_type = this.code.container_type === null || this.code.container_type === ''
@@ -453,13 +513,20 @@ export default {
           manager: val.manager,
           customer: val.customer,
           container_expanse_id: val.container_expanse_id,
-          wagon_expanse_id: null,
-          wagon_empty_expanse_id: null,
+          wagon_expanse_id: val.wagon_expanse_id,
+          wagon_empty_expanse_id: val.wagon_empty_expanse_id,
         }
 
-        if (this.form.order_number !== '') {
+        if (this.form.order_number !== '' && this.form.loading_type === 'container') {
           this.getContainerList(this.form.order_number)
         }
+        if (this.form.order_number !== '' && this.form.loading_type === 'wagon') {
+          this.getWagonList(this.form.order_number)
+        }
+        if (this.form.order_number !== '' && this.form.loading_type === 'wagon(empty)') {
+          this.getEmptyWagonList(this.form.order_number)
+        }
+
       },
       deep: true
     }

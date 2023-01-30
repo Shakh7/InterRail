@@ -281,7 +281,7 @@
                     <tr v-for="(wagon, i) in expanses" :key="i">
                       <th class="text-center">{{ i + 1 }}</th>
                       <td class="text-center" style="max-width: 150px">
-                        <wagonInput :id="wagon.id" :wagon="wagon.wagon"/>
+                        <wagonInput :id="wagon.id" :wagon="wagon.wagon" :code="wagon.code === null ? '' : wagon.code"/>
                       </td>
                       <td class="text-center">
                         <agreedRate @update="fetchData()" :agreed_rate="wagon"/>

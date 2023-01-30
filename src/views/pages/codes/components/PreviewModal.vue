@@ -72,32 +72,32 @@
               <tr>
                 <th scope="row">Loading type</th>
                 <td class="text-end">
-                  <span v-if="code.loading_type">{{ code.loading_type }}</span>
+                  <span v-if="code.loading_type">{{ code.loading_type.charAt(0).toUpperCase() + code.loading_type.slice(1) }}</span>
                 <span v-else class="text-danger">--</span>
                 </td>
               </tr>
-              <tr v-if="code.loading_type === 'Container'">
+              <tr v-if="code.loading_type === 'container'">
                 <th scope="row">Container type</th>
                 <td class="text-end">
                   <span v-if="code.container_type">{{ code.container_type }}</span>
                 <span v-else class="text-danger">--</span>
                 </td>
               </tr>
-              <tr v-if="code.loading_type === 'Container'">
+              <tr v-if="code.loading_type === 'container'">
                 <th scope="row">Container number</th>
                 <td class="text-end">
-                  <span v-if="code.container_number">{{ code.container_number }}</span>
+                  <span v-if="code.container_expanse_id">{{ code.container_expanse_id }}</span>
                 <span v-else class="text-danger">--</span>
                 </td>
               </tr>
-              <tr v-if="code.loading_type === 'Wagon'">
+              <tr v-if="code.loading_type === 'wagon' || code.loading_type === 'wagon(empty)'">
                 <th scope="row">Weight</th>
                 <td class="text-end">
                   <span v-if="code.weight">{{ code.weight }}</span>
                 <span v-else class="text-danger">--</span>
                 </td>
               </tr>
-              <tr v-if="code.loading_type === 'Wagon'">
+              <tr>
                 <th scope="row">Wagon number</th>
                 <td class="text-end">
                   <span v-if="code.wagon_number">{{ code.wagon_number }}</span>
@@ -177,6 +177,15 @@
                 <span v-else class="text-danger">$ 0</span>
                 </td>
               </tr>
+
+              <tr>
+                <th scope="row">Territory</th>
+                <td class="text-end">
+                  <span v-if="code.territory">{{ code.territory.name }}</span>
+                  <span v-else class="text-danger">--</span>
+                </td>
+              </tr>
+
               </tbody>
             </table>
           </div>

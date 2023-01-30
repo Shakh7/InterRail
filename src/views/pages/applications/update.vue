@@ -427,6 +427,8 @@ export default {
       data.destination_id = data.destination.id
       data.product_id = data.product.id
       data.forwarder_id = data.forwarder.id
+      data.sending_type = data.sending_type.toLowerCase()
+      data.loading_type = data.loading_type.toLowerCase()
 
       delete data.departure
       delete data.destination

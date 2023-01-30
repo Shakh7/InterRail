@@ -12,7 +12,7 @@ const store = createStore({
         token: null,
         user: {
             full_name: 'Shakhzodbek Sharipov',
-            role: 'staff',
+            role: 'admin',
             id: 2
         },
         users_list: [],
