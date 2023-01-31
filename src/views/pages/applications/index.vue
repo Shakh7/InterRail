@@ -9,7 +9,7 @@ import user from '../../../components/custom/user.vue'
 
 import Swal from "sweetalert2";
 
-import SwiperCore, {Thumbs, Pagination, Navigation} from "swiper";
+import SwiperCore, {Navigation, Pagination, Thumbs} from "swiper";
 import {Swiper, SwiperSlide} from "swiper/vue";
 import "swiper/swiper-bundle.css";
 
@@ -39,6 +39,7 @@ export default {
         data: {}
       },
 
+      getUpdate: false,
       applicationWidgets: [],
 
       table: {
@@ -385,7 +386,7 @@ export default {
                 {{ widget.filled + widget.not_filled }}
               </h5>
               <p class="text-muted">{{
-                widget.not_filled
+                  widget.not_filled
                 }}</p>
             </div>
 
@@ -414,6 +415,7 @@ export default {
       :searchable="true"
       :isLoading="false"
       :pagination="table.pagination"
+      :getUpdate="getUpdate"
   >
 
     <template #top-right>
@@ -500,7 +502,7 @@ export default {
             <router-link class="text-dark dropdown-item"
                          :to="{ name: 'application_update', params: { id: slotProps.row.id } }">
               <font-awesome-icon icon="fa-solid fa-pen-to-square"
-                           class="c_icon me-2 fs-6"/>
+                                 class="c_icon me-2 fs-6"/>
               Edit
             </router-link>
           </li>
@@ -520,6 +522,6 @@ export default {
 
   <PreviewModal :application="currentApplication.data"/>
 
-  <AddCodeModal :application="currentApplication.data"/>
+  <AddCodeModal :application="currentApplication.data" @update="this.getUpdate = !this.getUpdate"/>
 
 </template>

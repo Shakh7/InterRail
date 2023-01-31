@@ -418,7 +418,7 @@ export default {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/order/containers/${order_number}/`)
       let response = await request.json()
       this.containerList = request.ok
-          ? response['container'].filter(i => i.container_name !== null).map(container => {
+          ? response['containers'].filter(i => i.container_name !== null).map(container => {
             return {
               value: container.container_expanse_id,
               label: container.container_name

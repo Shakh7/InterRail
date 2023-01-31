@@ -24,14 +24,14 @@
                 <span class="text-warning"><i class="ri-alert-fill fs-5 my-0 me-2"></i></span>
                 <span class="text-muted">All the codes below will be considered as sub codes of the code above.</span>
               </div>
-<!--              <div style="max-width: 150px">-->
-<!--                <VTooltip>-->
-<!--                  <h6 class="my-0">Sub codes: <i class="ri-question-fill my-0"></i></h6>-->
-<!--                  <template #popper>-->
-<!--                    All the codes below will be considered as sub codes of the code above.-->
-<!--                  </template>-->
-<!--                </VTooltip>-->
-<!--              </div>-->
+              <!--              <div style="max-width: 150px">-->
+              <!--                <VTooltip>-->
+              <!--                  <h6 class="my-0">Sub codes: <i class="ri-question-fill my-0"></i></h6>-->
+              <!--                  <template #popper>-->
+              <!--                    All the codes below will be considered as sub codes of the code above.-->
+              <!--                  </template>-->
+              <!--                </VTooltip>-->
+              <!--              </div>-->
 
             </div>
             <div class="col-2">
@@ -128,6 +128,7 @@ import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 
 export default {
+  emits: ['update'],
   name: "AddCodeModal",
   data() {
     return {
@@ -270,6 +271,8 @@ export default {
       })
 
       if (request.ok) {
+
+        this.$emit('update')
 
         this.resetForm()
 

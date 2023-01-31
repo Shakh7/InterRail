@@ -164,6 +164,11 @@ export default {
             @click="setToCurrentCode(slotProps.row)">{{ slotProps.row.number }}</span>
     </template>
 
+    <template v-slot:loading_type="slotProps">
+      <span v-if="slotProps.row.loading_type === null" class="text-danger">--</span>
+      <span v-else>{{ slotProps.row.loading_type.charAt(0).toUpperCase() + slotProps.row.loading_type.slice(1) }}</span>
+    </template>
+
     <template v-slot:status="slotProps">
       <span class="badge" :class="{
         'bg-warning': slotProps.row.status === 'Checking',
