@@ -38,7 +38,12 @@ export default {
         current: 1,
         count: 0
       },
-      isFetchingData: false
+      isFetchingData: false,
+
+      widgetsList: {
+        isLoading: true,
+        list: []
+      }
     }
   },
   props: {
@@ -57,6 +62,10 @@ export default {
     url: {
       type: String,
       default: () => ''
+    },
+    widgets: {
+      type: Object,
+      required: false,
     },
     rows: {
       type: Array,
@@ -171,10 +180,18 @@ export default {
     async pageChange(page) {
       this.paginate.current = Math.ceil(page)
       await this.getData()
+    },
+    async getWidgetsData() {
+      this.widgetsList.isLoading = true
+      let request = await fetch(this.widgets.url)
+      let response = await request.json()
+      this.widgetsList.list = request.ok ? response : []
+      this.widgetsList.isLoading = false
     }
   },
   async mounted() {
     await this.getData()
+    await this.getWidgetsData()
   },
   watch: {
     search(value) {
@@ -189,6 +206,80 @@ export default {
 </script>
 
 <template>
+
+
+  <div class="row" v-if="widgetsList.isLoading === false">
+    <div v-for="widget in widgetsList.list" :key="widget" class="col-lg-3">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div class="d-flex flex-row">
+              <div class="me-3">
+                <i class="ri-pulse-line display-6 text-muted"></i>
+              </div>
+              <div class="pt-1">
+                <h5 class="fs-15 fw-semibold text-capitalize">Containers</h5>
+                <p class="text-muted">Filled</p>
+              </div>
+            </div>
+
+            <div class="text-end pt-2">
+              <h5 class="fs-15 fw-semibold text-capitalize text-primary">
+                {{ widget.quantity }}
+              </h5>
+              <p class="text-muted">{{ widget.filled_quantity }}</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0 bg-success" role="progressbar"
+               :style="'width: ' + (widget.filled_quantity / widget.quantity) * 100 + '%'"
+               :aria-valuenow="widget.filled_quantity"
+               aria-valuemin="0" :aria-valuemax="widget.quantity">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" v-else>
+    <div class="col-lg-3" v-for="i in 4" :key="i">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-row">
+              <div class="me-3">
+                <i class="ri-pulse-line display-6 text-muted"></i>
+              </div>
+              <div class="pt-1">
+                <h5 class="fs-15 fw-semibold text-capitalize">
+                  <skeleton/>
+                </h5>
+                <p class="text-muted">Shipment status</p>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <h5 class="fs-15 fw-semibold text-capitalize text-primary">
+                0
+              </h5>
+              <p class="text-muted">0%</p>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 6px">
+          <div class="progress-bar rounded-0 bg-soft-primary" role="progressbar" style="width: 100%" aria-valuenow="100"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-lg-12">

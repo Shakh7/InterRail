@@ -41,6 +41,12 @@ export default {
           searchable: true,
         },
         {
+          label: 'QUANTITY',
+          field: 'quantity',
+          align: 'center',
+          searchable: true,
+        },
+        {
           label: 'ORDER TYPE',
           field: 'type',
           align: 'center',
@@ -89,11 +95,25 @@ export default {
       table: {
         url: `${process.env.VUE_APP_ORDER_URL}/container_order/list/`,
       },
+      widgets_url: `${process.env.VUE_APP_ORDER_URL}/container_order/statistic/`,
       pagination: {
-        perPage: 10,
+        perPage: 100,
       },
 
-      getUpdate: false
+      getUpdate: false,
+
+
+      widgets: {
+        url: `${process.env.VUE_APP_ORDER_URL}/container_order/statistic/`,
+        list: [
+          {
+            label: 'Quantity',
+            field: 'quantity',
+            actual_volume: 0,
+            current_volume: 0
+          }
+        ]
+      },
     };
   },
   methods: {
@@ -226,6 +246,7 @@ export default {
       :isLoading="isLoading"
       :pagination="pagination"
       :getUpdate="getUpdate"
+      :widgets="widgets"
   >
     <template v-slot:top-right>
       <div class="btn-group">
@@ -240,6 +261,15 @@ export default {
           <router-link class="dropdown-item" :to="{name: 'create_empty_wagon'}">Empty wagon</router-link>
         </div>
       </div>
+    </template>
+
+    <template v-slot:quantity="slotProps">
+      <span class="badge" :class="{
+        'badge-outline-success' : slotProps.row.order.filled_quantity === slotProps.row.order.quantity,
+        'badge-outline-danger' : slotProps.row.order.filled_quantity < slotProps.row.order.quantity,
+      }">
+        {{ slotProps.row.order.filled_quantity + '/' + slotProps.row.order.quantity }}
+      </span>
     </template>
 
     <template v-slot:order_number="slotProps">

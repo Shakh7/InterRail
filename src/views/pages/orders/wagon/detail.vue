@@ -139,7 +139,8 @@
                       <tr v-for="(wagon, i) in expanses" :key="i">
                         <th class="text-center">{{ i + 1 }}</th>
                         <td class="text-center">
-                          <wagon_rate_weight @update="this.fetchData()" trackBy="Wagon" :id="wagon.id" :wagonName="wagon.wagon"/>
+                          <wagon_rate_weight :code="wagon.code.toString()"
+                              @update="this.fetchData()" trackBy="Wagon" :id="wagon.id" :wagonName="wagon.wagon"/>
                         </td>
                         <td class="text-center">
                           <wagon_rate_weight @update="this.fetchData()" trackBy="Rate" :id="wagon.id" :rate="wagon.agreed_rate_per_tonn"/>

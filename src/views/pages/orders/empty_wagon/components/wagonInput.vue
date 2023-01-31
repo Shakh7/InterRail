@@ -6,7 +6,7 @@
 
   <div v-if="wagon_computed !== null && code !== ''" class="y position-relative">
     <span
-      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"> {{ code }}
+      class="order-connected-code position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"> {{ code }}
     </span>
   </div>
 

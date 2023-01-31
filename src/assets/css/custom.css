@@ -23,3 +23,14 @@
     border-radius: 50%;
     margin-right: 5px;
 }
+
+
+.order-connected-code {
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.order-connected-code:hover {
+    transition: 0.5s;
+    font-size: 14px;
+}

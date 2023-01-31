@@ -10,6 +10,12 @@
          v-on:keyup.enter="Save" type="number">
   <input class="form-control form-control-sm m-auto" v-if="trackBy === 'Weight'" :value="actual_weight"
          :placeholder="trackBy" v-on:keyup.enter="Save" type="number">
+
+  <div  v-if="trackBy === 'Wagon' && wagonName !== null && code !==''"  class="y position-relative">
+    <span
+      class="order-connected-code position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"> {{ code }}
+    </span>
+  </div>
 </template>
 
 <script>
@@ -34,6 +40,11 @@ export default {
     actual_weight: {
       type: Number,
     },
+    code: {
+      type: String,
+      required: false,
+      default: () => ''
+    }
   },
   methods: {
     async Save(event) {

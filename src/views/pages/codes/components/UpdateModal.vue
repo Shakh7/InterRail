@@ -200,7 +200,7 @@
                 </div>
               </div>
 
-              <div v-else class="row border-bottom py-2 align-items-center">
+              <div v-if="code.loading_type === 'container'" class="row border-bottom py-2 align-items-center">
                 <div class="col-lg-5 py-2">
                   <label class="form-label my-0">Wagon number:</label>
                 </div>
@@ -322,7 +322,7 @@ export default {
       code.product_id = code.product.id
       code.loading_type = code.loading_type.toLowerCase()
       code.status = code.status.toLowerCase()
-      code.wagon_number = code.loading_type === 'wagon' ? code.wagon_number : ' '
+      code.wagon_number = code.loading_type === 'container' ? code.wagon_number : '##'
       code.smgs_number = code.smgs_number === null ? ' ' : code.smgs_number
       code.charges = code.charges === '' ? 0 : code.charges
       code.add_charges = code.add_charges === '' ? 0 : code.add_charges
