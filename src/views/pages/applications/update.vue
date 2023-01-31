@@ -74,7 +74,8 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Вид отправки</td>
               <td class="w-50 py-1 px-1">
-                <Multiselect class="border-0" v-model="data.sending_type" :caret="false" :options="['Одиночная', 'КП']"
+
+                <Multiselect class="border-0" v-model="data.sending_type" :caret="false" :options="sending_types"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -349,6 +350,15 @@ export default {
           active: true,
         },
       ],
+      loading_types: [
+        {value: 'container', label: 'Container'},
+        {value: 'wagon', label: 'Wagon'},
+        {value: 'wagon_empty', label: 'Wagon(empty)'},
+      ],
+      sending_types: [
+        {value: 'single', label: 'Одиночная'},
+        {value: 'block_train', label: 'КП'}
+      ],
       application: null,
       isLoading: false,
       forwarders: {
@@ -402,6 +412,7 @@ export default {
         }
       })
     },
+
     onStationSelect(event) {
       if (event.option === 'departure') {
         if (event.value === null) return this.data.departure = null
@@ -419,6 +430,7 @@ export default {
         }
       }
     },
+
     async updateApplication() {
       let data = {
         ...this.data
