@@ -243,6 +243,7 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'codes_list', component: () => import("../views/pages/codes/index.vue"),},
+            {path: 'update/:id/', name: 'code_update', component: () => import("../views/pages/codes/update.vue"),},
         ],
     },
 

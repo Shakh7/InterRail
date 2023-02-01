@@ -198,9 +198,11 @@ export default {
             @click="setToCurrentCode(slotProps.row)"
         />
 
-        <font-awesome-icon @click="alert(slotProps.row.id)" icon="fa-solid fa-trash"
-                           class="c_icon c_icon_hoverable text-danger"
-        />
+        <router-link :to="{name: 'code_update', params: {id: slotProps.row.id}}">
+          <font-awesome-icon icon="fa-solid fa-trash"
+                             class="c_icon c_icon_hoverable text-danger"
+          />
+        </router-link>
       </div>
     </template>
 
