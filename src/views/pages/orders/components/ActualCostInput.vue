@@ -1,20 +1,15 @@
 <template>
-  <input class="form-control form-control-sm w-75 m-auto"
+  <input v-if="cost.code === null" class="form-control form-control-sm w-75 m-auto"
          type="number" placeholder="Actual cost"
          v-model="cost.actual_cost" :class="inputClass"
          v-on:keyup.enter="showPrice(cost.id)">
 
-<!--  <div v-if="cost.code === null" >-->
-<!--    <VTooltip>-->
-<!--      <div class="px-2 py-1 rounded w-75 m-auto text-start border border-2 border-success"-->
-<!--           type="number" placeholder="Actual cost"> {{ cost.code }}-->
-<!--      </div>-->
-<!--      <template #popper>-->
-<!--        <span class="fw-bold me-1">Actual cost: </span> ${{ cost.actual_cost }}-->
-<!--      </template>-->
-<!--    </VTooltip>-->
-<!--  </div>-->
-
+  <div v-if="cost.code !== null" class="y position-relative w-75 m-auto border border-success rounded">
+    1251
+    <span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-success">
+        {{ cost.code }}
+      </span>
+  </div>
 </template>
 
 <script>
