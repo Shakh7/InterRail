@@ -4,12 +4,19 @@
          v-model="cost.actual_cost" :class="inputClass"
          v-on:keyup.enter="showPrice(cost.id)">
 
-  <div v-if="cost.code !== null" class="y position-relative w-75 m-auto border border-success rounded">
-    1251
-    <span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-success">
-        {{ cost.code }}
-      </span>
+
+  <div v-if="cost.code !== null" class="y position-relative w-75 m-auto">
+    <input class="form-control form-select-sm " :value="cost.actual_cost" disabled>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">{{ cost.code }}</span>
   </div>
+
+
+  <!--  <div v-if="cost.code !== null" class="y position-relative w-75 m-auto border border-success rounded">-->
+  <!--    1251-->
+  <!--    <span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-success">-->
+  <!--        {{ cost.code }}-->
+  <!--      </span>-->
+  <!--  </div>-->
 </template>
 
 <script>

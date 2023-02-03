@@ -95,13 +95,6 @@ export default {
             visible: true
           },
           {
-            label: 'Client',
-            field: 'customer',
-            align: 'center',
-            searchable: true,
-            visible: true
-          },
-          {
             label: 'Manager',
             field: 'manager',
             align: 'center',
@@ -472,10 +465,6 @@ export default {
 
     <template v-slot:date="slotProps">
       <span class="link-primary fw-medium">{{ slotProps.row.date }}</span>
-    </template>
-
-    <template v-slot:customer="slotProps">
-      <user :userId="slotProps.row.customer" :avatar="true" avatarBgColor="success"></user>
     </template>
 
     <template v-slot:manager="slotProps">

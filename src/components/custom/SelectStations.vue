@@ -1,5 +1,5 @@
 <template>
-  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[0]">
+  <div v-if="showDeparture" class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[0]">
     <label for="departure" class="form-label" :class="errorDepColor">
       Departure <span class="text-danger">*</span>
     </label>
@@ -16,7 +16,7 @@
     />
   </div>
 
-  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[1]">
+  <div v-if="showDeparture" class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[1]">
     <label for="departure_code" class="form-label" :class="errorDepColor">
       Code <span class="text-danger">*</span>
     </label>
@@ -34,7 +34,7 @@
     />
   </div>
 
-  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[2]">
+  <div v-if="showDestination" class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[2]">
     <label for="destination" class="form-label" :class="errorDesColor">
       Destination <span class="text-danger">*</span>
     </label>
@@ -51,7 +51,7 @@
     />
   </div>
 
-  <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[3]">
+  <div v-if="showDestination" class="col-12 mb-3" :class="classes === undefined ? 'col-lg-3' : 'col-lg-' + classes[3]">
     <label for="destination_code" class="form-label" :class="errorDesColor">
       Code <span class="text-danger">*</span>
     </label>
@@ -103,6 +103,16 @@ export default {
       type: Object,
       default: () => {
       },
+      required: false
+    },
+    showDeparture: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    showDestination: {
+      type: Boolean,
+      default: true,
       required: false
     },
   },
@@ -185,9 +195,9 @@ export default {
     current_departure: {
       handler(newValue) {
         this.departure.options = [{
-            value: newValue.id,
-            label: newValue.name,
-            code: newValue.code
+          value: newValue.id,
+          label: newValue.name,
+          code: newValue.code
         }] // set options
         this.departure.selected = this.departure.options[0] // set the selected option
       },
@@ -196,9 +206,9 @@ export default {
     current_destination: {
       handler(newValue) {
         this.destination.options = [{
-            value: newValue.id,
-            label: newValue.name,
-            code: newValue.code
+          value: newValue.id,
+          label: newValue.name,
+          code: newValue.code
         }] // set options
         this.destination.selected = this.destination.options[0] // set the selected option
       },

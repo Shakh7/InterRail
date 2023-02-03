@@ -26,7 +26,7 @@ export default {
           },
           {
             label: 'ORDER NUMBER',
-            field: 'order_number',
+            field: 'order',
             align: 'center',
             visible: true,
           },
@@ -35,6 +35,24 @@ export default {
             field: 'number',
             align: 'center',
             visible: true,
+          },
+          {
+            label: 'DEPARTURE',
+            field: 'departure',
+            align: 'center',
+            visible: false,
+          },
+          {
+            label: 'DESTINATION',
+            field: 'destination',
+            align: 'center',
+            visible: false,
+          },
+          {
+            label: 'PRODUCT',
+            field: 'product',
+            align: 'center',
+            visible: false,
           },
           {
             label: 'STATUS',
@@ -153,9 +171,9 @@ export default {
       <span v-else>{{ forwarders.filter(i => i.value === slotProps.row.forwarder_id)[0]['label'] }}</span>
     </template>
 
-    <template v-slot:order_number="slotProps">
-      <span v-if="slotProps.row.order_number === null" class="text-danger">--</span>
-      <span v-else>{{ slotProps.row.order_number }}</span>
+    <template v-slot:order="slotProps">
+      <span v-if="slotProps.row.order === null" class="text-danger">--</span>
+      <span v-else>{{ slotProps.row.order.order_number }}</span>
     </template>
 
     <template v-slot:number="slotProps">
@@ -167,6 +185,28 @@ export default {
     <template v-slot:loading_type="slotProps">
       <span v-if="slotProps.row.loading_type === null" class="text-danger">--</span>
       <span v-else>{{ slotProps.row.loading_type.charAt(0).toUpperCase() + slotProps.row.loading_type.slice(1) }}</span>
+    </template>
+
+    <template v-slot:departure="slotProps">
+      <span v-if="slotProps.row.departure === null" class="text-danger">--</span>
+      <span v-else>{{ slotProps.row.departure.name + '(' + slotProps.row.departure.code + ')' }}</span>
+    </template>
+
+    <template v-slot:destination="slotProps">
+      <span v-if="slotProps.row.destination === null" class="text-danger">--</span>
+      <span v-else>{{ slotProps.row.destination.name + '(' + slotProps.row.destination.code + ')' }}</span>
+    </template>
+
+    <template v-slot:product="slotProps">
+      <span v-if="slotProps.row.product === null" class="text-danger">--</span>
+      <div v-else style="max-width: 180px">
+        <VTooltip class="text-truncate">
+          <span>{{ slotProps.row.product.name }}</span>
+          <template #popper>
+            <span>{{ slotProps.row.product.name }}</span>
+          </template>
+        </VTooltip>
+      </div>
     </template>
 
     <template v-slot:status="slotProps">

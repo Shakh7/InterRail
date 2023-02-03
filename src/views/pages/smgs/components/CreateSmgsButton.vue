@@ -289,7 +289,7 @@ export default {
         this.train.id === null ? this.train.id = data.train.id : 0
         try {
 
-          let userId = await fetch(`${process.env.VUE_APP_SMGS_URL}/train/${this.train.id}`, {
+          await fetch(`${process.env.VUE_APP_SMGS_URL}/train/${this.train.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
@@ -299,8 +299,6 @@ export default {
               user_id: store.state.user.id
             })
           })
-
-          console.log("userId: ", userId)
 
           var formData = new FormData();
           formData.append("file", this.dropZone.files[0]);

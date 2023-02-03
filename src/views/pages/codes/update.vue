@@ -6,6 +6,10 @@ import animationData from "@/components/widgets/uetqnvvg.json";
 import animationNoContentData from "../../../components/widgets/spxnqpau.json";
 import Lottie from "@/components/widgets/lottie.vue";
 
+import SelectStations from "../../../components/custom/SelectStations.vue";
+import SelectProduct from "../../../components/custom/SelectProduct.vue";
+import Swal from "sweetalert2";
+
 export default {
   data() {
     return {
@@ -27,6 +31,10 @@ export default {
       container_type: null,
       order: null,
       hasMounted: false,
+
+      destinationModal: false,
+      departureModal: false,
+      productModal: false,
 
       options: {
         sending_type: [
@@ -62,6 +70,8 @@ export default {
   components: {
     PageHeader,
     Multiselect,
+    SelectStations,
+    SelectProduct,
     lottie: Lottie
   },
   computed: {
@@ -98,7 +108,7 @@ export default {
       this.codeData = response
       this.loading_type = this.code.loading_type
       this.container_type = this.code.container_type
-      this.isLoading = false
+
     },
     async findOrderNumber(query) {
       this.order = null
@@ -125,6 +135,8 @@ export default {
           customer_id: i.customer,
         }
       })
+
+      this.isLoading = false
 
     },
     async getOrderContainerNumbers() {
@@ -191,19 +203,62 @@ export default {
           wagon_empty_actual_cost_id: this.loading_type === 'wagon' || this.loading_type === 'container' ? null : this.code.wagon_empty_actual_cost_id,
         })
       })
-      let response = await request.json()
-      console.log(response)
+
+
+      const Swala = Swal.mixin({
+        position: 'center',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Swala.fire({
+        icon: request.ok ? 'success' : 'error',
+        title: request.ok ? 'Successfully saved' : 'Error',
+        text: request.ok ? 'Code has been saved successfully' : 'Error while saving code',
+      }).then(() => {
+        this.$router.push({name: 'codes_list'})
+      })
+
     },
     readData(key) {
       return this.isLoading ? 'Loading..' : this.codeData[key]
-    }
+    },
+
+    onSelectDestination(event) {
+      let option = event.value
+      this.code.destination = {
+        id: option.value,
+        name: option.label,
+        code: option.code,
+      }
+    },
+    onSelectDeparture(event) {
+      let option = event.value
+      this.code.departure = {
+        id: option.value,
+        name: option.label,
+        code: option.code,
+      }
+    },
+    onSelectProduct(event) {
+      this.code.product = {
+        id: event.value,
+        name: event.label,
+        hc_code: event.hc_code,
+        etcng_code: event.etcng,
+      }
+    },
   },
   async mounted() {
     await this.getCodeData()
     await this.findOrderNumber()
     this.hasMounted = true
   },
-
   watch: {
     loading_type() {
       if (!this.hasMounted) return
@@ -211,7 +266,6 @@ export default {
     },
     order: {
       handler(val) {
-        this.code.container_actual_cost_id = null
         if (val === null) {
           this.options.containers = []
           this.options.wagons = []
@@ -229,6 +283,7 @@ export default {
       deep: true
     },
     container_type() {
+      if (this.isLoading) return
       this.code.container_actual_cost_id = null
     }
   }
@@ -238,12 +293,95 @@ export default {
 <template>
   <PageHeader :title="title" :items="items"/>
 
-  <div class="row" v-if="code !== null">
+  <div class="row" v-if="!isLoading">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="fs-15 fw-semibold">{{ code.departure.name }}</h5>
+              <p class="text-muted">
+                <i class="ri-map-pin-line align-middle me-1 text-muted"></i>
+                Departure Address
+              </p>
+            </div>
+            <div class="text-end">
+
+              <font-awesome-icon
+                  icon="fa-solid fa-pen-to-square"
+                  class="c_icon c_icon_hoverable"
+                  data-bs-toggle="modal"
+                  data-bs-target="#departureModal"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="fs-15 fw-semibold">{{ code.destination.name }}</h5>
+              <p class="text-muted">
+                <i class="ri-map-pin-line align-middle me-1 text-muted"></i>
+                Destination Address
+              </p>
+            </div>
+            <div class="text-end">
+              <font-awesome-icon
+                  icon="fa-solid fa-pen-to-square"
+                  class="c_icon c_icon_hoverable"
+                  data-bs-toggle="modal"
+                  data-bs-target="#destinationModal"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body pb-0">
+          <div class="d-flex justify-content-between">
+            <div style="max-width: 78%">
+
+              <VTooltip>
+                <div class="w-100">
+                  <h5 class="fs-15 fw-semibold text-truncate">{{ code.product.name }}</h5>
+                </div>
+                <template #popper>
+                  {{ code.product.name }}
+                </template>
+              </VTooltip>
+
+              <p class="text-muted">
+                <i class="ri-map-pin-line align-middle me-1 text-muted"></i>
+                Product Info
+              </p>
+            </div>
+            <div style="max-width: 20%" class="text-end">
+              <font-awesome-icon
+                  icon="fa-solid fa-pen-to-square"
+                  class="c_icon c_icon_hoverable"
+                  data-bs-toggle="modal"
+                  data-bs-target="#productModal"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" v-if="isLoading === false">
     <div class="col-xl-9">
       <div class="card">
         <div class="card-header">
           <div class="d-flex align-items-center">
-            <h5 class="card-title flex-grow-1 mb-0">Code {{ readData('number') }}</h5>
+            <h5 class="card-title flex-grow-1 my-0">
+              Code:
+              <b-badge variant="success" class="ms-2 my-0"> {{ code.number }}</b-badge>
+            </h5>
             <div class="flex-shrink-0">
               <button @click="save()"
                       class="btn btn-success btn-sm"
@@ -298,7 +436,7 @@ export default {
                   <VTooltip>
                     <div class="w-100">
                       <div class="mb-3">
-                        <label class="form-label">Container number</label>
+                        <label class="form-label">Container number {{ code.container_actual_cost_id }}</label>
                         <Multiselect placeholder="Select container"
                                      :disabled="order === null"/>
                       </div>
@@ -446,7 +584,17 @@ export default {
     </div>
     <!--end col-->
     <div class="col-xl-3">
+
       <div class="card">
+        <div class="card-body pb-0">
+          <h5 class="fs-15 fw-semibold">{{ code.forwarder.name }}</h5>
+          <p class="text-muted">Forwarder</p>
+        </div>
+      </div>
+      <!--end card-->
+
+      <div class="card">
+
         <div class="card-header">
           <div class="d-flex">
             <h5 class="card-title flex-grow-1 mb-0">
@@ -457,20 +605,47 @@ export default {
             </h5>
           </div>
         </div>
-        <div class="card-body">
+
+        <div class="card-body" v-if="order !== null">
           <div class="text-center">
-            <p class="text-muted mb-3">{{ code.forwarder.name }}</p>
+            <div>
+              <h1 style="font-size: 45px">{{ order.label }}</h1>
+            </div>
+            <h5 class="fs-16 mt-2">Connected Order</h5>
+            <Multiselect v-model="order" :object="true"
+                         :placeholder="'Results found: ' + options.order_numbers.length"
+                         :options="options.order_numbers" :searchable="true"
+            >
+              <template #nooptions>
+                <h6 class="my-0 p-2 lh-base">
+                  We could not find any {{ loading_type }} orders with
+                  {{ code.forwarder.name }}
+                </h6>
+              </template>
+            </Multiselect>
+          </div>
+
+        </div>
+        <div class="card-body" v-else>
+          <div class="text-center">
             <lottie
                 colors="primary:#405189,secondary:#08a88a"
                 :options="defaultOptions"
                 :height="80"
                 :width="80"
             />
-            <h5 class="fs-16 mt-2">Connect Order {{ options.containers.length }}</h5>
-            <p class="text-muted mb-3">Code is not connected with order</p>
+            <h5 class="fs-16 mt-2">Connect Order</h5>
+            <p class="text-danger fw-semibold mb-3">Code is not connected with order</p>
             <Multiselect v-model="order" :object="true"
+                         :placeholder="'Results found: ' + options.order_numbers.length"
                          :options="options.order_numbers" :searchable="true"
             >
+              <template #nooptions>
+                <h6 class="my-0 p-2 lh-base">
+                  We could not find any {{ loading_type }} orders with
+                  {{ code.forwarder.name }}
+                </h6>
+              </template>
             </Multiselect>
           </div>
         </div>
@@ -526,100 +701,100 @@ export default {
         </div>
       </div>
       <!--end card-->
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            <i class="ri-map-pin-line align-middle me-1 text-muted"></i>
-            Billing Address
-          </h5>
-        </div>
-        <div class="card-body">
-          <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-            <li class="fw-medium fs-14">Joseph Parker</li>
-            <li>+(256) 245451 451</li>
-            <li>2186 Joyce Street Rocky Mount</li>
-            <li>New York - 25645</li>
-            <li>United States</li>
-          </ul>
-        </div>
-      </div>
-      <!--end card-->
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            <i class="ri-map-pin-line align-middle me-1 text-muted"></i>
-            Shipping Address
-          </h5>
-        </div>
-        <div class="card-body">
-          <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-            <li class="fw-medium fs-14">Joseph Parker</li>
-            <li>+(256) 245451 451</li>
-            <li>2186 Joyce Street Rocky Mount</li>
-            <li>California - 24567</li>
-            <li>United States</li>
-          </ul>
-        </div>
-      </div>
-      <!--end card-->
-
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            <i
-                class="ri-secure-payment-line align-bottom me-1 text-muted"
-            ></i>
-            Payment Details
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-2">
-            <div class="flex-shrink-0">
-              <p class="text-muted mb-0">Transactions:</p>
-            </div>
-            <div class="flex-grow-1 ms-2">
-              <h6 class="mb-0">#VLZ124561278124</h6>
-            </div>
-          </div>
-          <div class="d-flex align-items-center mb-2">
-            <div class="flex-shrink-0">
-              <p class="text-muted mb-0">Payment Method:</p>
-            </div>
-            <div class="flex-grow-1 ms-2">
-              <h6 class="mb-0">Debit Card</h6>
-            </div>
-          </div>
-          <div class="d-flex align-items-center mb-2">
-            <div class="flex-shrink-0">
-              <p class="text-muted mb-0">Card Holder Name:</p>
-            </div>
-            <div class="flex-grow-1 ms-2">
-              <h6 class="mb-0">Joseph Parker</h6>
-            </div>
-          </div>
-          <div class="d-flex align-items-center mb-2">
-            <div class="flex-shrink-0">
-              <p class="text-muted mb-0">Card Number:</p>
-            </div>
-            <div class="flex-grow-1 ms-2">
-              <h6 class="mb-0">xxxx xxxx xxxx 2456</h6>
-            </div>
-          </div>
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-              <p class="text-muted mb-0">Total Amount:</p>
-            </div>
-            <div class="flex-grow-1 ms-2">
-              <h6 class="mb-0">$415.96</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--end card-->
     </div>
     <!--end col-->
   </div>
-  <!--end row-->
+
+
+  <div v-if="isLoading === false" id="departureModal" class="modal fade" tabindex="-1" aria-hidden="true"
+       style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content border-0">
+
+        <div class="modal-header border-bottom p-3">
+          <h5 class="modal-title">
+            Departure Edit
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="px-4 py-3">
+          <div class="row">
+            <SelectStations
+                :current_departure="{
+                    id: code.departure.id,
+                    name: code.departure.name,
+                    code: code.departure.code
+                }"
+                :showDestination="false" :ratio="[12,12]"
+                @onSelect="onSelectDeparture"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div v-if="isLoading === false" id="destinationModal" class="modal fade" tabindex="-1" aria-hidden="true"
+       style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content border-0">
+
+        <div class="modal-header border-bottom p-3">
+          <h5 class="modal-title">
+            Destination Edit
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="px-4 py-3">
+          <div class="row">
+            <SelectStations
+                :current_destination="{
+                    id: code.destination.id,
+                    name: code.destination.name,
+                    code: code.destination.code
+                }"
+                :showDeparture="false" :ratio="[6,6]"
+                @onSelect="onSelectDestination"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div v-if="isLoading === false" id="productModal" class="modal fade" tabindex="-1" aria-hidden="true"
+       style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content border-0">
+
+        <div class="modal-header border-bottom p-3">
+          <h5 class="modal-title">
+            Product Edit
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="px-4 py-3">
+          <div class="row">
+            <SelectProduct
+                :current_product="{
+                    id: code.product.id,
+                    name: code.product.name,
+                    hc_code: code.product['hc_code'],
+                    etcng_code: code.product['etcng_code'],
+                }"
+                :ratio="[12,12,12]"
+                @onSelect="onSelectProduct"/>
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </template>
 
 

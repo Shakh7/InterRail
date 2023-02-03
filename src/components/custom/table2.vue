@@ -265,14 +265,7 @@ export default {
                         class="btn-icon waves-effect me-3">
                 <i class="ri-menu-2-line"></i>
               </b-button>
-              <slot name="top-right">
-                <button class="btn btn-soft-danger me-1">
-                  <i class="ri-delete-bin-2-line"></i>
-                </button>
-                <button type="button" class="btn btn-info ms-1">
-                  <i class="ri-file-download-line align-bottom me-1"></i> Import
-                </button>
-              </slot>
+              <slot name="top-right"></slot>
             </div>
           </div>
         </div>
@@ -378,7 +371,7 @@ export default {
                       <input class="form-check-input" type="checkbox">
                     </div>
                   </th>
-                  <td v-for="td in headers" :key="td">
+                  <td v-for="td in getHeaders" :key="td">
                     <skeleton/>
                   </td>
                 </tr>

@@ -283,22 +283,6 @@
       </div>
     </div>
     <div class="col-3">
-      <div class="row bg-white rounded-2 mb-3 py-2 pb-3">
-        <div class="col-12">
-          <label>Customer</label>
-          <span class="text-danger ms-1">*</span>
-          <Multiselect
-              class="form-control"
-              v-model="customer"
-              :searchable="true"
-              :hideSelected="true"
-              :options="clients"
-              placeholder="Client"
-              :object="true"
-              @input="$event ? data.customer = $event.value : data.customer = null"
-          />
-        </div>
-      </div>
 
       <div class="row bg-white rounded-2 pt-2">
         <SelectStations
@@ -373,14 +357,12 @@ export default {
         selected: null,
         options: []
       },
-      customer: null
     }
   },
   methods: {
     async getData() {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/list/${this.$route.params.id}/`)
       this.application = await request.json()
-      this.customer = this.clients.find(client => client.value === this.application.customer)
       this.isLoading = false
     },
     async getCounterpartyList() {
