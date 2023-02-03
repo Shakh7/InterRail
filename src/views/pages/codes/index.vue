@@ -230,19 +230,16 @@ export default {
     <template v-slot:actions="slotProps">
 
       <div class="w-100 text-center">
-        <font-awesome-icon
-            data-bs-toggle="modal"
-            data-bs-target="#CodeUpdateModal"
-            icon="fa-solid fa-pen-to-square"
-            class="c_icon me-1 c_icon_hoverable"
-            @click="setToCurrentCode(slotProps.row)"
-        />
-
         <router-link :to="{name: 'code_update', params: {id: slotProps.row.id}}">
-          <font-awesome-icon icon="fa-solid fa-trash"
-                             class="c_icon c_icon_hoverable text-danger"
+          <font-awesome-icon
+              icon="fa-solid fa-pen-to-square"
+              class="c_icon me-1 c_icon_hoverable text-dark"
           />
         </router-link>
+
+        <font-awesome-icon icon="fa-solid fa-trash"
+                           class="c_icon c_icon_hoverable text-danger"
+        />
       </div>
     </template>
 
