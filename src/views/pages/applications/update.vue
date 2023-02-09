@@ -143,11 +143,13 @@
               <td class="w-50 py-1 px-1">
                 <div class="row justify-content-between align-items-center w-100 m-auto px-0">
                   <div class="col-xl-6 p-0">
-                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_1" :options="['A', 'B']" :caret="false"
+                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_1" :options="rolling_stock_a"
+                                 :caret="false"
                                  style="max-height: 28px;"/>
                   </div>
                   <div class="col-xl-6 p-0">
-                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_2" :options="['A', 'B']" :caret="false"
+                    <Multiselect class="border-0 rounded-0" v-model="data.rolling_stock_2" :options="rolling_stock_b"
+                                 :caret="false"
                                  style="max-height: 28px"/>
                   </div>
                 </div>
@@ -162,7 +164,8 @@
             <tr v-if="data.loading_type === 'Container'">
               <td class="w-50 py-1 fw-bolder">Вес/Фут</td>
               <td class="w-50 py-1">
-                <Multiselect class="border-0 rounded-0" v-model="data.container_type" :options="['20', '40']" :caret="false"
+                <Multiselect class="border-0 rounded-0" v-model="data.container_type" :options="['20', '40']"
+                             :caret="false"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -319,6 +322,7 @@ import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
 import store from "../../../state/store";
+import RollingStocks from "../../../core/application/RollingStocks";
 
 export default {
   name: "update",
@@ -357,6 +361,9 @@ export default {
         selected: null,
         options: []
       },
+
+      rolling_stock_a: RollingStocks.A,
+      rolling_stock_b: RollingStocks.B,
     }
   },
   methods: {

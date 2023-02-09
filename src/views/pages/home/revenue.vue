@@ -1,7 +1,5 @@
 <script>
-import {
-  CountTo
-} from "vue3-count-to";
+import {CountTo} from "vue3-count-to";
 
 import store from "../../../state/store.js";
 import revenue from "@/views/pages/home/data.js";
@@ -9,12 +7,14 @@ import spxnqpau from '../../../components/widgets/spxnqpau.json';
 import Lottie from "../../../components/widgets/lottie.vue";
 import {ordersMehtods} from "../../../state/helpers";
 import skeleton from "../../../components/custom/skeleton.vue";
+import ClientsProfit from "../../../components/widgets/statistics/ClientsProfit.vue";
 
 export default {
   components: {
     CountTo,
     lottie: Lottie,
-    skeleton
+    skeleton,
+    ClientsProfit
   },
   props: {
     totalOrdersList: {
@@ -22,6 +22,10 @@ export default {
       default: () => []
     },
     shipment_status: {
+      type: Array,
+      default: () => []
+    },
+    top_customers: {
       type: Array,
       default: () => []
     },
@@ -39,7 +43,7 @@ export default {
       },
       defaultOptions: {animationData: spxnqpau},
       skip: 0,
-      offset: 10
+      offset: 10,
     };
   },
   methods: {
@@ -113,11 +117,25 @@ export default {
       }
       return all
     },
+    topCustomersComputed() {
+      let data = Object.entries(this.top_customers)
+          .map(([key, value]) => {
+            return {
+              x: store.state.users_list.filter(item => item.id === parseInt(key))[0]['full_name'],
+              y: value
+            }
+          }).sort((a, b) => {
+            return b.y - a.y;
+          }).slice(0, 10)
+
+      return data
+    }
   }
 };
 </script>
 
 <template>
+
   <div class="card">
     <div class="card-header border-0 align-items-center d-flex">
       <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
@@ -172,6 +190,16 @@ export default {
     </div>
     <!-- end card body -->
   </div>
+
+  <b-row>
+    <row class="row">
+      <div class="col-12">
+        <div class="card card-body">
+          <ClientsProfit :data="topCustomersComputed"/>
+        </div>
+      </div>
+    </row>
+  </b-row>
 
   <div class="row" v-if="shipment_status.length > 0">
     <div class="col-lg-4" v-for="status in shipment_status.filter(s => s.shipment_status === 'in_process')"
@@ -279,7 +307,7 @@ export default {
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h5 class="fs-15 fw-semibold text-capitalize">
-                <skeleton />
+                <skeleton/>
               </h5>
               <p class="text-muted">Shipment status</p>
             </div>

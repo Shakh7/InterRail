@@ -54,7 +54,8 @@ export default {
           },
         ],
         order_type: [],
-        shipment_status: []
+        shipment_status: [],
+        top_customers: [],
       }
     };
   },
@@ -74,7 +75,7 @@ export default {
       let sales = data['sales']
       this.statistics.order_type = data['order_type']
       this.statistics.shipment_status = data['shipment_status']
-
+      this.statistics.top_customers = data['top_customers']
 
       sales.filter(a => a.type === 'ContainerOrder').forEach(item => {
 
@@ -205,7 +206,9 @@ export default {
 
             <div class="row">
               <div class="col-xl-12">
-                <Revenue :totalOrdersList="totalOrdersList" :shipment_status="statistics.shipment_status"/>
+                <Revenue :top_customers="statistics.top_customers"
+                         :totalOrdersList="totalOrdersList"
+                         :shipment_status="statistics.shipment_status"/>
               </div>
             </div>
           </div>

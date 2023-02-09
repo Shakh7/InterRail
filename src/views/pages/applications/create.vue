@@ -167,11 +167,11 @@
               <td class="w-50 py-1">
                 <div class="row justify-content-between align-items-center w-100 m-auto px-0">
                   <div class="col-xl-6 pe-1 ps-0 py-0">
-                    <Multiselect class="border-0" v-model="form.rolling_stock_1" :options="['A', 'B']"
+                    <Multiselect class="border-0" v-model="form.rolling_stock_1" :options="rolling_stock_a"
                                  style="max-height: 28px;"/>
                   </div>
                   <div class="col-xl-6 ps-1 pe-0 py-0">
-                    <Multiselect class="border-0" v-model="form.rolling_stock_2" :options="['A', 'B']"
+                    <Multiselect class="border-0" v-model="form.rolling_stock_2" :options="rolling_stock_b"
                                  style="max-height: 28px"/>
                   </div>
                 </div>
@@ -341,6 +341,9 @@ import PageHeader from "../../../components/page-header.vue";
 import store from "../../../state/store.js";
 import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
+
+import RollingStocks from "../../../core/application/RollingStocks";
+
 export default {
   name: "update",
   data() {
@@ -406,7 +409,10 @@ export default {
         forwarder_id: 0,
         manager: store.state.user.id,
         customer: 0
-      }
+      },
+
+      rolling_stock_a: RollingStocks.A,
+      rolling_stock_b: RollingStocks.B,
     }
   },
   methods: {
