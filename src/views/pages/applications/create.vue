@@ -38,7 +38,7 @@
           Yakkasaroy district <br>
           100031 Tashkent, Uzbekistan <br>
           Tel/Fax: +998 71 2525600 <br>
-          Website: <span class="fw-medium link-primary"> www.interrail.a </span>
+          Website: <span class="fw-medium link-primary"> www.interrail.ag </span>
         </span>
           </div>
           <div class="col-6 text-end" style="height: 100%">
@@ -218,12 +218,14 @@
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Условия перевозки</td>
-              <td class="w-50 py-1"></td>
+              <td class="w-50 py-1">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.border_crossing">
+              </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.border_crossing">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.condition_of_carriage">
               </td>
             </tr>
             <tr>
