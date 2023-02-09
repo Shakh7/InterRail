@@ -787,7 +787,6 @@ export default {
                 }"
                 :ratio="[12,12,12]"
                 @onSelect="onSelectProduct"/>
-            />
           </div>
         </div>
 

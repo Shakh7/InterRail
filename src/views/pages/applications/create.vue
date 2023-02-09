@@ -307,22 +307,6 @@
     </div>
     <div class="col-3">
 
-      <div class="row bg-white rounded-2 mb-3 py-2 pb-3">
-        <div class="col-12">
-          <label>Customer</label>
-          <span class="text-danger ms-1">*</span>
-          <Multiselect
-              class="form-control"
-              :searchable="true"
-              :hideSelected="true"
-              :options="clients"
-              placeholder="Client"
-              :object="true"
-              @input="$event ? form.customer = $event.value : form.customer = null"
-          />
-        </div>
-      </div>
-
       <div class="row bg-white rounded-2 pt-2">
         <SelectStations
             :ratio="[12,12,12,12]"
@@ -348,7 +332,6 @@
 </template>
 
 <script>
-import OrdersApi from "../../../api/orders/orders_api.js";
 import SelectStations from "../../../components/custom/SelectStations.vue";
 import SelectProduct from "../../../components/custom/SelectProduct.vue";
 import "@vueform/multiselect/themes/default.css";
@@ -356,6 +339,7 @@ import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
 import store from "../../../state/store.js";
+import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
 export default {
   name: "update",
@@ -434,8 +418,8 @@ export default {
     },
 
     async getCounterpartyList() {
-      let orders = new OrdersApi()
-      let response = await orders.getCounterpartyList()
+      let api = new CounterpartyApi()
+      let response = await api.getCounterparties('?is_used_for_code=true')
       this.forwarders.options = response.results.map(item => {
         return {
           value: item.id,
@@ -519,16 +503,6 @@ export default {
         return this.application
       }
     },
-    clients: {
-      get() {
-        return store.state.users_list.filter(item => item.role === 'client').map(i => {
-          return {
-            value: i.id,
-            label: i.full_name
-          }
-        })
-      }
-    }
   },
   components: {
     SelectStations,

@@ -181,7 +181,7 @@ export default {
       fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/delete/${id}`, {
         method: 'DELETE',
       }).then(response => {
-        this.getApplications()
+        this.getUpdate = !this.getUpdate
         Swal.fire({
           position: "center",
           icon: response.ok ? "success" : "error",
@@ -193,7 +193,6 @@ export default {
           focusConfirm: false,
         });
       })
-
     },
 
     showAddCodeModal(application) {

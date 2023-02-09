@@ -2,6 +2,7 @@
 import CustomTable from '../../../components/custom/table2.vue'
 import CodePreviewModal from './components/PreviewModal.vue'
 import CodeUpdateModal from './components/UpdateModal.vue'
+import CreateCodes from './components/CreateCodes.vue'
 import user from '../../../components/custom/user.vue'
 import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
@@ -121,6 +122,7 @@ export default {
     CustomTable,
     CodePreviewModal,
     CodeUpdateModal,
+    CreateCodes,
     user
   },
   methods: {
@@ -132,7 +134,7 @@ export default {
     },
     async getForwarders() {
       let api = new CounterpartyApi()
-      let response = await api.getCounterparties()
+      let response = await api.getCounterparties('?is_used_for_code=true')
       this.forwarders = response.results.map(forwarder => {
         return {
           value: forwarder.id,
@@ -158,6 +160,27 @@ export default {
       :pagination="table.pagination"
       :getUpdate="getUpdate"
   >
+
+    <template v-slot:top-right>
+
+      <div class="btn-group">
+        <button
+            type="button" class="btn btn-success dropdown-toggle"
+            data-bs-toggle="dropdown" aria-expanded="false">
+          Connect codes
+        </button>
+        <div class="dropdown-menu dropdownmenu-success">
+          <span class="dropdown-item cursor-pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#codeCreateModal"
+          >Container</span>
+          <span class="dropdown-item cursor-pointer">Wagon</span>
+          <span class="dropdown-item cursor-pointer">Empty wagon</span>
+        </div>
+      </div>
+
+    </template>
+
     <template v-slot:application_number="slotProps">
       <h5 class="fw-medium link-primary my-0">
         <span class="badge badge-soft-primary">
@@ -247,7 +270,7 @@ export default {
 
   <CodePreviewModal :codeData="currentCode"/>
   <CodeUpdateModal :codeData="currentCode" @update="getUpdate = !getUpdate"/>
-
+  <CreateCodes :forwarders="forwarders"/>
 </template>
 
 <style>

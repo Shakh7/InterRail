@@ -14,7 +14,9 @@
         @search-change="getOptions($event)"
         :object="true"
         @input="onOptionSelect($event)"
-    />
+        :caret="true"
+    >
+    </Multiselect>
   </div>
 
   <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-4' : 'col-lg-' + classes[1]">
@@ -32,7 +34,8 @@
         :object="true"
         label="hc_code"
         @input="onOptionSelect($event)"
-    />
+    >
+    </Multiselect>
   </div>
 
   <div class="col-12 mb-3" :class="classes === undefined ? 'col-lg-4' : 'col-lg-' + classes[2]">
@@ -50,8 +53,12 @@
         :object="true"
         label="etcng"
         @input="onOptionSelect($event)"
-    />
+    >
+    </Multiselect>
   </div>
+
+  <CreateProductModal/>
+
 
 </template>
 
@@ -59,6 +66,7 @@
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import CoreApi from "../../api/core/core_api.js";
+import CreateProductModal from "./CreateProductModal.vue";
 
 export default {
   name: 'SelectProduct',
@@ -123,7 +131,8 @@ export default {
     },
   },
   components: {
-    Multiselect
+    Multiselect,
+    CreateProductModal
   },
 
   mounted() {

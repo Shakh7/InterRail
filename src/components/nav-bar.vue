@@ -3,6 +3,7 @@
 import i18n from "../i18n";
 import ContainerSearch from "./ContainerSearch.vue";
 // import router from '../router/index.js'
+import GeneralModals from "../components/GeneralModals.vue";
 
 /**
  * Nav-bar Component
@@ -29,7 +30,8 @@ export default {
     };
   },
   components: {
-    ContainerSearch
+    ContainerSearch,
+    GeneralModals
   },
 
   methods: {
@@ -216,6 +218,41 @@ export default {
           <div class="dropdown ms-1 topbar-head-dropdown header-item">
             <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img
+                  src="https://img.icons8.com/external-flatart-icons-flat-flatarticons/64/null/external-question-mark-chat-flatart-icons-flat-flatarticons.png"
+                  alt="Header Question Icon" height="30"
+                  class="rounded"/>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+              <!-- item-->
+              <!--              <a href="javascript:void(0);" v-for="(entry, i) in languages" :key="`Lang${i}`" :value="entry"-->
+              <!--                 @click="setLanguage(entry.language, entry.title, entry.flag)"-->
+              <!--                 :class="{ active: lan === entry.language }" class="dropdown-item notify-item language py-2"-->
+              <!--                 data-lang="en" title="English">-->
+              <!--                <img :src="entry.flag" alt="user-image" class="me-2 rounded" height="18"/>-->
+              <!--                <span class="align-middle">{{ entry.title }}</span>-->
+              <!--              </a>-->
+
+              <div class="dropdown-item notify-item cursor-pointer"
+                   data-bs-toggle="modal"
+                   data-bs-target="#generalProductCreate">
+                <i class="ri-file-paper-line me-2 my-0"></i>
+                <h6 class="my-0 py-0 d-inline">Product</h6>
+              </div>
+
+              <div class="dropdown-item notify-item cursor-pointer"
+                   data-bs-toggle="modal"
+                   data-bs-target="#generalStationCreate">
+                <i class="ri-file-paper-line me-2 my-0"></i>
+                <h6 class="my-0 py-0 d-inline">Station</h6>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="dropdown ms-1 topbar-head-dropdown header-item">
+            <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img id="header-lang-img" src="@/assets/images/flags/us.svg" alt="Header Language" height="20"
                    class="rounded"/>
             </button>
@@ -275,4 +312,7 @@ export default {
       </div>
     </div>
   </header>
+
+
+  <GeneralModals/>
 </template>
