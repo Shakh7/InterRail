@@ -198,7 +198,9 @@
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Условия перевозки</td>
-              <td class="w-50 py-1"></td>
+              <td class="w-50 py-1">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="data.condition_of_carriage">
+              </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>

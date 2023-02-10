@@ -271,12 +271,12 @@ export default {
           </div>
         </li>
 
-        <!--        <li class="nav-item">-->
-        <!--          <router-link class="nav-link menu-link" :to="{name: 'invoices_list'}">-->
-        <!--            <i class="ri-file-paper-line"></i>-->
-        <!--            <span data-key="t-orders">Invoices</span>-->
-        <!--          </router-link>-->
-        <!--        </li>-->
+        <li class="nav-item">
+          <router-link class="nav-link menu-link" :to="{name: 'invoices_list'}">
+            <i class="ri-file-paper-line"></i>
+            <span data-key="t-orders">Invoices</span>
+          </router-link>
+        </li>
 
         <li class="nav-item">
           <router-link class="nav-link menu-link" :to="{name: 'counterparty_list'}">

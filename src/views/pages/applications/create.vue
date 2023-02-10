@@ -219,13 +219,13 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Условия перевозки</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.border_crossing">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.condition_of_carriage">
               </td>
             </tr>
             <tr>
               <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
               <td class="w-50 py-1">
-                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.condition_of_carriage">
+                <input class="form-control form-control-sm border-0" typeof="text" v-model="form.border_crossing">
               </td>
             </tr>
             <tr>

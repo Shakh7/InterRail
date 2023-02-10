@@ -332,6 +332,7 @@ export default {
             <div class="table-responsive table-card border-bottom-0">
               <table class="table align-middle table-nowrap" :id="id">
                 <thead class="text-muted table-light">
+
                 <tr>
                   <th scope="col" style="width: 50px;" v-if="selectable === true">
                     <div class="form-check">
@@ -339,12 +340,14 @@ export default {
                              type="checkbox" v-model="table.checkbox.all">
                     </div>
                   </th>
-                  <th v-for="th in getHeaders" :key="th" class="text-uppercase"
-                      :class="th.align === undefined ? '' : 'text-' + th.align"
-                  >
-                    {{ th.label }}
-                  </th>
+
+                    <th v-for="th in getHeaders" :key="th" class="text-uppercase"
+                        :class="th.align === undefined ? '' : 'text-' + th.align"
+                    >
+                      {{ th.label }}
+                    </th>
                 </tr>
+
                 </thead>
                 <!-- IF DATA EXISTS -->
                 <tbody v-if="apiData.length > 0" class="list form-check-all">
@@ -455,12 +458,11 @@ export default {
       </div>
     </div>
 
-    <div class="border-top-2 text-end w-100">
-      <b-button variant="outline-danger" size="md" class="me-2" disabled>Reset</b-button>
-      <b-button variant="success" size="md" disabled>Save for future</b-button>
-    </div>
+    <!--    <div class="border-top-2 text-end w-100">-->
+    <!--      <b-button variant="outline-danger" size="md" class="me-2" disabled>Reset</b-button>-->
+    <!--      <b-button variant="success" size="md" disabled>Save for future</b-button>-->
+    <!--    </div>-->
   </b-modal>
 
 
 </template>
-

@@ -38,16 +38,6 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-5 mt-md-0 mt-4 bg-danger">
-                  <div class="hstack gap-1 flex-wrap">
-                    <button type="button" class="btn avatar-xs mt-n1 p-0 favourite-btn active">
-                        <span class="avatar-title bg-transparent fs-15">
-                          <i class="ri-star-fill"></i>
-                        </span>
-                    </button>
-                    <button type="button" class="btn py-0 fs-16 text-body"><i class="ri-flag-line"></i></button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

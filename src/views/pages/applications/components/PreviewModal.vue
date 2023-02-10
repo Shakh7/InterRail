@@ -114,7 +114,9 @@
               </tr>
               <tr>
                 <td class="w-50 py-1 fw-bolder">Условия перевозки</td>
-                <td class="w-50 py-1"></td>
+                <td class="w-50 py-1">
+                  {{ data.condition_of_carriage }}
+                </td>
               </tr>
               <tr>
                 <td class="w-50 py-1 fw-bolder">Пограничные переходы</td>
