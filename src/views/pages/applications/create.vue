@@ -81,7 +81,7 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
               <td class="w-50 py-1 ps-0">
-                <Multiselect class="border-0" v-model="form.period" :options="['Январь', 'февраль', 'Март','Апрель','Май',
+                <Multiselect class="border-0" v-model="form.period" :options="['Январь', 'Февраль', 'Март','Апрель','Май',
                 'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
                              style="min-height: 28px"/>
               </td>
