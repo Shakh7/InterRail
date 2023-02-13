@@ -81,8 +81,7 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
               <td class="w-50 py-1 ps-0">
-                <Multiselect class="border-0" v-model="form.period" :options="['Январь', 'Февраль', 'Март','Апрель','Май',
-                'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
+                <Multiselect class="border-0" v-model="form.period" :options="months"
                              style="min-height: 28px"/>
               </td>
             </tr>
@@ -345,6 +344,7 @@ import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
 
 import RollingStocks from "../../../core/application/RollingStocks";
+import Months from "../../../core/Months";
 
 export default {
   name: "update",
@@ -415,6 +415,7 @@ export default {
 
       rolling_stock_a: RollingStocks.A,
       rolling_stock_b: RollingStocks.B,
+      months: Months
     }
   },
   methods: {

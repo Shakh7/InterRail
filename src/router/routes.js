@@ -203,6 +203,15 @@ export default [
                 meta: {title: "Empty Wagon Order Detail",},
                 component: () => import("../views/pages/orders/empty_wagon/detail.vue"),
             },
+
+
+            {
+                path: 'container/update/:id',
+                name: 'orders_container_update',
+                hide: true,
+                meta: {title: "Container Orders Update",},
+                component: () => import("../views/pages/orders/container/update.vue"),
+            },
         ],
     },
 
@@ -303,7 +312,8 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: 'list/', name: 'invoices_list', component: () => import("../views/pages/invoices/index.vue"),},
-            {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),}
+            {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),},
+            {path: 'create/:order_id/', name: 'order_invoice_create', component: () => import("../views/pages/invoices/create.vue"),}
         ],
     },
 

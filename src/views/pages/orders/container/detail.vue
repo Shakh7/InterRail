@@ -200,9 +200,11 @@
                   </div>
                 </div>
                 <div class="col-md-auto mt-md-0 mt-4">
-                  <b-button pill size="sm" variant="primary" class="btn-label waves-effect waves-light"><i
-                      class="ri-file-download-line label-icon align-middle rounded-pill fs-16 me-2"></i> Invoice
-                  </b-button>
+                  <router-link :to="{ name: 'order_invoice_create', params: {order_id: 100}}">
+                    <b-button pill size="sm" variant="primary" class="btn-label waves-effect waves-light"><i
+                        class="ri-file-download-line label-icon align-middle rounded-pill fs-16 me-2"></i> Invoice
+                    </b-button>
+                  </router-link>
                 </div>
                 <div class="col-md-auto mt-md-0 mt-4" v-if="order.is_code_connected">
                   <b-badge variant="secondary" class="badge-label fs-12">

@@ -66,8 +66,7 @@
             <tr>
               <td class="w-50 py-1 fw-bolder">Период перевозки</td>
               <td class="w-50 py-1 px-1">
-                <Multiselect class="border-0" v-model="data.period" :caret="false" :options="['Январь', 'Февраль', 'Март','Апрель','Май',
-                'Июнь','Июнь','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']"
+                <Multiselect class="border-0" v-model="data.period" :caret="false" :options="months"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -325,6 +324,7 @@ import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
 import store from "../../../state/store";
 import RollingStocks from "../../../core/application/RollingStocks";
+import Months from "../../../core/Months";
 
 export default {
   name: "update",
@@ -366,6 +366,7 @@ export default {
 
       rolling_stock_a: RollingStocks.A,
       rolling_stock_b: RollingStocks.B,
+      months: Months
     }
   },
   methods: {
