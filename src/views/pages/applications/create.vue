@@ -70,7 +70,9 @@
           </div>
           <div class="col-12 my-3">
             <div class="text-dark fw-light text-center">
-              <span class="fs-5"> “InterRail Services AG” просит Вас предоставить <span class="fw-bold">коды</span> на следующую перевозку: </span>
+              <span class="fs-5"> “InterRail Services AG” просит Вас предоставить <span class="fw-bold">{{
+                  isFormValid()
+                }} коды</span> на следующую перевозку: </span>
             </div>
           </div>
         </section>
@@ -86,16 +88,16 @@
               </td>
             </tr>
             <tr>
-              <td class="w-50 py-1 fw-bolder">Вид отправки</td>
-              <td class="w-50 py-1 ps-0">
-                <Multiselect class="border-0" v-model="form.sending_type" :options="sending_types"
-                             style="max-height: 28px"/>
-              </td>
-            </tr>
-            <tr>
               <td class="w-50 py-1 fw-bolder">Тип погрузки</td>
               <td class="w-50 py-1 ps-0">
                 <Multiselect class="border-0" v-model="form.loading_type" :options="loading_types"
+                             style="max-height: 28px"/>
+              </td>
+            </tr>
+            <tr v-if="form.loading_type === 'container'">
+              <td class="w-50 py-1 fw-bolder">Вид отправки</td>
+              <td class="w-50 py-1 ps-0">
+                <Multiselect class="border-0" v-model="form.sending_type" :options="sending_types"
                              style="max-height: 28px"/>
               </td>
             </tr>
@@ -384,6 +386,7 @@ export default {
         options: []
       },
       allow_create: true,
+
       form: {
         quantity: null,
         prefix: '',
@@ -500,6 +503,39 @@ export default {
       })
 
     },
+
+    isFormValid() {
+      if (this.quantity === null ||
+          this.prefix === '' ||
+          this.date === '' ||
+          this.period === '' ||
+          this.sending_type === '' ||
+          this.shipper === '' ||
+          this.consignee === '' ||
+          this.condition_of_carriage === '' ||
+          this.agreed_rate === '' ||
+          this.border_crossing === '' ||
+          this.departure_country === '' ||
+          this.destination_country === '' ||
+          this.rolling_stock_1 === "string" ||
+          this.rolling_stock_2 === '' ||
+          this.paid_telegram === '' ||
+          this.departure_id === 0 ||
+          this.destination_id === 0 ||
+          this.containers_or_wagons === '' ||
+          this.product_id === 0 ||
+          this.loading_type === '' ||
+          this.container_type === '' ||
+          this.weight === '' ||
+          this.territories === [] ||
+          this.forwarder_id === 0 ||
+          this.manager === store.state.user.id ||
+          this.customer === 0) {
+        return 'false'
+      } else {
+        return 'true'
+      }
+    }
   },
   computed: {
     forwarderPrefix: {

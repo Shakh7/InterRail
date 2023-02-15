@@ -1,4 +1,4 @@
-import { mapState, mapActions } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 // export const authComputed = {
 //   ...mapState('auth', {
@@ -8,39 +8,39 @@ import { mapState, mapActions } from 'vuex'
 // }
 
 export const layoutComputed = {
-  ...mapState('layout', {
-    layoutType: (state) => state.layoutType,
-    sidebarSize: (state) => state.sidebarSize,
-    layoutWidth: (state) => state.layoutWidth,
-    topbar: (state) => state.topbar,
-    mode: (state) => state.mode,
-    position: (state) => state.position,
-    sidebarView: (state) => state.sidebarView,
-    sidebarColor: (state) => state.sidebarColor
-  })
+    ...mapState('layout', {
+        layoutType: (state) => state.layoutType,
+        sidebarSize: (state) => state.sidebarSize,
+        layoutWidth: (state) => state.layoutWidth,
+        topbar: (state) => state.topbar,
+        mode: (state) => state.mode,
+        position: (state) => state.position,
+        sidebarView: (state) => state.sidebarView,
+        sidebarColor: (state) => state.sidebarColor
+    })
 }
 
 // export const authMethods = mapActions('auth', ['logIn', 'logOut', 'register', 'resetPassword'])
 
-export const layoutMethods = mapActions('layout', 
-['changeLayoutType', 'changeLayoutWidth', 'changeSidebarSize', 'changeTopbar', 'changeMode', 'changePosition', 'changeSidebarView',
- 'changeSidebarColor'])
+export const layoutMethods = mapActions('layout',
+    ['changeLayoutType', 'changeLayoutWidth', 'changeSidebarSize', 'changeTopbar', 'changeMode', 'changePosition', 'changeSidebarView',
+        'changeSidebarColor'])
 
 // export const authFackMethods = mapActions('authfack', ['login', 'registeruser', 'logout'])
 
 export const notificationMethods = mapActions('notification', ['success', 'error', 'clear'])
 
 export const todoComputed = {
-  ...mapState('todo', {
-    todos: (state) => state.todos
-  })
+    ...mapState('todo', {
+        todos: (state) => state.todos
+    })
 }
 
 export const todoMethods = mapActions('todo', ['fetchTodos'])
 
 export const ordersMehtods = mapActions('orders', ['setCurrentlyUpdating', 'updateCurrentUpdating', 'fetchAllOrders', 'orders_list'])
 export const orderComputed = {
-  ...mapState('orders', {
-    orders: (state) => state.orders
-  })
+    ...mapState('orders', {
+        orders: (state) => state.orders
+    })
 }

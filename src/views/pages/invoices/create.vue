@@ -1,23 +1,25 @@
 <script>
 import InvoiceCreate from "../../../components/forms/InvoiceCreate.vue";
+import OrderInvoiceCreate from "../../../components/forms/OrderInvoiceCreate.vue";
 
 export default {
   name: "create",
   data() {
     return {
-      orderId: this.$route.params.order_id,
+      order_number: this.$route.params.order_number,
     }
   },
   components: {
-    InvoiceCreate
+    InvoiceCreate,
+    OrderInvoiceCreate
   },
 }
 </script>
 
 <template>
-  <InvoiceCreate v-if="orderId === undefined"/>
-  <InvoiceCreate
+  <InvoiceCreate v-if="order_number === undefined"/>
+  <OrderInvoiceCreate
       v-else
-      :shipper="{name: 'Shipper prop'}"
+      :orderNumber="parseInt(order_number)"
   />
 </template>

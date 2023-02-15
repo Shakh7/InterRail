@@ -313,7 +313,7 @@ export default [
         children: [
             {path: 'list/', name: 'invoices_list', component: () => import("../views/pages/invoices/index.vue"),},
             {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),},
-            {path: 'create/:order_id/', name: 'order_invoice_create', component: () => import("../views/pages/invoices/create.vue"),}
+            {path: 'create/:order_number/', name: 'order_invoice_create', component: () => import("../views/pages/invoices/create.vue"),}
         ],
     },
 
