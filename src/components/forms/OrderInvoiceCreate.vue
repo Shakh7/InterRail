@@ -4,6 +4,7 @@ import "@vueform/multiselect/themes/default.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import OrderApi from "../../api/order/OrderApi";
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -24,6 +25,8 @@ export default {
 
       rows: [],
       orderData: null,
+
+      sscs: 'retybi'
     };
   },
   components: {
@@ -40,8 +43,17 @@ export default {
         usd: 0
       })
     },
-    removeRow(index) {
-      this.rows.splice(index, 1);
+    removeRow(row, index) {
+      if (this.rows.filter(i => !i.deleted).length === 1) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'You cannot delete the last row!',
+        })
+      } else {
+        let r = this.rows[index]
+        r.deleted = true
+      }
     },
     async getOrder() {
       let api = new OrderApi();
@@ -56,21 +68,28 @@ export default {
             forwarder: f.counterparty.counterparty.id,
             quantity: c.quantity,
             unit: c.container_type,
-            amount: c.agreed_rate
+            amount: c.agreed_rate,
+            deleted: false,
+            deleted_and_hidden: false,
           })
         })
       })
-    }
+    },
+
+    restoreRow(row, index) {
+      let r = this.rows[index]
+      r.deleted = false
+    },
   },
   computed: {
     totalUSD() {
-      return this.rows.reduce((total, row) => (parseFloat(total) + (parseFloat(row.amount) * parseFloat(row.quantity))).toFixed(2).toLocaleString('en-US'), 0);
+      return this.rows.filter(i => !i.deleted).reduce((total, row) => (parseFloat(total) + (parseFloat(row.amount) * parseFloat(row.quantity))).toFixed(2).toLocaleString('en-US'), 0);
     },
     totalAmount() {
-      return this.rows.reduce((total, row) => (parseFloat(total) + parseFloat(row.amount)).toFixed(2), 0);
+      return this.rows.filter(i => !i.deleted).reduce((total, row) => (parseFloat(total) + parseFloat(row.amount)).toFixed(2), 0);
     },
     totalQuantity() {
-      return this.rows.reduce((total, row) => total + row.quantity, 0);
+      return this.rows.filter(i => !i.deleted).reduce((total, row) => total + row.quantity, 0);
     },
     order() {
       return this.orderData[0]['order']
@@ -83,20 +102,18 @@ export default {
         }
       })
     },
-    container_types: {
+    containers: {
       get() {
-        let container_types = []
+        let containers = []
         this.orderData[0]['container_types'].forEach(c => {
-          c.container_preliminary_costs.forEach(f => {
-            container_types.push({
-              forwarder: f.counterparty.counterparty.id,
-              quantity: c.quantity,
-              unit: c.container_type,
-              amount: c.agreed_rate
+          c['expanses'].filter(v => v.container !== null).forEach(e => {
+            containers.push({
+              container_type: c.container_type,
+              container: e.container.name,
             })
           })
         })
-        return container_types
+        return containers
       }
     },
     customer() {
@@ -111,7 +128,7 @@ export default {
 
 <template>
   <div class="row justify-content-center">
-    <div class="col-xl-9 bg-success" v-if="orderData">
+    <div class="col-xl-9" v-if="orderData">
       <div class="card">
 
         <div class="card-body border-bottom border-bottom-dashed p-4 pb-2">
@@ -239,8 +256,20 @@ export default {
 
         <div class="card-body p-4 py-2 border-top border-top-dashed">
           <div class="row align-items-end justify-content-between">
-            <div class="col-lg-6 lh-lg">
-              {{ container_types }}
+            <div class="col-11 col-lg-9 lh-lg">
+              {{ containers.map(c => c.container).join(', ') }}
+            </div>
+            <div class="col-1 col-lg-3 lh-lg text-end fw-semibold">
+              <VTooltip>
+                  <span>{{ containers.map(c => c.container).length }}/
+                    {{ this.orderData[0].container_types.map(c => c.quantity).reduce((a, b) => a + b, 0) }}</span>
+                <template #popper>
+                  Showing <span class="fw-semibold">
+                  {{ containers.map(c => c.container).length }}</span> container out of
+                  <span class="fw-semibold">
+                    {{ this.orderData[0].container_types.map(c => c.quantity).reduce((a, b) => a + b, 0) }}</span>
+                </template>
+              </VTooltip>
             </div>
           </div>
         </div>
@@ -261,9 +290,10 @@ export default {
               </thead>
               <tbody>
 
-              <tr class="text-center" v-for="(row, n) in rows" :key="row.forwarder" :id="n+1">
+              <tr class="text-center" v-for="(row, n) in rows.filter(r => r.deleted_and_hidden === false)"
+                  :key="row.forwarder" :id="n+1" :class="{'bg-soft-danger deleted-row' : row.deleted}">
                 <td class="text-start">
-                  <Multiselect lable="label" value="value" class="form-control w-md" v-model="row.forwarder"
+                  <Multiselect class="form-control w-md" v-model="row.forwarder"
                                :searchable="true" :options="counterparties"/>
                 </td>
                 <td>
@@ -288,14 +318,27 @@ export default {
                 </td>
                 <td class="text-end">
                   <div>
-                    <input :value="'$'+ row.quantity * row.amount" type="text" class="form-control bg-light border-0"
-                           placeholder="$0.00" readonly/>
+                    <VTooltip>
+                      <input :value="'$'+ row.quantity * row.amount" type="text" class="form-control bg-light border-0"
+                             placeholder="$0.00" readonly/>
+                      <template #popper>
+                        <span>This field is read only</span>
+                      </template>
+                    </VTooltip>
                   </div>
                 </td>
                 <td class="pt-3">
-                  <b-button @click="removeRow(n)" variant="danger" size="sm" class="waves-effect waves-light">
+
+                  <b-button v-if="row.deleted" @click="restoreRow(row, n)" variant="success" size="sm"
+                            class="waves-effect waves-light" style="z-index: 999">
+                    <i class="ri-arrow-go-back-line"></i>
+                  </b-button>
+
+                  <b-button v-else-if="!row.deleted" @click="removeRow(row, n)" variant="danger" size="sm"
+                            class="waves-effect waves-light">
                     <i class="ri-delete-bin-7-line"></i>
                   </b-button>
+
                 </td>
               </tr>
 
@@ -329,10 +372,28 @@ export default {
               Invoice</a>
           </div>
         </div>
-
       </div>
     </div>
     <!--end col-->
   </div>
   <!--end row-->
 </template>
+
+<style scoped>
+.deleted-row {
+  position: relative;
+}
+
+.deleted-row::after {
+  content: "Deleted";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  padding-top: 20px;
+  color: red;
+  font-weight: bold;
+}
+</style>

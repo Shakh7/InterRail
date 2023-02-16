@@ -5,6 +5,7 @@ import CodeUpdateModal from './components/UpdateModal.vue'
 import CreateCodes from './components/CreateCodes.vue'
 import user from '../../../components/custom/user.vue'
 import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
+import Swal from "sweetalert2";
 
 export default {
   name: 'codes_list',
@@ -142,6 +143,52 @@ export default {
         }
       })
     },
+
+    async confirmDelete(row) {
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `You are about to delete code ${row.number}`,
+        text: 'Deleting your code will remove all of its information from our database.',
+        showDenyButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Yes, Delete It',
+        denyButtonText: 'Cancel',
+        cancelButtonColor: 'transparent',
+        focusConfirm: false,
+        inputLabel: `Please type COde${row.number} to confirm`,
+        input: 'email',
+        inputPlaceholder: `Code${row.number}`,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value === 'Code' + row.number) {
+              resolve(this.deleteCode(row.id))
+            } else {
+              resolve('Code number did not match :)')
+            }
+          })
+        }
+      });
+    },
+
+    async deleteCode(id) {
+      fetch(`${process.env.VUE_APP_ORDER_URL}/code/list/delete/${id}/`, {
+        method: 'DELETE',
+      }).then(response => {
+        alert('hey')
+        this.getUpdate = !this.getUpdate
+        Swal.fire({
+          position: "center",
+          icon: response.ok ? "success" : "error",
+          title: response.ok ? "Code Deleted" : "Code Delete Failed",
+          text: response.ok ? "Code has been deleted successfully" : "Code could not be deleted",
+          showConfirmButton: true,
+          confirmButtonText: 'Ok',
+          cancelButtonColor: 'transparent',
+          focusConfirm: false,
+        });
+      })
+    },
   },
   async mounted() {
     await this.getForwarders()
@@ -260,7 +307,7 @@ export default {
           />
         </router-link>
 
-        <font-awesome-icon icon="fa-solid fa-trash"
+        <font-awesome-icon @click="confirmDelete(slotProps.row)" icon="fa-solid fa-trash"
                            class="c_icon c_icon_hoverable text-danger"
         />
       </div>
