@@ -358,10 +358,17 @@ export default {
         <li class="menu-title">
           <span data-key="t-orders-menu"> Services </span>
         </li>
+        <!-- start SMGS Menu -->
         <li class="nav-item">
           <router-link class="nav-link menu-link" to="/smgs/list/">
             <font-awesome-icon icon="fa-solid fa-print"/>
             <span data-key="t-orders">SMGS printing</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link :to="{ name: 'smgs_extractor'}" class="nav-link" data-key="t-task-details">
+            <font-awesome-icon icon="fa-solid fa-print"/>
+            <span data-key="t-orders">Smgs extractor</span>
           </router-link>
         </li>
 
