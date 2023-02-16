@@ -297,6 +297,11 @@ export default [
         children: [
             {path: 'list/', name: 'smgs_list', component: () => import("../views/pages/smgs/list.vue"),},
             {path: 'update/:id', name: 'smgs_update', component: () => import("../views/pages/smgs/update.vue"),},
+            {
+                path: 'extractor/',
+                name: 'smgs_extractor',
+                component: () => import("../views/pages/smgs/Extract.vue"),
+            },
         ],
     },
 
