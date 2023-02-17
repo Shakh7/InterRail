@@ -14,7 +14,7 @@
           </tr>
       </thead>
       <tbody>
-        <tr v-for="row, index in documents" :key="row.id">
+        <tr v-for="(row, index) in documents" :key="row.id">
           <th>{{ index+1}}</th>
           <td>{{ row.name }}</td>
           <td>{{ row.pages }}</td>
