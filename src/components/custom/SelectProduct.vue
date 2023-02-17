@@ -136,7 +136,7 @@ export default {
   },
 
   mounted() {
-    if (this.current_product !== null) {
+    if (typeof this.current_product !== 'undefined') {
       this.products.options = [{
         value: this.current_prod.id,
         label: this.current_prod.name,

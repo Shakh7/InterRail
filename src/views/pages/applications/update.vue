@@ -3,8 +3,6 @@
   <PageHeader :items="items" title="Application"></PageHeader>
 
   <div v-if="data !== null" style="max-width: 1400px">
-
-    {{ data }}
     <Form class="row justify-content-around m-auto"
           :validation-schema="applicationSchema">
       <div class="col-8">
