@@ -1,14 +1,14 @@
 <template>
   <PageHeader title="SMGS" :items="items"/>
-  <div class="card card-body p-1" v-if="!selected_doc">
-    <b-card-body>
+  <b-card v-if="!selected_doc">
+    <b-card-body class="p-1">
       <div class="text-center" v-if="isReadingDocs">
         <b-spinner variant="info" class="mb-2"></b-spinner>
         <h5 class="mb-0">We are processing your documents, please wait !</h5>
       </div>
       <DropZone v-else @change="selectedFile"/>
     </b-card-body>
-  </div>
+  </b-card>
   <div class="card container-fluid p-2 mt-2" v-if="!selected_doc">
     <table class="table  table-nowrap">
       <thead>
