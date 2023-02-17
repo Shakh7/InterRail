@@ -507,6 +507,7 @@ import Months from "../../../core/Months";
 import * as Yup from "yup";
 import {configure, ErrorMessage, Field, Form} from "vee-validate";
 import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
+import Swal from "sweetalert2";
 
 export default {
   name: "update",
@@ -632,42 +633,53 @@ export default {
         paid_telegram: this.data.paid_telegram,
         agreed_rate: this.data.agreed_rate,
       }
+
       let isValid = await this.applicationSchema.isValid(form)
 
-      alert(isValid)
 
-      // let data = {
-      //   ...this.data
-      // }
-      // data.departure_id = data.departure.id
-      // data.destination_id = data.destination.id
-      // data.product_id = data.product.id
-      // data.forwarder_id = data.forwarder.id
-      // data.sending_type = data.sending_type.toLowerCase()
-      // data.loading_type = data.loading_type.toLowerCase()
-      //
-      // delete data.departure
-      // delete data.destination
-      // delete data.product
-      // delete data.forwarder
-      //
-      // let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/update/${this.$route.params.id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(data)
-      // })
-      //
-      // await this.getData()
-      //
-      // await Swal.fire({
-      //   icon: request.ok ? 'success' : 'error',
-      //   title: request.ok ? 'Updated successfully' : 'Update failed',
-      //   showConfirmButton: true,
-      //   showCloseButton: false,
-      //   confirmButtonText: 'Ok',
-      // })
+      if (isValid) {
+        let data = {
+          ...this.data
+        }
+        data.departure_id = data.departure.id
+        data.destination_id = data.destination.id
+        data.product_id = data.product.id
+        data.forwarder_id = data.forwarder.id
+        data.sending_type = data.sending_type.toLowerCase()
+        data.loading_type = data.loading_type.toLowerCase()
+
+        delete data.departure
+        delete data.destination
+        delete data.product
+        delete data.forwarder
+
+        let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/update/${this.$route.params.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+
+        await this.getData()
+
+        await Swal.fire({
+          icon: request.ok ? 'success' : 'error',
+          title: request.ok ? 'Updated successfully' : 'Update failed',
+          showConfirmButton: true,
+          showCloseButton: false,
+          confirmButtonText: 'Ok',
+        })
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Invalid form',
+          text: 'Please fill all the required fields',
+          showConfirmButton: true,
+          showCloseButton: false,
+          confirmButtonText: 'Try again',
+        })
+      }
     },
   },
   computed: {
