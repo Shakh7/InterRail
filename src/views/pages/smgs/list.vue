@@ -64,48 +64,56 @@ export default {
           field: 'name',
           align: 'center',
           searchable: true,
+          visible: true
         },
         {
           label: 'SMGS COUNT',
           field: 'smgs_count',
           align: 'center',
           searchable: true,
+          visible: true
         },
         {
           label: 'DRAFT',
           field: 'draft',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
         {
           label: 'ORIGINAL',
           field: 'original',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
         {
           label: 'ALL',
           field: 'all',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
         {
           label: 'EXCEL',
           field: 'excel',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
         {
           label: 'DATE CREATED',
           field: 'created_at',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
         {
           label: 'MANAGER',
           field: 'user_id',
           align: 'center',
-          filterable: true,
+          visible: true
         },
         {
           label: 'ACTIONS',
           field: 'actions',
-          align: 'center'
+          align: 'center',
+          visible: true
         },
       ],
       rows: [],

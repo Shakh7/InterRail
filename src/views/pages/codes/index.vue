@@ -156,7 +156,7 @@ export default {
         denyButtonText: 'Cancel',
         cancelButtonColor: 'transparent',
         focusConfirm: false,
-        inputLabel: `Please type COde${row.number} to confirm`,
+        inputLabel: `Please type Code${row.number} to confirm`,
         input: 'email',
         inputPlaceholder: `Code${row.number}`,
         inputValidator: (value) => {

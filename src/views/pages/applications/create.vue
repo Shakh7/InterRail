@@ -24,7 +24,7 @@
   </div>
 
 
-  <div v-else style="max-width: 1400px">
+  <div v-else style="max-width: 1400px" class="mx-auto">
     <Form
         class="form row justify-content-around m-auto"
         :validation-schema="applicationSchema"
