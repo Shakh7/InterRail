@@ -175,7 +175,6 @@ export default {
       fetch(`${process.env.VUE_APP_ORDER_URL}/code/list/delete/${id}/`, {
         method: 'DELETE',
       }).then(response => {
-        alert('hey')
         this.getUpdate = !this.getUpdate
         Swal.fire({
           position: "center",
