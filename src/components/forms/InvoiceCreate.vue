@@ -110,14 +110,8 @@ export default {
               <h6>CH-9001St.Gallen/Switzerland</h6>
             </div>
             <div class="col-lg-5 text-end">
-              <div class="profile-user mb-3">
-                      <span
-                          class="overflow-hidden border border-dashed d-flex align-items-center justify-content-center rounded"
-                          style="height: 60px; width: 256px">
-                        <img src="http://10.0.2.241:8080/img/interrail-logo.268299c8.png"
-                             class="card-logo user-profile-image img-fluid" alt="logo dark"/>
-                      </span>
-              </div>
+              <img alt="Responsive image" class="img-fluid"
+                     src="https://system.interrail.uz/img/interrail-logo.268299c8.png">
               <div class="mt-4">
                 <div class="table-responsive">
                   <table class="table table-borderless table-sm table-nowrap align-middle mb-0">
