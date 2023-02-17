@@ -220,12 +220,20 @@ export default {
             charges: this.charges,
           })
         })
-        if(!request.ok) {
+        if (!request.ok) {
           let response = await request.json()
           Swal.fire({
             icon: 'error',
             title: 'Something went wrong!',
             text: response.message.toString().toUpperCase(),
+          })
+        } else {
+          document.getElementById('codeCreateModalCloseBtn').click()
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Codes connected successfully',
+            showCancelButton: false,
           })
         }
       }
