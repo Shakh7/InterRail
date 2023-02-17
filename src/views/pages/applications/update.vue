@@ -661,8 +661,6 @@ export default {
           body: JSON.stringify(data)
         })
 
-        await this.getData()
-
         await Swal.fire({
           icon: request.ok ? 'success' : 'error',
           title: request.ok ? 'Updated successfully' : 'Update failed',
