@@ -138,6 +138,7 @@ import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 import animationNoContentData from "../../../../components/widgets/spxnqpau.json";
 import Lottie from "@/components/widgets/lottie.vue";
+import Swal from "sweetalert2";
 
 export default {
   name: "CreateCodes",
@@ -204,7 +205,7 @@ export default {
     },
     async createCodes() {
       if (this.isValid()) {
-        await fetch(`${process.env.VUE_APP_ORDER_URL}/code/connect_order_code/${this.order_number}/`, {
+        let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/connect_order_code/${this.order_number}/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -219,6 +220,14 @@ export default {
             charges: this.charges,
           })
         })
+        if(!request.ok) {
+          let response = await request.json()
+          Swal.fire({
+            icon: 'error',
+            title: 'Something went wrong!',
+            text: response.message.toString().toUpperCase(),
+          })
+        }
       }
     },
     isValid() {
