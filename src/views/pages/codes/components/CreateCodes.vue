@@ -204,7 +204,7 @@ export default {
     },
     async createCodes() {
       if (this.isValid()) {
-        let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/connect_order_code/${this.order_number}/`, {
+        await fetch(`${process.env.VUE_APP_ORDER_URL}/code/connect_order_code/${this.order_number}/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -219,7 +219,6 @@ export default {
             charges: this.charges,
           })
         })
-        alert(request.ok)
       }
     },
     isValid() {

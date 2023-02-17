@@ -194,23 +194,31 @@ export default {
   watch: {
     current_departure: {
       handler(newValue) {
-        this.departure.options = [{
-          value: newValue.id,
-          label: newValue.name,
-          code: newValue.code
-        }] // set options
-        this.departure.selected = this.departure.options[0] // set the selected option
+        if (newValue !== null) {
+          this.departure.options = [{
+            value: newValue.id,
+            label: newValue.name,
+            code: newValue.code
+          }] // set options
+          this.departure.selected = this.departure.options[0] // set the selected option
+        } else {
+          this.departure.selected = null
+        }
       },
       deep: true
     },
     current_destination: {
       handler(newValue) {
-        this.destination.options = [{
-          value: newValue.id,
-          label: newValue.name,
-          code: newValue.code
-        }] // set options
-        this.destination.selected = this.destination.options[0] // set the selected option
+        if (newValue !== null) {
+          this.destination.options = [{
+            value: newValue.id,
+            label: newValue.name,
+            code: newValue.code
+          }] // set options
+          this.destination.selected = this.destination.options[0] // set the selected option
+        } else {
+          this.destination.selected = null
+        }
       },
       deep: true
     }

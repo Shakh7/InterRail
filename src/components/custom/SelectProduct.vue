@@ -136,7 +136,7 @@ export default {
   },
 
   mounted() {
-    if (this.current_product) {
+    if (this.current_product !== null) {
       this.products.options = [{
         value: this.current_prod.id,
         label: this.current_prod.name,
@@ -144,18 +144,25 @@ export default {
         etcng: this.current_prod['etcng_code'],
       }]
       this.products.selected = this.products.options[0]
+    } else {
+      this.products.selected = null
+      this.products.options = []
     }
   },
   watch: {
     current_product: {
       handler(newValue) {
-        this.products.options = [{
-          value: newValue.id,
-          label: newValue.name,
-          hc_code: newValue['hc_code'],
-          etcng: newValue['etcng_code'],
-        }]
-        this.products.selected = this.products.options[0]
+        if (newValue !== null) {
+          this.products.options = [{
+            value: newValue.id,
+            label: newValue.name,
+            hc_code: newValue['hc_code'],
+            etcng: newValue['etcng_code'],
+          }]
+          this.products.selected = this.products.options[0]
+        }else{
+          this.products.selected = null
+        }
       },
       deep: true,
     }

@@ -214,6 +214,7 @@
                   </div>
                 </td>
               </tr>
+
               <tr>
                 <td class="w-50 py-1 fw-bolder">Страна отправления<span class="text-danger fw-semibold ms-1">*</span>
                 </td>
@@ -248,6 +249,7 @@
                   </div>
                 </td>
               </tr>
+
               <tr>
                 <td class="w-50 py-1 fw-bolder bg-light">Наименование груза, Коды ГНГ и ЕТСНГ<span
                     class="text-danger fw-semibold ms-1">*</span></td>
