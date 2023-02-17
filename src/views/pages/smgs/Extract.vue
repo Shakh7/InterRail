@@ -1,10 +1,16 @@
 <template>
   <PageHeader title="SMGS" :items="items"/>
-  <b-card-body v-if="!selected_doc">
-    <DropZone @change="selectedFile"/>
-  </b-card-body>
+  <div class="card card-body p-1" v-if="!selected_doc">
+    <b-card-body>
+      <div class="text-center" v-if="isReadingDocs">
+        <b-spinner variant="info" class="mb-2"></b-spinner>
+        <h5 class="mb-0">We are processing your documents, please wait !</h5>
+      </div>
+      <DropZone v-else @change="selectedFile"/>
+    </b-card-body>
+  </div>
   <div class="card container-fluid p-2 mt-2" v-if="!selected_doc">
-    <table class="table table-borderless table-nowrap">
+    <table class="table  table-nowrap">
       <thead>
       <tr>
         <th scope="col">№</th>
@@ -172,6 +178,7 @@ export default {
       isCreate: true,
       selected_doc: null,
       imagePath: '',
+      isReadingDocs: false,
       items: [
         {
           text: "Home",
@@ -196,6 +203,7 @@ export default {
       return date.toLocaleString()
     },
     async selectedFile() {
+      this.isReadingDocs = true
       const Toast = Swal.mixin({
         toast: true,
         position: 'bottom',
@@ -225,6 +233,7 @@ export default {
           title: err
         })
       })
+      this.isReadingDocs = false
     },
     async getCounterpartyList() {
       await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?is_used_for_code=true`)
