@@ -1,13 +1,13 @@
 <script>
-// import Lottie from "@/components/widgets/lottie.vue";
-// import animationData1 from "@/components/widgets/gsqxdxog.json";
-import Multiselect from "@vueform/multiselect";
-import "@vueform/multiselect/themes/default.css";
+
+// import Multiselect from "@vueform/multiselect";
+// import "@vueform/multiselect/themes/default.css";
+
 import flatPickr from "vue-flatpickr-component";
 import skeleton from "@/components/custom/skeleton.vue";
 import spxnqpau from "@/components/widgets/spxnqpau.json";
 import Lottie from "../widgets/lottie.vue";
-import pagination from "./pagination.vue";
+// import pagination from "./pagination.vue";
 import store from "../../state/store.js";
 
 export default {
@@ -48,7 +48,7 @@ export default {
       },
       isFetchingData: false,
 
-      headersControllerModal: false
+      headersControllerModal: false,
     }
   },
   props: {
@@ -102,10 +102,9 @@ export default {
   },
   components: {
     flatPickr,
-    Multiselect,
     skeleton,
     lottie: Lottie,
-    pagination
+    // pagination
   },
   computed: {
     getFilterableFields() {
@@ -126,38 +125,42 @@ export default {
       })
       return fields
     },
+    getManagersFilter() {
+      return store.state.users_list.filter(user => user.role === 'staff').map(i => {
+        return {
+          value: i.id,
+          label: i.full_name
+        }
+      })
+    },
+    getClientsFilter() {
+      return store.state.users_list.filter(user => user.role === 'client').map(i => {
+        return {
+          value: i.id,
+          label: i.full_name
+        }
+      })
+    },
+    getHeaders() {
+      return this.headers
+          .filter(header => header.visible === undefined || header.visible === true)
+          .map(i => {
+            return {
+              ...i,
+              searchText: '',
+            }
+          })
+    },
 
-    getManagersFilter: {
+
+    p: {
       get() {
-        let managers = []
-        this.apiData.forEach(item => {
-          if (!managers.map(manager => manager.value).includes(item.manager)) {
-            managers.push({
-              value: item.manager,
-              label: this.getAccountName(item.manager)
-            })
-          }
-        })
-        return managers
-      }
-    },
-    getClientsFilter: {
-      get() {
-        let customers = []
-        this.apiData.forEach(item => {
-          if (!customers.map(client => client.value).includes(item.customer)) {
-            customers.push({
-              value: item.customer,
-              label: this.getAccountName(item.customer)
-            })
-          }
-        })
-        return customers
-      }
-    },
-    getHeaders: {
-      get() {
-        return this.headers.filter(header => header.visible)
+        return {
+          current: this.paginate.current,
+          count: this.paginate.count,
+          perPage: this.pagination.perPage,
+          ratio: Math.ceil(this.paginate.count / this.pagination.perPage)
+        }
       }
     }
   },
@@ -198,20 +201,14 @@ export default {
       let item = this.table.selected.filter(item => item.id === id)
       return item.length > 0
     },
-    async getData(search) {
+    async getData() {
       let fetchUrl = ''
 
       this.isFetchingData = true
 
-      if (search) {
-        fetchUrl = store.state.user.role === 'admin'
-            ? `${this.url}?search=${search}&limit=${this.pagination.perPage}`
-            : `${this.url}?search=${search}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
-      } else {
-        fetchUrl = store.state.user.role === 'admin'
-            ? `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}`
-            : `${this.url}?offset=${this.pagination.perPage * (this.paginate.current - 1)}&limit=${this.pagination.perPage}&manager=${store.state.user.id}`
-      }
+      fetchUrl = store.state.user.role === 'admin'
+          ? `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
+          : `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
 
       let result = await fetch(fetchUrl)
 
@@ -221,6 +218,7 @@ export default {
 
       this.isFetchingData = false
     },
+
     async pageChange(page) {
       this.paginate.current = Math.ceil(page)
       await this.getData()
@@ -230,11 +228,50 @@ export default {
       return account.length > 0 ? account[0].full_name : 'Unknown'
     },
 
-    handleHeaderVisibility(header) {
-      header.hide ? header.hide = false : header.hide = true
+    async searchChange() {
+      let currentSearchedFields = this.getHeaders.filter(header => header.searchText !== '').map(header => {
+        return {
+          field: header.field,
+          searchText: header.searchText
+        }
+      })
+      if (currentSearchedFields.length > 0) {
+        let url = ''
+        currentSearchedFields.forEach((item, index) => {
+          index === 0
+              ? url += `?${item.field}=${item.searchText}`
+              : url += `&${item.field}=${item.searchText}`
+        })
+        this.paginate = {
+          current: 1,
+          count: this.p.count
+        }
+        url += store.state.user.role === 'admin'
+            ? `&offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
+            : `&offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
+
+        this.isFetchingData = true
+        let request = await fetch(`${this.url}` + url)
+        let data = await request.json()
+        this.apiData = data['results']
+        this.paginate.count = data['count']
+        this.isFetchingData = false
+      } else {
+        this.paginate = {
+          current: 1,
+          count: this.p.count
+        }
+        await this.getData()
+      }
     }
+
   },
   async mounted() {
+    try {
+      this.paginate.current = this.$route.query.page === undefined ? 1 : Math.ceil(this.$route.query.page)
+    } catch {
+      this.paginate.current = 1
+    }
     await this.getData()
   },
   watch: {
@@ -247,7 +284,11 @@ export default {
     },
     getUpdate() {
       this.getData()
-    }
+    },
+    "$route.query": function () {
+      this.paginate.current = Math.ceil(this.$route.query.page)
+      this.getData()
+    },
   }
 }
 </script>
@@ -260,6 +301,15 @@ export default {
         <div class="card-header border-0">
           <div class="d-flex align-items-center">
             <h5 class="card-title mb-0 flex-grow-1">{{ name }}</h5>
+            <div class="search-box me-3">
+              <input
+                  type="text"
+                  class="form-control search"
+                  placeholder="Search for order ID, customer, order status or something..."
+                  v-model="search"
+              />
+              <i class="ri-search-line search-icon"></i>
+            </div>
             <div class="flex-shrink-0">
               <b-button variant="outline-primary" @click="headersControllerModal = !headersControllerModal"
                         class="btn-icon waves-effect me-3">
@@ -269,85 +319,46 @@ export default {
             </div>
           </div>
         </div>
-        <div
-            v-if="searchable === true"
-            class="card-body border border-dashed border-end-0 border-start-0 mb-0 px-3"
-        >
-          <form class="mb-0">
-            <div class="row g-3">
-              <div class="col-xxl-3 col-sm-12">
-                <div class="search-box">
-                  <input
-                      type="text"
-                      class="form-control search"
-                      placeholder="Search for order ID, customer, order status or something..."
-                      v-model="search"
-                  />
-                  <i class="ri-search-line search-icon"></i>
-                </div>
-              </div>
-              <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
-                <div>
-                  <flat-pickr
-                      placeholder="Select date"
-                      v-model="date"
-                      class="form-control flatpickr-input"
-                      id="demo-datepicker"
-                      :config="config"
-                  ></flat-pickr>
-                </div>
-              </div>
-              <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
-                <div>
-                  <Multiselect
-                      class="form-control"
-                      v-model="multiselect.clients.value"
-                      :close-on-select="true"
-                      :searchable="true"
-                      placeholder="Customers"
-                      :options="getClientsFilter"
-                  />
-                </div>
-              </div>
-              <!--end col-->
-              <div class="col-xxl-3 col-sm-4">
-                <div>
-                  <Multiselect
-                      class="form-control"
-                      v-model="multiselect.managers.value"
-                      :close-on-select="true"
-                      :searchable="true"
-                      placeholder="Managers"
-                      :options="getManagersFilter"
-                  />
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
         <div class="card-body pt-0 mt-0">
           <div class="pt-3">
             <div class="table-responsive table-card border-bottom-0">
               <table class="table align-middle table-nowrap" :id="id">
                 <thead class="text-muted table-light">
-
                 <tr>
-                  <th scope="col" style="width: 50px;" v-if="selectable === true">
+                  <th scope="col" style="width: 50px;" v-if="selectable">
                     <div class="form-check">
                       <input class="form-check-input" @click="pushSelected('all')"
                              type="checkbox" v-model="table.checkbox.all">
                     </div>
                   </th>
 
-                    <th v-for="th in getHeaders" :key="th" class="text-uppercase"
-                        :class="th.align === undefined ? '' : 'text-' + th.align"
-                    >
-                      {{ th.label }}
-                    </th>
+                  <th v-for="th in getHeaders" :key="th" class="text-uppercase"
+                      :class="th.align === undefined ? '' : 'text-' + th.align"
+                  >
+                    {{ th.label }}
+                  </th>
                 </tr>
+                <tr>
+                  <th scope="col" style="width: 50px;" v-if="selectable" class="bg-white">
 
+                  </th>
+
+                  <th v-for="th in getHeaders" :key="th" class="text-uppercase bg-white"
+                      :class="th.align === undefined ? '' : 'text-' + th.align"
+                  >
+                    <div v-if="th.field === 'date'">
+                      <flat-pickr
+                          placeholder="Select date"
+                          v-model="date"
+                          class="form-control form-control-sm flatpickr-input"
+                          id="demo-datepicker"
+                          :config="config"
+                      ></flat-pickr>
+                    </div>
+                    <input v-else v-model="th.searchText" @input="searchChange()"
+                           class="form-control form-select-sm w-75 m-auto">
+                  </th>
+                </tr>
                 </thead>
                 <!-- IF DATA EXISTS -->
                 <tbody v-if="apiData.length > 0" class="list form-check-all">
@@ -409,60 +420,93 @@ export default {
           </div>
         </div>
         <div class="card-footer pt-0 border-top-0" v-if="apiData.length > 0 & search.trim().length === 0">
-          <div class="d-flex justify-content-end py-0 w-100">
-            <pagination
-                :page_count="paginate.count"
-                :per_page="pagination.perPage"
-                prev_text="Prev"
-                next_text="Next"
-                @page_change="pageChange"
-                @current_page="pageChange"
-            />
+          <div v-if="p.ratio <= 6" class="d-flex justify-content-end py-0 w-100">
+
+            <ul class="pagination pagination-sm pagination-separated my-0">
+              <li class="page-item"
+                  :class="{ 'disabled' : p.ratio === 1 || p.current === 1 }">
+                <router-link class="page-link" :to="'?page=' + (p.current - 1)">
+                  Prev
+                </router-link>
+              </li>
+
+              <li v-for="page in p.ratio" :key="page"
+                  class="page-item" :class="{ 'active' : page === p.current }"
+              >
+                <router-link class="page-link" :to="'?page=' + page">
+                  {{ page }}
+                </router-link>
+              </li>
+
+              <li class="page-item"
+                  :class="{ 'disabled' : p.ratio === 1 || p.current === p.ratio }">
+                <router-link class="page-link" :to="'?page=' + (p.current + 1)">
+                  Next
+                </router-link>
+              </li>
+            </ul>
+
           </div>
+
+          <div v-else-if="p.ratio >= 7 " class="d-flex justify-content-end py-0 w-100">
+
+            <ul class="pagination pagination-sm pagination-separated my-0">
+              <li class="page-item"
+                  :class="{ 'disabled' : p.ratio === 1 || p.current === 1 }">
+                <router-link class="page-link" :to="'?page=' + (p.current - 1)">
+                  Prev
+                </router-link>
+              </li>
+
+              <li v-for="page in p.ratio" :key="page"
+                  class="page-item" :class="{ 'active' : page === p.current }"
+              >
+                <router-link class="page-link" :to="'?page=' + page" v-if="p.current-2<=page && p.current+2>=page">
+                  {{ page }}
+                </router-link>
+              </li>
+
+              <li class="page-item"
+                  :class="{ 'disabled' : p.ratio === 1 || p.current === p.ratio }">
+                <router-link class="page-link" :to="'?page=' + (p.current + 1)">
+                  Next
+                </router-link>
+              </li>
+            </ul>
+
+          </div>
+
         </div>
       </div>
     </div>
     <!--end col-->
   </div>
 
-
   <b-modal v-model="headersControllerModal" hide-footer title="Control Table" modal-class="zoomIn"
            class="v-modal-custom" dialog-class="modal-dialog-right">
-    <!-- Outlined Styles -->
     <div class="hstack gap-2 flex-wrap">
       <div class="row">
         <div class="col-3 py-2" v-for="i in headers.filter(h => h.label !== 'actions')" :key="i">
-
-          <!-- Switches Color -->
           <div class="form-check form-switch">
-            <input v-if="i.visible" @click="i.visible = false" class="form-check-input" type="checkbox" role="switch"
-                   :id="i.label + 'Check'" checked>
-            <input v-else @click="i.visible = true" class="form-check-input" type="checkbox" role="switch"
-                   :id="i.label + 'Check'">
-            <label class="form-check-label" :for="i.label + 'Check'">{{
-                i.label
-              }}</label>
+            <input
+                class="form-check-input" role="switch"
+                :id="i.label + 'Check'" type="checkbox"
+                v-if="i.visible === true || i.visible === undefined"
+                @click="i.visible = false" checked
+            >
+            <input
+                class="form-check-input" role="switch"
+                :id="i.label + 'Check'" type="checkbox"
+                v-if="i.visible === false"
+                @click="i.visible = true"
+            >
+            <label class="form-check-label" :for="i.label + 'Check'">
+              {{ i.label }}
+            </label>
           </div>
-
-          <!--          <b-button v-if="i.visible" @click="i.visible = false" variant="info" class=" waves-effect waves-light w-100">-->
-          <!--            {{-->
-          <!--              i.label-->
-          <!--            }}-->
-          <!--          </b-button>-->
-          <!--          <b-button v-else @click="i.visible = true" variant="outline-info" class=" waves-effect waves-light w-100">-->
-          <!--            {{-->
-          <!--              i.label-->
-          <!--            }}-->
-          <!--          </b-button>-->
         </div>
       </div>
     </div>
-
-    <!--    <div class="border-top-2 text-end w-100">-->
-    <!--      <b-button variant="outline-danger" size="md" class="me-2" disabled>Reset</b-button>-->
-    <!--      <b-button variant="success" size="md" disabled>Save for future</b-button>-->
-    <!--    </div>-->
   </b-modal>
-
 
 </template>

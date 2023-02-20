@@ -49,62 +49,46 @@ export default {
             label: 'NUMBER',
             field: 'number',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Forwarder',
             field: 'forwarder',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Departure',
             field: 'departure',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Destination',
             field: 'destination',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'File',
             field: 'file',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Date',
             field: 'date',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Quantity',
             field: 'quantity',
             align: 'center',
-            searchable: true,
-            visible: true
           },
           {
             label: 'Manager',
             field: 'manager',
             align: 'center',
-            searchable: true,
-            visible: true
+            visible: false
           },
           {
             label: 'actions',
             field: 'actions',
-            visible: true
           },
         ],
         pagination: {
