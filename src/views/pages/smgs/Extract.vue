@@ -30,9 +30,9 @@
             <b-link @click="onEditDoc(row)"
                     class="link-success fs-15"><i
                 class="ri-edit-2-line"></i></b-link>
-            <!-- <b-link @click=""
+            <b-link @click="deleteDocRow(row)"
                 class="link-danger fs-15"><i
-                    class="ri-delete-bin-line"></i></b-link> -->
+                    class="ri-delete-bin-line"></i></b-link>
           </div>
         </td>
       </tr>
@@ -98,7 +98,7 @@
                     <div class="mb-3">
                       <label class="form-label">Forwarder</label>
                       <Multiselect
-                          class="ms-0"
+                          class="ms-0 p-0"
                           v-model="forwarder"
                           :searchable="true"
                           :closeOnSelect="true"
@@ -235,6 +235,28 @@ export default {
       })
       this.isReadingDocs = false
     },
+    async deleteDocRow(row) {
+      Swal.fire({
+          title: "Do you want to delete?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          cancelButtonColor: "#f46a6a",
+          confirmButtonColor: "#0ab39c",
+          confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        // TODO: refactor the async operation
+          if (result.value) {
+            await axios.delete(`${process.env.VUE_APP_IMAGE_URL}/document/${row.id}/`, {})
+            .then(async () => {
+              await this.getDocument()
+              await Swal.fire("Deleted!", "User has been deleted successfully", "success");
+            }).catch((err) => {
+              Swal.fire(`Error to delete file ${row.name}`, "An Error Has Occured !", err);
+            })
+          }
+      });
+    },
     async getCounterpartyList() {
       await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?is_used_for_code=true`)
           .then((response) => response.json())
@@ -290,14 +312,16 @@ export default {
       this.isCreate = true
       this.current_image = `${process.env.VUE_APP_IMAGE_URL}/` + this.selected_smgs.image_path
     },
-  },
-  async mounted() {
-    fetch(`${process.env.VUE_APP_IMAGE_URL}/document/`, {method: 'GET'})
+    async getDocument() {
+      await fetch(`${process.env.VUE_APP_IMAGE_URL}/document/`, {method: 'GET'})
         .then((response) => response.json())
         .then((res) => {
-          console.log(res)
           this.documents = res.results
         })
+    }
+  },
+  async mounted() {
+    await this.getDocument()
     await this.getCounterpartyList()
   },
 }

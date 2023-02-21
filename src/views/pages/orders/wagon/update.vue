@@ -3,7 +3,7 @@ import animationData from "@/components/widgets/lupuorrc.json";
 // import Lottie from "@/components/widgets/lottie.vue";
 import custom_wizard from "@/views/pages/orders/components/custom_wizard";
 import Multiselect from "@vueform/multiselect";
-import CoreApi from "@/api/core/core_api";
+import CoreApi from "@/api/core/core";
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
 

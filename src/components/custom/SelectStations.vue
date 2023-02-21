@@ -74,7 +74,7 @@
 <script>
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
-import CoreApi from "../../api/core/core_api.js";
+import CoreApi from "@/api/core/core";
 
 export default {
   name: 'SelectStations',

@@ -1,7 +1,7 @@
 <script>
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
-import CoreApi from "@/api/core/core_api";
+import CoreApi from "@/api/core/core";
 import counterpartySelect from "@/views/pages/orders/components/counterpartySelect";
 import custom_wizard from "@/views/pages/orders/components/custom_wizard";
 import OrdersApi from "@/api/orders/orders_api";
