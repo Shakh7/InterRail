@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import CoreApi from "@/api/core/core_api.js";
+import CoreApi from "@/api/core/core";
 import Swal from "sweetalert2";
 import PageHeader from "../../../../components/page-header.vue";
 

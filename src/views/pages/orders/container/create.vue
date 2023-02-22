@@ -4,7 +4,7 @@ import counterpartySelect from "@/views/pages/orders/components/counterpartySele
 import "@vueform/multiselect/themes/default.css";
 import Multiselect from "@vueform/multiselect";
 import OrdersApi from "@/api/orders/orders_api";
-import CoreApi from "@/api/core/core_api";
+import CoreApi from "@/api/core/core";
 import Swal from "sweetalert2";
 import store from "@/state/store";
 
