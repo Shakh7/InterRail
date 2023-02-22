@@ -59,7 +59,7 @@ class CoreApi {
     }
 
     async createProduct(product) {
-        let request = await fetch(`${this.url}/products/`, {
+        let request = await fetch(`${this.base_api}/products/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ class CoreApi {
     }
 
     async createStation(station) {
-        let request = await fetch(`${this.url}/stations/`, {
+        let request = await fetch(`${this.base_api}/stations/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
