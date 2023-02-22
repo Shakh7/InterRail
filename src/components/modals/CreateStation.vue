@@ -17,7 +17,7 @@
           </div>
           <div class="col-12 col-md-6">
             <label class="form-label">Station code</label>
-            <input v-model="code" type="number" class="form-control" placeholder="Station code">
+            <input v-model="code" type="text" class="form-control" placeholder="Station code">
           </div>
           <div class="col-12 mt-3 pt-2">
             <b-button v-if="!isCreating" variant="primary" class="w-100" @click="createStation()">Create</b-button>

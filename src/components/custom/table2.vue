@@ -235,13 +235,25 @@ export default {
           searchText: header.searchText
         }
       })
-      if (currentSearchedFields.length > 0) {
+      let date = this.date !== null ? this.date.split(' to ') : []
+
+      if (currentSearchedFields.length > 0 || date.length > 0) {
         let url = ''
+
         currentSearchedFields.forEach((item, index) => {
           index === 0
               ? url += `?${item.field}=${item.searchText}`
               : url += `&${item.field}=${item.searchText}`
         })
+
+        if (date.length === 1) {
+          url += currentSearchedFields.length > 0
+              ? `&date=${date[0]}` : `?date=${date[0]}`
+        } else if (date.length === 2) {
+          url += currentSearchedFields.length > 0
+              ? `&start_date=${date[0]}&end_date=${date[1]}` : `?start_date=${date[0]}&end_date=${date[1]}`
+        }
+
         this.paginate = {
           current: 1,
           count: this.p.count
@@ -353,6 +365,7 @@ export default {
                           class="form-control form-control-sm flatpickr-input"
                           id="demo-datepicker"
                           :config="config"
+                          @change="searchChange()"
                       ></flat-pickr>
                     </div>
                     <input v-else v-model="th.searchText" @input="searchChange()"

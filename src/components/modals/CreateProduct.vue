@@ -17,11 +17,11 @@
           </div>
           <div class="col-12 col-md-6">
             <label class="form-label">HS code</label>
-            <input v-model="hc_code" type="number" class="form-control" placeholder="Hs code">
+            <input v-model="hc_code" type="text" class="form-control" placeholder="Hs code">
           </div>
           <div class="col-12 col-md-6">
             <label class="form-label">ETCNG code</label>
-            <input v-model="etcng_code" type="number" class="form-control" placeholder="Etsng code">
+            <input v-model="etcng_code" type="text" class="form-control" placeholder="Etsng code">
           </div>
           <div class="col-12 col-md-6">
             <label class="form-label">ETCNG name</label>

@@ -285,7 +285,7 @@
               </tr>
 
               <tr v-if="data.loading_type === 'container'">
-                <td class="w-50 py-1 fw-bolder">Вес/Фут<span class="text-danger fw-semibold ms-1">*</span></td>
+                <td class="w-50 py-1 fw-bolder">Вес/Фут BBB<span class="text-danger fw-semibold ms-1">*</span></td>
                 <td class="w-50 py-1">
                   <Field v-model="data.container_type" name="container_type" as="select"
                          class="form-select form-select-sm border-0">
@@ -304,7 +304,7 @@
               </tr>
 
               <tr v-else>
-                <td class="w-50 py-1 fw-bolder">Вес/Фут<span class="text-danger fw-semibold ms-1">*</span></td>
+                <td class="w-50 py-1 fw-bolder">Вес/Фут AAAA<span class="text-danger fw-semibold ms-1">*</span></td>
                 <td class="w-50 py-1">
                   <Field
                       type="number"
@@ -317,7 +317,6 @@
                       <ErrorMessage name="weight"/>
                     </small>
                   </div>
-
                 </td>
               </tr>
 
@@ -716,7 +715,9 @@ export default {
           quantity: Yup.number().required().label("Количество").positive().integer().min(1),
           rolling_stock_1: Yup.string().required().label("Rolling stock 1"),
           rolling_stock_2: Yup.string().required().label("Rolling stock 2"),
-          weight: Yup.number().notRequired().label("Вес/Фут"),
+          weight: this.data.loading_type === 'wagon'
+              ? Yup.number().required().label("Вес/Фут 1").positive().min(1)
+              : Yup.string().notRequired().label("Вес/Фут"),
           container_type: this.data.loading_type === 'container'
               ? Yup.string().required().label("Вес/Фут")
               : Yup.string().notRequired().label("Вес/Фут"),
