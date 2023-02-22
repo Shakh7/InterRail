@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import CoreApi from "@/api/core/CoreApi";
+import CoreApi from "@/api/core/core";
 import {defineComponent} from "vue";
 import Swal from "sweetalert2";
 
