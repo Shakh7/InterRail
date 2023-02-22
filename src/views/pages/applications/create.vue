@@ -771,7 +771,7 @@ export default {
           quantity: Yup.number().required().label("Количество").positive().integer().min(1),
           rolling_stock_1: Yup.string().required().label("Rolling stock 1"),
           rolling_stock_2: Yup.string().required().label("Rolling stock 2"),
-          weight: this.data.loading_type === 'wagon'
+          weight: this.form.loading_type === 'wagon'
               ? Yup.number().required().label("Вес/Фут").positive().min(1).integer()
               : Yup.string().notRequired().label("Вес/Фут"),
           container_type: this.form.loading_type === 'container'
