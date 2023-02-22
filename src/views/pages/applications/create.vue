@@ -740,8 +740,6 @@ export default {
           body: JSON.stringify(data)
         })
 
-        let response = await request.json()
-
         await Swal.fire({
           icon: request.ok ? 'success' : 'error',
           title: request.ok ? 'Application created successfully' : 'Create failed',
