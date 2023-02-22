@@ -731,7 +731,7 @@ export default {
             ? data.period
             : data.period + '-' + data.period_2
 
-
+        //  d
         let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
           method: 'POST',
           headers: {

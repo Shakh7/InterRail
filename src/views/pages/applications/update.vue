@@ -675,7 +675,7 @@ export default {
         data.period = data.period_2 === ''
             ? data.period
             : data.period + '-' + data.period_2
-
+        // d
         delete data.departure
         delete data.destination
         delete data.product
