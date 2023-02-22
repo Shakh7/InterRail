@@ -750,7 +750,7 @@ export default {
           confirmButtonText: 'Ok',
         }).then(() => {
           if (request.ok) {
-            this.$router.push({name: 'application_update', params: {id: response.application_id}})
+            this.$router.push({name: 'applications_list'})
           }
         })
       } else {
