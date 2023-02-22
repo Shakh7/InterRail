@@ -69,19 +69,36 @@
               <tr>
                 <td class="w-50 py-1 fw-bolder">Период перевозки</td>
                 <td class="w-50 py-1">
-                  <Field v-model="data.period" name="period" as="select"
-                         class="form-select form-select-sm border-0">
-                    <option value="" disabled></option>
-                    <option v-for="option in months" :key="option" :value="option.value">{{
-                        option.label
-                      }}
-                    </option>
-                  </Field>
-                  <div class="fv-plugins-message-container">
-                    <small class="text-danger py-0 my-0">
-                      <ErrorMessage name="period"/>
-                    </small>
+
+                  <div class="d-flex flex-row justify-content-between">
+                    <div class="w-50">
+                      <Field v-model="data.period" name="period" as="select"
+                             class="form-select form-select-sm border-0">
+                        <option value="" selected></option>
+                        <option v-for="option in months" :key="option" :value="option.value">{{
+                            option.label
+                          }}
+                        </option>
+                      </Field>
+                      <div class="fv-plugins-message-container">
+                        <small class="text-danger py-0 my-0">
+                          <ErrorMessage name="period"/>
+                        </small>
+                      </div>
+                    </div>
+                    <div class="w-50">
+                      <select v-model="data.period_2" :disabled="data.period === ''"
+                              class="form-select form-select-sm border-0">
+                        <option value="" selected></option>
+                        <option v-for="option in months.filter(m => m.value !== data.period)" :key="option"
+                                :value="option.value">{{
+                            option.label
+                          }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
+
                 </td>
               </tr>
 
@@ -104,6 +121,7 @@
                   </div>
                 </td>
               </tr>
+
               <tr v-if="data.loading_type === 'container'">
                 <td class="w-50 py-1 fw-bolder">Вид отправки<span class="text-danger fw-semibold ms-1">*</span></td>
                 <td class="w-50 py-1">
@@ -559,6 +577,11 @@ export default {
     async getData() {
       let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/list/${this.$route.params.id}/`)
       this.application = await request.json()
+      let periods = this.application.period.split('-')
+      if (periods.length === 2) {
+        this.application.period = periods[0]
+        this.application.period_2 = periods[1]
+      }
       this.isLoading = false
     },
     async getCounterpartyList() {
@@ -608,7 +631,9 @@ export default {
 
       let form = {
         forwarder: this.data.forwarder_id,
-        period: this.data.period,
+        period: this.data.period_2 === ''
+            ? this.data.period
+            : this.data.period + '-' + this.data.period_2,
         loading_type: this.data.loading_type,
         sending_type: this.data.sending_type,
         departure: this.data.departure === null
@@ -646,6 +671,10 @@ export default {
         data.forwarder_id = data.forwarder.id
         data.sending_type = data.sending_type.toLowerCase()
         data.loading_type = data.loading_type.toLowerCase()
+
+        data.period = data.period_2 === ''
+            ? data.period
+            : data.period + '-' + data.period_2
 
         delete data.departure
         delete data.destination

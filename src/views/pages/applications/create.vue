@@ -105,19 +105,33 @@
                 </td>
                 <td class="w-50 py-1">
 
-                  <Field v-model="form.period" name="period" as="select"
-                         class="form-select form-select-sm border-0">
-                    <option value="" selected></option>
-                    <option v-for="option in months" :key="option" :value="option.value">{{
-                        option.label
-                      }}
-                    </option>
-                  </Field>
-
-                  <div class="fv-plugins-message-container">
-                    <small class="text-danger py-0 my-0">
-                      <ErrorMessage name="period"/>
-                    </small>
+                  <div class="d-flex flex-row justify-content-between">
+                    <div class="w-50">
+                      <Field v-model="form.period" name="period" as="select"
+                             class="form-select form-select-sm border-0">
+                        <option value="" selected></option>
+                        <option v-for="option in months" :key="option" :value="option.value">{{
+                            option.label
+                          }}
+                        </option>
+                      </Field>
+                      <div class="fv-plugins-message-container">
+                        <small class="text-danger py-0 my-0">
+                          <ErrorMessage name="period"/>
+                        </small>
+                      </div>
+                    </div>
+                    <div class="w-50">
+                      <select v-model="form.period_2" :disabled="form.period === ''"
+                              class="form-select form-select-sm border-0">
+                        <option value="" selected></option>
+                        <option v-for="option in months.filter(m => m.value !== form.period)" :key="option"
+                                :value="option.value">{{
+                            option.label
+                          }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
 
                 </td>
@@ -593,6 +607,7 @@ export default {
         prefix: '',
         date: '',
         period: '',
+        period_2: '',
         sending_type: '',
         shipper: '',
         consignee: '',
@@ -677,7 +692,9 @@ export default {
     async createApplication() {
       let form = {
         forwarder: this.form.forwarder_id,
-        period: this.form.period,
+        period: this.form.period_2 === ''
+            ? this.form.period
+            : this.form.period + '-' + this.form.period_2,
         loading_type: this.form.loading_type,
         sending_type: this.form.sending_type,
         departure: this.form.departure_id === null || this.form.departure_id === ''
@@ -710,6 +727,9 @@ export default {
         data.destination_id = data.destination_id.id
         data.product_id = data.product_id.id
         data.prefix = 'TEST'
+        data.period = data.period_2 === ''
+            ? data.period
+            : data.period + '-' + data.period_2
 
 
         let request = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/application/create/`, {
