@@ -525,9 +525,22 @@
 
         <div class="row mt-3">
           <div class="col-12 px-0">
-            <b-button class="btn-success waves-effect waves-light w-100" @click="createApplication()" type="submit">
+            <b-button v-if="!is_creating" class="btn-success waves-effect waves-light w-100"
+                      @click="createApplication()" type="submit">
               Create
             </b-button>
+
+            <button v-if="is_creating" type="button" class="btn btn-success btn-load w-100">
+                <span class="d-flex align-items-center justify-content-center">
+                  <span class="me-2">
+                    Creating...
+                  </span>
+                  <span class="spinner-grow" role="status">
+                    <span class="visually-hidden">Creating...</span>
+                  </span>
+                </span>
+            </button>
+
           </div>
         </div>
 
@@ -602,6 +615,7 @@ export default {
         options: []
       },
 
+      is_creating: false,
       form: {
         quantity: null,
         prefix: '',
@@ -720,6 +734,7 @@ export default {
       }
       let isValid = await this.applicationSchema.isValid(form)
       if (isValid) {
+        this.is_creating = true
         let data = {
           ...this.form,
         }
@@ -749,6 +764,8 @@ export default {
         }).then(() => {
           if (request.ok) {
             this.$router.push({name: 'applications_list'})
+          } else {
+            this.is_creating = false
           }
         })
       } else {
