@@ -32,11 +32,14 @@ export default {
           options: [],
         },
       },
+
       table: {
         selected: [],
         checkbox: {
           all: false
-        }
+        },
+        per_page_options: [10, 20, 50, 100],
+        per_page: null,
       },
       search: '',
       apiData: [],
@@ -151,15 +154,13 @@ export default {
             }
           })
     },
-
-
     p: {
       get() {
         return {
           current: this.paginate.current,
           count: this.paginate.count,
-          perPage: this.pagination.perPage,
-          ratio: Math.ceil(this.paginate.count / this.pagination.perPage)
+          perPage: this.table.per_page,
+          ratio: Math.ceil(this.paginate.count / this.table.per_page)
         }
       }
     }
@@ -275,12 +276,19 @@ export default {
         }
         await this.getData()
       }
-    }
+    },
+
+
+    changeTablePerPage(page) {
+      this.table.per_page = page
+      this.getData()
+    },
 
   },
   async mounted() {
     try {
       this.paginate.current = this.$route.query.page === undefined ? 1 : Math.ceil(this.$route.query.page)
+      this.table.per_page = this.pagination.perPage
     } catch {
       this.paginate.current = 1
     }
@@ -351,8 +359,23 @@ export default {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" style="width: 50px;" v-if="selectable" class="bg-white">
+                  <th scope="col" style="width: 80px;" v-if="selectable" class="bg-white">
+                    <!--                    <select class="form-select form-select-sm" v-model="table.per_page" @change="getData()">-->
+                    <!--                      <option v-for="page in table.per_page_options" :key="page" :value="page">{{ page }}</option>-->
+                    <!--                    </select>-->
 
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown"
+                              aria-expanded="false"> {{ table.per_page }}
+                      </button>
+                      <div class="dropdown-menu dropdownmenu-info">
+                        <a class="dropdown-item" v-for="page in table.per_page_options" :key="page"
+                           :class="{'text-info bg-soft-info fw-bold': page === table.per_page}"
+                           @click="changeTablePerPage(page)">
+                          {{ page }}
+                        </a>
+                      </div>
+                    </div>
                   </th>
 
                   <th v-for="th in getHeaders" :key="th" class="text-uppercase bg-white"
