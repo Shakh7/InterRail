@@ -228,7 +228,7 @@ export default [
     {
         path: "/applications",
         name: "Applications",
-        meta: {title: "Applications", authRequired: true, isVisableInMenu: true, permissions: ['admin']},
+        meta: {title: "Applications", authRequired: true, isVisableInMenu: true, permissions: ['admin', 'staff']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
