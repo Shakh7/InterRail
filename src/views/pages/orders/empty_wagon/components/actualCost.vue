@@ -6,7 +6,6 @@
   <input v-else :value="cost.code_cost"
          class="form-control form-control-sm w-75 m-auto" type="text"
          placeholder="Agreed rate" disabled>
-
 </template>
 
 <script>

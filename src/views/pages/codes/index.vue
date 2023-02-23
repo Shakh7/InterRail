@@ -6,6 +6,7 @@ import CreateCodes from './components/CreateCodes.vue'
 import user from '../../../components/custom/user.vue'
 import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 import Swal from "sweetalert2";
+import Statuses from "@/core/code/Statuses";
 
 export default {
   name: 'codes_list',
@@ -61,6 +62,8 @@ export default {
             field: 'status',
             align: 'center',
             visible: true,
+            searchType: 'select',
+            searchOptions: Statuses,
           },
           {
             label: 'LOADING TYPE',
@@ -91,6 +94,7 @@ export default {
             field: 'date',
             align: 'center',
             visible: true,
+            searchType: 'date',
           },
           {
             label: 'MANAGER',
@@ -202,6 +206,7 @@ export default {
       id="codes_table"
       :headers="table.headers"
       :searchable="true"
+      :selectable="true"
       :isLoading="false"
       :pagination="table.pagination"
       :getUpdate="getUpdate"
@@ -280,10 +285,10 @@ export default {
 
     <template v-slot:status="slotProps">
       <span class="badge" :class="{
-        'bg-warning': slotProps.row.status === 'Checking',
-        'bg-secondary': slotProps.row.status === 'Used',
-        'bg-success': slotProps.row.status === 'Completed',
-        'bg-danger': slotProps.row.status === 'Canceled',
+        'bg-warning': slotProps.row.status === 'checking',
+        'bg-secondary': slotProps.row.status === 'used',
+        'bg-success': slotProps.row.status === 'completed',
+        'bg-danger': slotProps.row.status === 'canceled',
       }">{{ slotProps.row.status }}</span>
     </template>
 

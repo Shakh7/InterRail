@@ -9,6 +9,7 @@ import spxnqpau from "@/components/widgets/spxnqpau.json";
 import Lottie from "../widgets/lottie.vue";
 // import pagination from "./pagination.vue";
 import store from "../../state/store.js";
+import Swal from "sweetalert2";
 
 export default {
   name: 'CustomTable2',
@@ -43,6 +44,7 @@ export default {
       },
       search: '',
       apiData: [],
+      apiDataInitialCount: 0,
       defaultOptions: {animationData: spxnqpau},
 
       paginate: {
@@ -110,43 +112,9 @@ export default {
     // pagination
   },
   computed: {
-    getFilterableFields() {
-      let fields = []
-      let filterable = this.headers.filter(header => header.filterable === true).map(header => header.field.toString().trim().toUpperCase())
-
-      Array.from(this.rows).forEach(item => {
-        for (const [key, value] of Object.entries(item)) {
-          if (filterable.includes(key.toString().trim().toUpperCase())) {
-            if (!fields.includes(value)) {
-              fields.push({
-                value: value,
-                label: value
-              })
-            }
-          }
-        }
-      })
-      return fields
-    },
-    getManagersFilter() {
-      return store.state.users_list.filter(user => user.role === 'staff').map(i => {
-        return {
-          value: i.id,
-          label: i.full_name
-        }
-      })
-    },
-    getClientsFilter() {
-      return store.state.users_list.filter(user => user.role === 'client').map(i => {
-        return {
-          value: i.id,
-          label: i.full_name
-        }
-      })
-    },
     getHeaders() {
       return this.headers
-          .filter(header => header.visible === undefined || header.visible === true)
+          .filter(header => header.visible === undefined || header.visible === true )
           .map(i => {
             return {
               ...i,
@@ -204,20 +172,54 @@ export default {
     },
     async getData() {
       let fetchUrl = ''
-
       this.isFetchingData = true
 
-      fetchUrl = store.state.user.role === 'admin'
-          ? `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
-          : `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
+      let currentSearchedFields = this.getHeaders.filter(header => header.searchText !== '').map(header => {
+        return {
+          field: header.field,
+          searchText: header.searchText
+        }
+      })
 
-      let result = await fetch(fetchUrl)
+      if (currentSearchedFields.length > 0) {
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
+            : `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
+        currentSearchedFields.forEach((item) => {
+          fetchUrl.includes('?')
+              ? fetchUrl += `&${item.field}=${item.searchText}`
+              : fetchUrl += `?${item.field}=${item.searchText}`
+        })
+      } else {
+        fetchUrl = store.state.user.role === 'admin'
+            ? `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
+            : `${this.url}?offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
+      }
 
-      let data = await result.json()
-      this.apiData = data['results']
-      this.paginate.count = data['count']
+      try {
+        let result = await fetch(fetchUrl)
+        let data = await result.json()
+        this.apiData = data['results']
+        this.paginate.count = data['count']
+        this.isFetchingData = false
+      } catch {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'bottom',
+          showConfirmButton: false,
+          timer: 30000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
 
-      this.isFetchingData = false
+        await Toast.fire({
+          icon: 'error',
+          title: 'Something went wrong!'
+        })
+      }
     },
 
     async pageChange(page) {
@@ -236,6 +238,7 @@ export default {
           searchText: header.searchText
         }
       })
+
       let date = this.date !== null ? this.date.split(' to ') : []
 
       if (currentSearchedFields.length > 0 || date.length > 0) {
@@ -259,6 +262,7 @@ export default {
           current: 1,
           count: this.p.count
         }
+
         url += store.state.user.role === 'admin'
             ? `&offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}`
             : `&offset=${this.p.perPage * (this.p.current - 1)}&limit=${this.p.perPage}&manager=${store.state.user.id}`
@@ -283,7 +287,18 @@ export default {
       this.table.per_page = page
       this.getData()
     },
-
+    goNextPage() {
+      this.paginate.current = this.paginate.current + 1
+      this.getData()
+    },
+    goPrevPage() {
+      this.paginate.current = this.paginate.current - 1
+      this.getData()
+    },
+    goPage(page) {
+      this.paginate.current = page
+      this.getData()
+    },
   },
   async mounted() {
     try {
@@ -320,7 +335,14 @@ export default {
       <div class="card" id="orderList">
         <div class="card-header border-0">
           <div class="d-flex align-items-center">
-            <h5 class="card-title mb-0 flex-grow-1">{{ name }}</h5>
+            <div class="flex-grow-1 d-flex flex-column">
+              <h5 class="card-title mb-1">{{ name }}</h5>
+              <span>Showing <span class="link-success fw-semibold">{{
+                  p.perPage * (p.current - 1) === 0 ? 1 : p.perPage * (p.current - 1) + 1
+                }}</span>
+              to <span class="link-success fw-semibold">{{ p.perPage * p.current }}</span>
+              of <span class="link-success fw-semibold">{{ p.count }}</span> entries</span>
+            </div>
             <div class="search-box me-3">
               <input
                   type="text"
@@ -378,10 +400,10 @@ export default {
                     </div>
                   </th>
 
-                  <th v-for="th in getHeaders" :key="th" class="text-uppercase bg-white"
+                  <th v-for="th in getHeaders.filter(i => i.field !== 'actions')" :key="th" class="text-uppercase bg-white"
                       :class="th.align === undefined ? '' : 'text-' + th.align"
                   >
-                    <div v-if="th.field === 'date'">
+                    <div v-if="th.searchType === 'date'">
                       <flat-pickr
                           placeholder="Select date"
                           v-model="date"
@@ -391,7 +413,13 @@ export default {
                           @change="searchChange()"
                       ></flat-pickr>
                     </div>
-                    <input v-else v-model="th.searchText" @input="searchChange()"
+                    <select class="form-select form-select-sm" v-model="th.searchText" @change="getData()"
+                            v-else-if="th.searchType === 'select'">
+                      <option v-for="option in th.searchOptions" :key="option.value" :value="option.value">
+                        {{ option.label }}
+                      </option>
+                    </select>
+                    <input v-else v-model="th.searchText" @input="getData()"
                            class="form-control form-select-sm w-75 m-auto">
                   </th>
                 </tr>
@@ -459,26 +487,26 @@ export default {
           <div v-if="p.ratio <= 6" class="d-flex justify-content-end py-0 w-100">
 
             <ul class="pagination pagination-sm pagination-separated my-0">
-              <li class="page-item"
+              <li class="page-item" @click="goPrevPage()"
                   :class="{ 'disabled' : p.ratio === 1 || p.current === 1 }">
-                <router-link class="page-link" :to="'?page=' + (p.current - 1)">
+                <a class="page-link cursor-pointer">
                   Prev
-                </router-link>
+                </a>
               </li>
 
               <li v-for="page in p.ratio" :key="page"
                   class="page-item" :class="{ 'active' : page === p.current }"
-              >
-                <router-link class="page-link" :to="'?page=' + page">
+                  @click="goPage(page)">
+                <a class="page-link cursor-pointer">
                   {{ page }}
-                </router-link>
+                </a>
               </li>
 
-              <li class="page-item"
+              <li class="page-item" @click="goNextPage()"
                   :class="{ 'disabled' : p.ratio === 1 || p.current === p.ratio }">
-                <router-link class="page-link" :to="'?page=' + (p.current + 1)">
+                <a class="page-link cursor-pointer">
                   Next
-                </router-link>
+                </a>
               </li>
             </ul>
 
@@ -487,26 +515,26 @@ export default {
           <div v-else-if="p.ratio >= 7 " class="d-flex justify-content-end py-0 w-100">
 
             <ul class="pagination pagination-sm pagination-separated my-0">
-              <li class="page-item"
+              <li class="page-item" @click="goPrevPage()"
                   :class="{ 'disabled' : p.ratio === 1 || p.current === 1 }">
-                <router-link class="page-link" :to="'?page=' + (p.current - 1)">
+                <a class="page-link cursor-pointer">
                   Prev
-                </router-link>
+                </a>
               </li>
 
-              <li v-for="page in p.ratio" :key="page"
+              <li v-for="page in p.ratio" :key="page" @click="goPage(page)"
                   class="page-item" :class="{ 'active' : page === p.current }"
               >
-                <router-link class="page-link" :to="'?page=' + page" v-if="p.current-2<=page && p.current+2>=page">
+                <a class="page-link cursor-pointer" v-if="p.current-2<=page && p.current+2>=page">
                   {{ page }}
-                </router-link>
+                </a>
               </li>
 
-              <li class="page-item"
+              <li class="page-item" @click="goNextPage()"
                   :class="{ 'disabled' : p.ratio === 1 || p.current === p.ratio }">
-                <router-link class="page-link" :to="'?page=' + (p.current + 1)">
+                <a class="page-link cursor-pointer">
                   Next
-                </router-link>
+                </a>
               </li>
             </ul>
 

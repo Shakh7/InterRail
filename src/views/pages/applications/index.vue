@@ -4,6 +4,7 @@ import PageHeader from "../../../components/page-header.vue";
 import CustomTable from '../../../components/custom/table2.vue'
 import PreviewModal from "./components/PreviewModal.vue";
 import AddCodeModal from "./components/AddCodeModal.vue";
+import SeeCodesModal from "./components/SeeCodesModal.vue";
 import skeleton from "../../../components/custom/skeleton.vue";
 import user from '../../../components/custom/user.vue'
 
@@ -105,6 +106,7 @@ export default {
     // XOctagonIcon,
     PreviewModal,
     AddCodeModal,
+    SeeCodesModal,
     Swiper,
     SwiperSlide,
     CustomTable,
@@ -181,8 +183,11 @@ export default {
 
     showAddCodeModal(application) {
       this.currentApplication.data = application
-      let a = document.getElementById('addCodem')
-      a.click()
+      document.getElementById('addCodeTriggerBtn').click()
+    },
+    showSeeCodesModal(application) {
+      this.currentApplication.data = {id: application.id}
+      document.getElementById('seeCodesTriggerBtn').click()
     }
   },
   async mounted() {
@@ -381,7 +386,6 @@ export default {
     </swiper-slide>
   </swiper>
 
-
   <CustomTable
       :url="table.url"
       name="APPLICATION TABLE"
@@ -435,7 +439,7 @@ export default {
     </template>
 
     <template v-slot:quantity="slotProps">
-      <h6 class="my-0" @click="showAddCodeModal(slotProps.row)">
+      <h6 class="my-0" @click="showSeeCodesModal(slotProps.row)">
         <span class="badge" :class="{
           'badge-outline-danger': slotProps.row.code_count > slotProps.row.quantity,
           'badge-outline-success': slotProps.row.code_count === slotProps.row.quantity,
@@ -455,39 +459,22 @@ export default {
     </template>
 
     <template v-slot:actions="slotProps">
-      <div class="dropdown">
-        <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="ri-more-fill"></i>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li class="dropdown-item cursor-pointer" @click="showAddCodeModal(slotProps.row)">
-            <i class="ri-add-fill align-bottom me-2 text-muted"></i>
-            Add codes
-          </li>
-          <li class="dropdown-item cursor-pointer">
-            <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-            See codes
-          </li>
-          <li class="dropdown-divider"></li>
-          <li class="cursor-pointer">
-            <router-link class="text-dark dropdown-item"
-                         :to="{ name: 'application_update', params: { id: slotProps.row.id } }">
-              <font-awesome-icon icon="fa-solid fa-pen-to-square"
-                                 class="c_icon me-2 fs-6"/>
-              Edit
+
+      <b-button-group class="mt-4 mt-md-0" role="group" size="sm" aria-label="Basic example">
+        <b-button @click="showAddCodeModal(slotProps.row)" variant="light">
+          <i class="ri-add-fill align-bottom fs-6"></i></b-button>
+        <b-button variant="light" class="p-0">
+          <div class="px-1">
+            <router-link class="text-dark" :to="{ name: 'application_update', params: { id: slotProps.row.id } }">
+              <i class="ri-pencil-fill align-bottom px-1"></i>
             </router-link>
-          </li>
-          <li>
-            <a class="dropdown-item cursor-pointer"
-               @click="confirmApplicationDelete(slotProps.row.id, slotProps.row.number)">
-              <font-awesome-icon icon="fa-solid fa-trash"
-                                 class="c_icon text-danger me-2 fs-6"
-              />
-              Delete</a>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </b-button>
+        <b-button variant="light" @click="confirmApplicationDelete(slotProps.row.id, slotProps.row.number)">
+          <i class="ri-delete-bin-7-fill align-bottom text-danger"></i>
+        </b-button>
+      </b-button-group>
+
     </template>
 
   </CustomTable>
@@ -495,5 +482,6 @@ export default {
   <PreviewModal :application="currentApplication.data"/>
 
   <AddCodeModal :application="currentApplication.data" @update="this.getUpdate = !this.getUpdate"/>
+  <SeeCodesModal :application="currentApplication.data"/>
 
 </template>

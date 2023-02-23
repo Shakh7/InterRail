@@ -1,8 +1,8 @@
 <template>
 
-  <b-button variant="success" class="visually-hidden" data-bs-toggle="modal"
-            data-bs-target="#addCodeModal" id="addCodem"> Add code
-  </b-button>
+  <button class="visually-hidden" data-bs-toggle="modal"
+          data-bs-target="#addCodeModal" id="addCodeTriggerBtn"> Add code
+  </button>
 
   <div id="addCodeModal" class="modal fade" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
