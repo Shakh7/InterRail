@@ -4,7 +4,7 @@
           data-bs-target="#seeCodesModal" id="seeCodesTriggerBtn"> Add code
   </button>
 
-  <div id="seeCodesModal" class="modal fade" tabindex="-1" aria-hidden="true" style="display: none;">
+  <div id="seeCodesModal" class="modal fade" tabindex="1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
       <div class="modal-content border-0">
 
@@ -24,11 +24,11 @@
               <th scope="col">Code</th>
               <th scope="col">Order Number</th>
               <th scope="col">Status Type</th>
+              <th scope="col">Status</th>
               <th scope="col">Rate</th>
               <th scope="col">Charges</th>
               <th scope="col">Add Charges</th>
               <th scope="col">Total Cost</th>
-              <th scope="col">Action</th>
               <th scope="col">Action</th>
             </tr>
             </thead>
@@ -37,7 +37,14 @@
               <th scope="row"><a href="#" class="fw-semibold">{{ code.number }}</a></th>
               <td>{{ code.order__order_number === null ? '--' : code.order__order_number }}</td>
               <td>{{ code.loading_type }}</td>
-              <td>{{ code.status }}</td>
+              <td>
+                <span class="badge" :class="{
+                    'bg-warning': code.status === 'checking',
+                    'bg-secondary': code.status === 'used',
+                    'bg-success': code.status === 'completed',
+                    'bg-danger': code.status === 'canceled',
+                }">{{ code.status }}</span>
+              </td>
               <td>${{ code.rate }}</td>
               <td>${{ code.charges }}</td>
               <td>${{ code.add_charges }}</td>

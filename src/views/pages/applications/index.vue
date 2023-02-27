@@ -1,7 +1,7 @@
 <script>
 
 import PageHeader from "../../../components/page-header.vue";
-import CustomTable from '../../../components/custom/table2.vue'
+import CustomTable from '@/components/custom/table2.vue'
 import PreviewModal from "./components/PreviewModal.vue";
 import AddCodeModal from "./components/AddCodeModal.vue";
 import SeeCodesModal from "./components/SeeCodesModal.vue";
@@ -396,6 +396,7 @@ export default {
       :isLoading="false"
       :pagination="table.pagination"
       :getUpdate="getUpdate"
+      :treeUrl="table.tree_url"
   >
 
     <template #top-right>

@@ -233,10 +233,30 @@ export default {
         </li>
 
         <li class="nav-item">
-          <router-link class="nav-link menu-link" :to="{name: 'codes_list'}">
+<!--          <router-link class="nav-link menu-link" :to="{name: 'codes_list'}">-->
+<!--            <i class="ri-file-paper-line"></i>-->
+<!--            <span data-key="t-orders">Codes</span>-->
+<!--          </router-link>-->
+
+          <a class="nav-link menu-link" href="#sidebarCodes" data-bs-toggle="collapse" role="button"
+             aria-expanded="false" aria-controls="sidebarCodes">
             <i class="ri-file-paper-line"></i>
             <span data-key="t-orders">Codes</span>
-          </router-link>
+          </a>
+          <div class="collapse menu-dropdown" id="sidebarCodes">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <router-link class="nav-link menu-link" :to="{name: 'codes_list'}">
+                  List
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link menu-link" :to="{name: 'codes_statistics'}">
+                  Statistics
+                </router-link>
+              </li>
+            </ul>
+          </div>
         </li>
 
 

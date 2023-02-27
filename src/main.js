@@ -5,7 +5,7 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import i18n from './i18n'
 import store from "./state/store.js";
-
+import axios from "axios";
 import BootstrapVue3 from 'bootstrap-vue-3';
 import vClickOutside from "click-outside-vue3"
 import VueApexCharts from "vue3-apexcharts";
@@ -40,6 +40,8 @@ import {
     faTrain,
     faTrash
 } from '@fortawesome/free-solid-svg-icons'
+
+axios.defaults.baseURL = process.env.VUE_APP_ORDER_URL;
 
 FloatingVue.options.themes.tooltip.delay.show = 0
 FloatingVue.options.themes.tooltip.delay.hide = 10

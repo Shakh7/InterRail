@@ -218,7 +218,7 @@ export default [
     {
         path: "/rates/",
         name: "Rates",
-        meta: {title: "Rates", authRequired: true, isVisableInMenu: true, permissions: ['admin', 'client']},
+        meta: {title: "Rates", authRequired: true, isVisableInMenu: true, permissions: ['admin']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'rate list', component: () => import("../views/pages/rates/index.vue"),}
@@ -248,10 +248,11 @@ export default [
     {
         path: "/codes",
         name: "Codes",
-        meta: {title: "Codes", authRequired: true, isVisableInMenu: true, permissions: ['admin']},
+        meta: {title: "Codes", authRequired: true, isVisableInMenu: true, permissions: ['admin', 'staff']},
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'codes_list', component: () => import("../views/pages/codes/index.vue"),},
+            {path: 'statistics/', name: 'codes_statistics', component: () => import("../views/pages/codes/statistics.vue"),},
             {path: 'update/:id/', name: 'code_update', component: () => import("../views/pages/codes/update.vue"),},
         ],
     },
@@ -318,7 +319,11 @@ export default [
         children: [
             {path: 'list/', name: 'invoices_list', component: () => import("../views/pages/invoices/index.vue"),},
             {path: 'create/', name: 'invoices_create', component: () => import("../views/pages/invoices/create.vue"),},
-            {path: 'create/:order_number/', name: 'order_invoice_create', component: () => import("../views/pages/invoices/create.vue"),}
+            {
+                path: 'create/:order_number/',
+                name: 'order_invoice_create',
+                component: () => import("../views/pages/invoices/create.vue"),
+            }
         ],
     },
 
