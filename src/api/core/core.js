@@ -1,6 +1,7 @@
 class CoreApi {
     constructor() {
         this.base_api = process.env.VUE_APP_ORDER_URL + '/core';
+        return !CoreApi.instance ? CoreApi.instance = this : CoreApi.instance;
     }
 
     async getCoreList(core_type, query, limit) {

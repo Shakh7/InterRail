@@ -14,6 +14,7 @@ export default {
     return {
       table: {
         url: process.env.VUE_APP_ORDER_URL + '/code/list/',
+        excel_url: process.env.VUE_APP_ORDER_URL + '/code/code_excel/',
         headers: [
           {
             label: 'APPLICATION NUMBER',
@@ -26,6 +27,8 @@ export default {
             field: 'forwarder_id',
             align: 'center',
             visible: true,
+            searchType: 'select',
+            searchOptions: this.forwardersComputed,
           },
           {
             label: 'ORDER NUMBER',
@@ -120,7 +123,7 @@ export default {
       },
       currentCode: {},
       getUpdate: false,
-      forwarders: []
+      forwarders: [],
     }
   },
   components: {
@@ -129,6 +132,112 @@ export default {
     CodeUpdateModal,
     CreateCodes,
     user
+  },
+  computed: {
+    headerComputed() {
+      return [
+        {
+          label: 'APPLICATION NUMBER',
+          field: 'application_number',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'FORWARDER',
+          field: 'forwarder_id',
+          align: 'center',
+          visible: true,
+          searchType: 'select',
+          searchOptions: this.forwarders,
+        },
+        {
+          label: 'ORDER NUMBER',
+          field: 'order',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'CODE',
+          field: 'number',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'DEPARTURE',
+          field: 'departure',
+          align: 'center',
+          visible: false,
+        },
+        {
+          label: 'DESTINATION',
+          field: 'destination',
+          align: 'center',
+          visible: false,
+        },
+        {
+          label: 'PRODUCT',
+          field: 'product',
+          align: 'center',
+          visible: false,
+        },
+        {
+          label: 'STATUS',
+          field: 'status',
+          align: 'center',
+          visible: true,
+          searchType: 'select',
+          searchOptions: Statuses,
+        },
+        {
+          label: 'LOADING TYPE',
+          field: 'loading_type',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'CONTAINER TYPE',
+          field: 'container_type',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'WEIGHT',
+          field: 'weight',
+          align: 'center',
+          visible: false,
+        },
+        {
+          label: 'SMGS FILE',
+          field: 'smgs_file',
+          align: 'center',
+          visible: true,
+        },
+        {
+          label: 'DATE',
+          field: 'date',
+          align: 'center',
+          visible: true,
+          searchType: 'date',
+        },
+        {
+          label: 'MANAGER',
+          field: 'manager',
+          align: 'center',
+          visible: true,
+        },
+        // {
+        //   label: 'SMGS FILE',
+        //   field: 'smgs_file',
+        //   align: 'center',
+        //   visible: true,
+        // },
+        {
+          label: 'actions',
+          field: 'actions',
+          visible: true,
+        },
+      ]
+    }
   },
   methods: {
     setToCurrentCode(data) {
@@ -202,9 +311,10 @@ export default {
 <template>
   <CustomTable
       :url="table.url"
+      :excel_url="table.excel_url"
       name="CODES TABLE"
       id="codes_table"
-      :headers="table.headers"
+      :headers="headerComputed"
       :searchable="true"
       :selectable="true"
       :isLoading="false"

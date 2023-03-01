@@ -226,10 +226,31 @@ export default {
         </li>
 
         <li class="nav-item">
-          <router-link class="nav-link menu-link" :to="{name: 'applications_list'}">
+<!--          <router-link class="nav-link menu-link" :to="{name: 'applications_list'}">-->
+<!--            <i class="ri-file-paper-line"></i>-->
+<!--            <span data-key="t-orders">Applications</span>-->
+<!--          </router-link>-->
+
+          <a class="nav-link menu-link" href="#sidebarApplications" data-bs-toggle="collapse" role="button"
+             aria-expanded="false" aria-controls="sidebarApplications">
             <i class="ri-file-paper-line"></i>
             <span data-key="t-orders">Applications</span>
-          </router-link>
+          </a>
+          <div class="collapse menu-dropdown" id="sidebarApplications">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <router-link class="nav-link menu-link" :to="{name: 'applications_list'}">
+                  List
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link menu-link" :to="{name: 'applications_statistics'}">
+                  Statistics
+                </router-link>
+              </li>
+            </ul>
+          </div>
+
         </li>
 
         <li class="nav-item">

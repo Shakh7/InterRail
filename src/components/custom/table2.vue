@@ -54,6 +54,7 @@ export default {
       isFetchingData: false,
 
       headersControllerModal: false,
+      getExcelModal: false,
     }
   },
   props: {
@@ -70,6 +71,10 @@ export default {
       default: () => []
     },
     url: {
+      type: String,
+      default: () => ''
+    },
+    excel_url: {
       type: String,
       default: () => ''
     },
@@ -114,7 +119,7 @@ export default {
   computed: {
     getHeaders() {
       return this.headers
-          .filter(header => header.visible === undefined || header.visible === true )
+          .filter(header => header.visible === undefined || header.visible === true)
           .map(i => {
             return {
               ...i,
@@ -282,11 +287,26 @@ export default {
       }
     },
 
+    async getExcel() {
+      let searchableFields = this.getHeaders.filter(o => o.searchText !== '')
+      let fileLink = document.createElement("a");
+      let url = this.excel_url
+      searchableFields.forEach((field, i) => {
+        url += i === 0
+            ? `?${field.field}=${field.searchText}`
+            : `&${field.field}=${field.searchText}`
+      })
+      fileLink.href = url;
+      fileLink.setAttribute("download", "import-excel-template");
+      document.body.appendChild(fileLink);
+      fileLink.click();
+    },
 
     changeTablePerPage(page) {
       this.table.per_page = page
       this.getData()
     },
+
     goNextPage() {
       this.paginate.current = this.paginate.current + 1
       this.getData()
@@ -343,16 +363,11 @@ export default {
               to <span class="link-success fw-semibold">{{ p.perPage * p.current }}</span>
               of <span class="link-success fw-semibold">{{ p.count }}</span> entries</span>
             </div>
-            <div class="search-box me-3">
-              <input
-                  type="text"
-                  class="form-control search"
-                  placeholder="Search for order ID, customer, order status or something..."
-                  v-model="search"
-              />
-              <i class="ri-search-line search-icon"></i>
-            </div>
             <div class="flex-shrink-0">
+              <b-button v-if="excel_url !== ''" variant="outline-primary" @click="getExcelModal = !getExcelModal"
+                        class="btn-icon waves-effect me-3">
+                <font-awesome-icon icon="fa-solid fa-file-excel" class="fs-5"/>
+              </b-button>
               <b-button variant="outline-primary" @click="headersControllerModal = !headersControllerModal"
                         class="btn-icon waves-effect me-3">
                 <i class="ri-menu-2-line"></i>
@@ -400,7 +415,8 @@ export default {
                     </div>
                   </th>
 
-                  <th v-for="th in getHeaders.filter(i => i.field !== 'actions')" :key="th" class="text-uppercase bg-white"
+                  <th v-for="th in getHeaders.filter(i => i.field !== 'actions')" :key="th"
+                      class="text-uppercase bg-white"
                       :class="th.align === undefined ? '' : 'text-' + th.align"
                   >
                     <div v-if="th.searchType === 'date'">
@@ -571,6 +587,27 @@ export default {
         </div>
       </div>
     </div>
+  </b-modal>
+  <b-modal v-model="getExcelModal" hide-footer title="Extract Excel" modal-class="zoomIn"
+           class="v-modal-custom" dialog-class="modal-dialog-right">
+
+    <b-alert v-if="getHeaders.filter(o => o.searchText !== '').length > 0"
+             show dismissible variant="info" class="fade show" role="alert">
+      <strong class="me-2">Note: </strong> Following search queries applies to your excel data!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </b-alert>
+
+
+    <div v-for="i in getHeaders.filter(o => o.searchText !== '')" :key="i"
+         class="border-bottom py-2 d-flex justify-content-between align-items-center mb-3">
+      <span class="fw-medium">{{ i.label }}</span>
+      <span class="d-flex justify-content-between align-items-center">
+        {{ i.searchText }}
+        <i class="ri-search-line my-0 py-0 ms-2 text-muted"></i>
+      </span>
+    </div>
+
+    <b-button variant="primary" @click="getExcel" class="w-100">Get Excel</b-button>
   </b-modal>
 
 </template>

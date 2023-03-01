@@ -2,62 +2,62 @@ const Months = [
     {
         id: 1,
         value: 'Январь',
-        label: 'Январь',
+        label: 'January',
     },
     {
         id  : 2,
         value: 'Февраль',
-        label: 'Февраль',
+        label: 'February',
     },
     {
         id: 3,
         value: 'Март',
-        label: 'Март',
+        label: 'March',
     },
     {
         id: 4,
         value: 'Апрель',
-        label: 'Апрель',
+        label: 'April',
     },
     {
         id: 5,
         value: 'Май',
-        label: 'Май',
+        label: 'May',
     },
     {
         id: 6,
         value: 'Июнь',
-        label: 'Июнь',
+        label: 'June',
     },
     {
         id: 7,
         value: 'Июль',
-        label: 'Июль',
+        label: 'July',
     },
     {
         id: 8,
         value: 'Август',
-        label: 'Август',
+        label: 'August',
     },
     {
         id: 9,
         value: 'Сентябрь',
-        label: 'Сентябрь',
+        label: 'September',
     },
     {
         id: 10,
         value: 'Октябрь',
-        label: 'Октябрь',
+        label: 'October',
     },
     {
         id: 11,
         value: 'Ноябрь',
-        label: 'Ноябрь',
+        label: 'November',
     },
     {
         id: 12,
         value: 'Декабрь',
-        label: 'Декабрь',
+        label: 'December',
     },
 ];
 

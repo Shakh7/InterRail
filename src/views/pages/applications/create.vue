@@ -560,7 +560,7 @@ import CounterpartyApi from "../../../api/counterparty/CounterpartyApi";
 
 
 import RollingStocks from "../../../core/application/RollingStocks";
-import Months from "../../../core/Months";
+import Months from "@/core/Months";
 import * as Yup from "yup";
 import {configure, ErrorMessage, Field, Form} from "vee-validate";
 import Swal from "sweetalert2";

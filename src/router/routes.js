@@ -232,6 +232,7 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
+            {path: 'statistics/', name: 'applications_statistics', component: () => import("../views/pages/applications/statistics.vue"),},
             {
                 path: 'create/',
                 name: 'application_create',

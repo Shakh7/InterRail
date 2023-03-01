@@ -151,7 +151,14 @@ export default {
         option: option_type,
         value: event === null ? null : event
       })
-    }
+    },
+
+    async searchStations(query) {
+      if (query.length <= 2) return;
+      let core_api = new CoreApi()
+      let stations = (await core_api.getCoreList(query)).results
+      return stations
+    },
   },
   computed: {
     classes: {
