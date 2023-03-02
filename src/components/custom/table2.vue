@@ -11,6 +11,7 @@ import Lottie from "../widgets/lottie.vue";
 import store from "../../state/store.js";
 import Swal from "sweetalert2";
 
+
 export default {
   name: 'CustomTable2',
   data() {
@@ -33,6 +34,22 @@ export default {
           options: [],
         },
       },
+
+
+      sampleData: [
+        {
+          id: 1,
+          name: "test1"
+        },
+        {
+          id: 2,
+          name: "test2"
+        },
+        {
+          id: 3,
+          name: "test3"
+        },
+      ],
 
       table: {
         selected: [],

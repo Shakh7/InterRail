@@ -100,6 +100,12 @@ export default [
                 component: () => import("../views/pages/profile/index.vue"),
             },
             {
+                path: 'users/settings/:id',
+                name: 'user_profile_settings',
+                hide: true,
+                component: () => import("../views/pages/profile/setting.vue"),
+            },
+            {
                 path: 'clients/:id',
                 name: 'client_profile',
                 hide: true,

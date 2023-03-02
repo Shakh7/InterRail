@@ -11,16 +11,23 @@
         <div class="modal-header border-bottom p-3">
           <h5 class="modal-title">
             Application:
-            <span class="badge badge-gradient-info"> {{ application.number }}</span>
+            <span class="badge badge-gradient-info"> {{ application_number }}</span>
           </h5>
           <button id="seeCodesModalClose" type="button" class="btn-close" data-bs-dismiss="modal"
                   aria-label="Close"></button>
         </div>
 
-        <div class="p-4 table-responsive">
+        <div class="p-4 pb-0 table-responsive">
           <table class="table table-nowrap">
             <thead>
             <tr class="text-center">
+              <td scope="col" style="max-width: 30px">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox"
+                         @click="selectAll"
+                         :checked="allSelected">
+                </div>
+              </td>
               <th scope="col">Code</th>
               <th scope="col">Order Number</th>
               <th scope="col">Status Type</th>
@@ -34,6 +41,13 @@
             </thead>
             <tbody v-if="!isLoading">
             <tr v-for="code in codes" :key="code.id" class="text-center">
+              <td scope="col" style="max-width: 30px">
+                <div class="form-check form-check-inline">
+                  <input @click="pushToSelected(code)"
+                         class="form-check-input" type="checkbox"
+                         :checked="selected.find(i => i.id === code.id) ? true : false">
+                </div>
+              </td>
               <th scope="row"><a href="#" class="fw-semibold">{{ code.number }}</a></th>
               <td>{{ code.order__order_number === null ? '--' : code.order__order_number }}</td>
               <td>{{ code.loading_type }}</td>
@@ -66,6 +80,10 @@
             </tbody>
           </table>
         </div>
+
+        <div class="modal-footer text-center">
+          <button @click="downloadExcel()" type="button" class="btn btn-success mx-auto">Download Excel</button>
+        </div>
       </div>
     </div>
   </div>
@@ -73,13 +91,15 @@
 </template>
 
 <script>
+import * as XLSX from "xlsx";
 
 export default {
   name: "SeeCodesModal",
   data() {
     return {
       isLoading: false,
-      codes: []
+      codes: [],
+      selected: []
     }
   },
   props: {
@@ -103,6 +123,38 @@ export default {
     goCodeUpdatePage(code_id) {
       document.getElementById('seeCodesModalClose').click()
       this.$router.push({name: 'code_update', params: {id: code_id}})
+    },
+
+    pushToSelected(code) {
+      this.selected.find(i => i.id === code.id)
+          ? this.selected.splice(this.selected.indexOf(code), 1)
+          : this.selected.push(code)
+    },
+    selectAll() {
+      if (this.selected.length === this.codes.length) {
+        this.selected = []
+      } else {
+        this.codes.forEach(i => this.selected.push(i))
+      }
+    },
+
+    downloadExcel() {
+      let data = this.selected
+      data.forEach(i => {
+        delete i.id
+      })
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.writeFile(wb, `Application${this.application_number}.xlsx`);
+    }
+  },
+  computed: {
+    allSelected() {
+      return this.selected.length === this.codes.length
+    },
+    application_number() {
+      return this.application !== {} ? this.application.application : null
     }
   },
   watch: {

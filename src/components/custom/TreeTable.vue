@@ -70,7 +70,7 @@
                   <span v-else-if="th.key === 'range'" class="text-success"
                         data-bs-toggle="modal"
                         data-bs-target="#seeCodesModal"
-                        @click="showSeeCodesModal(year.application_id)">
+                        @click="showSeeCodesModal(year.application_id, year.application)">
                     {{ year[th.key] }}
                   </span>
                   <span v-else-if="th.key === 'month'">
@@ -199,8 +199,8 @@ export default {
       this.changeTableDataHeader(response.data, Object.keys(response.data[0]))
     },
 
-    showSeeCodesModal(application) {
-      this.current_application = {id: application}
+    showSeeCodesModal(application_id, application) {
+      this.current_application = {id: application_id, application: application}
     },
 
     changeTableDataHeader(data, keys) {
