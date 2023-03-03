@@ -1,5 +1,9 @@
 const Statuses = [
     {
+        value: '',
+        label: '',
+    },
+    {
         value: 'checking',
         label: 'Checking',
     },

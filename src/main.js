@@ -30,18 +30,23 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
 import {
-    faAngleDown,
-    faArrowUpRightFromSquare,
-    faFileExcel,
-    faFileZipper,
-    faFolder,
-    faPenToSquare,
-    faPrint,
-    faTrain,
+    faAngleDown, faArrowUpRightFromSquare,
+    faFileExcel, faFileZipper,
+    faFolder, faPenToSquare,
+    faPrint, faTrain,
     faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
-axios.defaults.baseURL = process.env.VUE_APP_ORDER_URL;
+axios.defaults.baseURL = process.env.VUE_APP_ORDER_URL
+axios.interceptors.request.use(config => {
+    if (config.method === 'get' && store.state.user.role !== 'admin') {
+        config.params = {
+            ...config.params,
+            'manager': store.state.user.id
+        };
+    }
+    return config;
+});
 
 FloatingVue.options.themes.tooltip.delay.show = 0
 FloatingVue.options.themes.tooltip.delay.hide = 10
@@ -49,20 +54,15 @@ FloatingVue.options.instantMove = true
 
 
 library.add(
-    faFileExcel,
-    faPenToSquare,
-    faTrash,
-    faFileZipper,
-    faFolder,
-    faPrint,
-    faTrain,
-    faAngleDown,
+    faFileExcel, faPenToSquare,
+    faTrash, faFileZipper,
+    faFolder, faPrint,
+    faTrain, faAngleDown,
     faArrowUpRightFromSquare
 )
 
 AOS.init({
-    easing: 'ease-out-back',
-    duration: 1000
+    easing: 'ease-out-back', duration: 1000
 })
 
 createApp(App)

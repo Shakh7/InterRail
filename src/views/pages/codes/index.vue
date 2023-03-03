@@ -20,51 +20,46 @@ export default {
             label: 'APPLICATION NUMBER',
             field: 'application_number',
             align: 'center',
-            visible: true,
           },
           {
             label: 'FORWARDER',
             field: 'forwarder_id',
             align: 'center',
-            visible: true,
             searchType: 'select',
-            searchOptions: this.forwardersComputed,
+            searchOptions: [],
           },
           {
             label: 'ORDER NUMBER',
             field: 'order',
             align: 'center',
-            visible: true,
           },
           {
             label: 'CODE',
             field: 'number',
             align: 'center',
-            visible: true,
           },
           {
             label: 'DEPARTURE',
             field: 'departure',
             align: 'center',
-            visible: false,
+            visible: false
           },
           {
             label: 'DESTINATION',
             field: 'destination',
             align: 'center',
-            visible: false,
+            visible: false
           },
           {
             label: 'PRODUCT',
             field: 'product',
             align: 'center',
-            visible: false,
+            visible: false
           },
           {
             label: 'STATUS',
             field: 'status',
             align: 'center',
-            visible: true,
             searchType: 'select',
             searchOptions: Statuses,
           },
@@ -72,38 +67,34 @@ export default {
             label: 'LOADING TYPE',
             field: 'loading_type',
             align: 'center',
-            visible: true,
           },
           {
             label: 'CONTAINER TYPE',
             field: 'container_type',
             align: 'center',
-            visible: true,
+            visible: false
           },
           {
             label: 'WEIGHT',
             field: 'weight',
             align: 'center',
-            visible: false,
+            visible: false
           },
           {
             label: 'SMGS FILE',
             field: 'smgs_file',
             align: 'center',
-            visible: true,
           },
           {
             label: 'DATE',
             field: 'date',
             align: 'center',
-            visible: true,
             searchType: 'date',
           },
           {
             label: 'MANAGER',
             field: 'manager',
             align: 'center',
-            visible: true,
           },
           // {
           //   label: 'SMGS FILE',
@@ -114,12 +105,9 @@ export default {
           {
             label: 'actions',
             field: 'actions',
-            visible: true,
           },
         ],
-        pagination: {
-          perPage: 50,
-        },
+        per_page: 10
       },
       currentCode: {},
       getUpdate: false,
@@ -134,109 +122,20 @@ export default {
     user
   },
   computed: {
-    headerComputed() {
-      return [
-        {
-          label: 'APPLICATION NUMBER',
-          field: 'application_number',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'FORWARDER',
-          field: 'forwarder_id',
-          align: 'center',
-          visible: true,
-          searchType: 'select',
-          searchOptions: this.forwarders,
-        },
-        {
-          label: 'ORDER NUMBER',
-          field: 'order',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'CODE',
-          field: 'number',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'DEPARTURE',
-          field: 'departure',
-          align: 'center',
-          visible: false,
-        },
-        {
-          label: 'DESTINATION',
-          field: 'destination',
-          align: 'center',
-          visible: false,
-        },
-        {
-          label: 'PRODUCT',
-          field: 'product',
-          align: 'center',
-          visible: false,
-        },
-        {
-          label: 'STATUS',
-          field: 'status',
-          align: 'center',
-          visible: true,
-          searchType: 'select',
-          searchOptions: Statuses,
-        },
-        {
-          label: 'LOADING TYPE',
-          field: 'loading_type',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'CONTAINER TYPE',
-          field: 'container_type',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'WEIGHT',
-          field: 'weight',
-          align: 'center',
-          visible: false,
-        },
-        {
-          label: 'SMGS FILE',
-          field: 'smgs_file',
-          align: 'center',
-          visible: true,
-        },
-        {
-          label: 'DATE',
-          field: 'date',
-          align: 'center',
-          visible: true,
-          searchType: 'date',
-        },
-        {
-          label: 'MANAGER',
-          field: 'manager',
-          align: 'center',
-          visible: true,
-        },
-        // {
-        //   label: 'SMGS FILE',
-        //   field: 'smgs_file',
-        //   align: 'center',
-        //   visible: true,
-        // },
-        {
-          label: 'actions',
-          field: 'actions',
-          visible: true,
-        },
-      ]
+    headerComputed: {
+      get() {
+        return this.table.headers.map(header => {
+          if (header.field === 'forwarder_id') {
+            let forwarders = this.forwarders
+            forwarders.unshift({value: '', label: ''})
+            return {
+              ...header,
+              searchOptions: forwarders
+            };
+          }
+          return header;
+        });
+      }
     }
   },
   methods: {
@@ -317,8 +216,7 @@ export default {
       :headers="headerComputed"
       :searchable="true"
       :selectable="true"
-      :isLoading="false"
-      :pagination="table.pagination"
+      :perPage="table.per_page"
       :getUpdate="getUpdate"
   >
 
