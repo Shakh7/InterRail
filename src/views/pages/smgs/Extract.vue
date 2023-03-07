@@ -24,7 +24,7 @@
         <th>{{ index + 1 }}</th>
         <td>{{ row.name }}</td>
         <td>{{ row.pages }}</td>
-        <td>{{ getFormatedDate(row.updated_at) }}</td>
+        <td>{{ getFormatedDate(row.modified) }}</td>
         <td>
           <div class="hstack gap-3 flex-wrap">
             <b-link @click="onEditDoc(row)"
@@ -71,34 +71,219 @@
             <form @submit.prevent="addEditSmgsRow">
               <div class="modal-body">
                 <div class="row">
-                  <div class="col-xxl-6 ps-2">
+                  <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <label class="form-label">SMGS Number</label>
+                      <!-- <Multiselect
+                          v-model="forwarder.selected"
+                          :searchable="true"
+                          :closeOnSelect="true"
+                          :options="forwarder.options"
+                          placeholder="Forwarder"
+                          :object="true"
+                          required
+                      /> -->
+                      <v-select 
+                      required
+                      v-model="forwarder.selected"
+                      placeholder="Select forwarder"
+                      :options="forwarder.options"
+                      label="name">
+                    </v-select>
+                    </div>
+                  </div>
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                          v-model="code.selected"
+                          :searchable="true"
+                          :closeOnSelect="true"
+                          :options="code.options"
+                          placeholder="Search Code"
+                          :object="true"
+                          @search-change="getCodeOptions($event)"
+                          @input="onCodeOptionSelect($event)"
+                          required -->
+                        <v-select 
+                          required
+                          v-model="code.selected"
+                          placeholder="Search code"
+                          :options="code.options"
+                          @search="getCodeOptions($event)"
+                          @option:selected="onCodeOptionSelect($event)"
+                          label="number">
+                        </v-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
                       <input type="number" class="form-control"
                              placeholder="SMGS Number" required v-model="selected_smgs.number"/>
                     </div>
                   </div>
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <label class="form-label">Code</label>
-                      <input type="number" class="form-control" placeholder="Code"
-                             required v-model="selected_smgs.code"/>
-                    </div>
-                  </div>
-                  <div class="col-xxl-6 ps-2">
-                    <div class="mb-3">
-                      <label class="form-label">Date</label>
                       <flat-pickr
                           v-model="selected_smgs.date" placeholder="Current date"
                           class="form-control">
                       </flat-pickr>
                     </div>
                   </div>
+                </div>
+                <div class="row">
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <label class="form-label">Forwarder</label>
+                      <!-- <Multiselect
+                        required
+                        v-model="departure.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="departure.options"
+                        placeholder="Departure Station"
+                        @search-change="getStationOptions($event, 'departure')"
+                        :object="true"
+                        @input="onOptionSelect($event, 'departure')"
+                      /> -->
+                      <v-select 
+                        required
+                        v-model="departure.selected"
+                        placeholder="Search departure station"
+                        :options="departure.options"
+                        @search="getStationOptions($event, 'departure')"
+                        @option:selected="onOptionSelect($event, 'departure')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                        required
+                        v-model="destination.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="destination.options"
+                        placeholder="Destination"
+                        @search-change="getStationOptions($event, 'destination')"
+                        :object="true"
+                        @input="onOptionSelect($event, 'departure')" /> -->
+                      <v-select 
+                        required
+                        v-model="destination.selected"
+                        placeholder="Search destination station"
+                        :options="destination.options"
+                        @search="getStationOptions($event, 'destination')"
+                        @option:selected="onOptionSelect($event, 'destination')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                        required
+                        v-model="wagon.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="wagon.options"
+                        placeholder="Wagon"
+                        @search-change="getWagonOrContainerOptions($event, 'wagon')"
+                        :object="true"
+                      /> -->
+                      <v-select 
+                        required
+                        v-model="wagon.selected"
+                        placeholder="Search wagon"
+                        :options="wagon.options"
+                        @search="getWagonOrContainerOptions($event, 'wagon')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                        required
+                        v-model="container.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="container.options"
+                        placeholder="Container"
+                        @search-change="getWagonOrContainerOptions($event, 'container')"
+                        :object="true"
+                      /> -->
+                      <v-select 
+                        required
+                        v-model="container.selected"
+                        placeholder="Search container"
+                        :options="container.options"
+                        @search="getWagonOrContainerOptions($event, 'container')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                        required
+                        v-model="consignee.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="consignee.options"
+                        placeholder="Consignee"
+                        @search-change="getThirdPartyOptions($event, 'consignees')"
+                        :object="true"
+                      /> -->
+                      <v-select 
+                        required
+                        v-model="consignee.selected"
+                        placeholder="Search consignee"
+                        :options="consignee.options"
+                        @search="getThirdPartyOptions($event, 'consignees')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <!-- <Multiselect
+                        required
+                        v-model="shipper.selected"
+                        :searchable="true"
+                        :hideSelected="true"
+                        :options="shipper.options"
+                        placeholder="Shipper"
+                        @search-change="getThirdPartyOptions($event, 'shippers')"
+                        :object="true"
+                      /> -->
+                      <v-select 
+                        required
+                        v-model="shipper.selected"
+                        placeholder="Search shipper"
+                        :options="shipper.options"
+                        @search="getThirdPartyOptions($event, 'shippers')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <input type="number" class="form-control"
+                             placeholder="Weight" required v-model="selected_smgs.weight"/>
+                    </div>
+                  </div>
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
                       <Multiselect
-                          class="ms-0 p-0"
+                          class="ms-0 form-label"
                           v-model="forwarder"
                           :searchable="true"
                           :closeOnSelect="true"
@@ -109,7 +294,7 @@
                       />
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="hstack gap-2 mb-4">
                 <button type="submit" class="btn btn-success" style="width: 100%">
@@ -122,10 +307,9 @@
                 <thead class="table-light">
                 <tr>
                   <th scope="col">№</th>
-                  <th scope="col">Number</th>
+                  <th scope="col">SMGS Number</th>
                   <th scope="col">Code</th>
                   <th scope="col">Date</th>
-                  <th scope="col">Forwarder</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -138,9 +322,9 @@
                   <td style="white-space: pre-wrap;" class="text-start">
                     {{ row.number }}
                   </td>
-                  <td>{{ row.code }}</td>
+                  <td>{{ row.code ? row.code.number: '' }}</td>
                   <td>{{ row.date }}</td>
-                  <td>{{ row.forwarder_name }}</td>
+                  <!-- <td>{{ row.forwarder ? row.forwarder.name: '' }}</td>g -->
                 </tr>
                 </tbody>
               </table>
@@ -157,24 +341,56 @@ import flatPickr from "vue-flatpickr-component";
 import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
 import DropZone from "@/components/widgets/dropZone";
-import "@vueform/multiselect/themes/default.css";
-import Multiselect from "@vueform/multiselect";
 import axios from 'axios'
+// import "@vueform/multiselect/themes/default.css";
+// import Multiselect from "@vueform/multiselect";
+import OrderService from "@/api";
+import CoreApi from "@/api/core/core";
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
 
 export default {
   name: "ProductsList",
   data() {
     return {
-      csrfToken: '',
+      code: {
+        selected: null,
+        options: []
+      },
+      destination: {
+        selected: null,
+        options: []
+      },
+      departure: {
+        selected: null,
+        options: []
+      },
+      wagon: {
+        selected: null,
+        options: []
+      },
+      container: {
+        selected: null,
+        options: []
+      },
+      consignee: {
+        selected: null,
+        options: []
+      },
+      shipper: {
+        selected: null,
+        options: []
+      },
+      forwarder: {
+        selected: null,
+        options: []
+      },
       images: [],
       current_image: '',
-      forwarder: {},
-      forwarder_options: [],
       visible_rows: [],
       selected_smgs: {},
       smgsMap: {},
       documents: [],
-      forwarder_name: '',
       isCreate: true,
       selected_doc: null,
       imagePath: '',
@@ -194,8 +410,16 @@ export default {
   components: {
     DropZone,
     flatPickr,
-    Multiselect,
-    PageHeader
+    // Multiselect,
+    PageHeader,
+    vSelect
+  },
+  created() {
+    this.coreApi = new CoreApi();
+  },
+  mounted() {
+    this.getDocument()
+    this.getCounterpartyOptions()
   },
   methods: {
     getFormatedDate(timestamp) {
@@ -217,12 +441,15 @@ export default {
       })
       const formData = new FormData();
       formData.append("file", document.querySelector(".dropzoneFile").files[0]);
-      await axios.post(`${process.env.VUE_APP_IMAGE_URL}/pdf/`, formData, {
+      await OrderService({
+        url: '/smgs/pdf/',
+        method: 'post',
+        data: formData,
         headers: {"Content-Type": "multipart/form-data"},
       }).then((res) => {
         this.selected_doc = res.data
         this.selected_smgs = this.selected_doc.smgses.length > 0 ? this.selected_doc.smgses[0] : {}
-        this.current_image = `${process.env.VUE_APP_IMAGE_URL}/` + this.selected_smgs.image_path
+        this.current_image = `${process.env.VUE_APP_ORDER_URL}/` + this.selected_smgs.image_path
         Toast.fire({
           icon: 'success',
           title: 'File upload was successful!'
@@ -247,54 +474,77 @@ export default {
       }).then(async (result) => {
         // TODO: refactor the async operation
           if (result.value) {
-            await axios.delete(`${process.env.VUE_APP_IMAGE_URL}/document/${row.id}/`, {})
+            await axios.delete(`${process.env.VUE_APP_ORDER_URL}/smgs/document/${row.id}/`, {})
             .then(async () => {
               await this.getDocument()
-              await Swal.fire("Deleted!", "User has been deleted successfully", "success");
+              await Swal.fire({
+                title: "Deleted!",
+                text: "Document has been deleted successfully", 
+                timer: 100,
+                icon: "success"});
             }).catch((err) => {
               Swal.fire(`Error to delete file ${row.name}`, "An Error Has Occured !", err);
             })
           }
       });
     },
-    async getCounterpartyList() {
-      await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?is_used_for_code=true`)
-          .then((response) => response.json())
-          .then(response => {
-            this.forwarder_options = response.results.map(item => {
-              return {
-                value: item.id,
-                label: item.name,
-              }
-            })
-          })
+    async getCounterpartyOptions() {
+      let forwarders = (await this.coreApi.getCounterpartiesForCode(7, 0)).results
+        this.forwarder.selected = null
+        this.forwarder.options = forwarders
+    },
+    async getCodeOptions(query) {
+      if (query.length < 2) {return}
+      let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/extractor/list/?forwarder_id=${this.forwarder.selected.id}&number=${query}`)
+      let result = await res.json()
+      this.code.selected = null
+      this.code.options = result
     },
     async confirm() {
 
     },
     async onEditDoc(row) {
-      await fetch(`${process.env.VUE_APP_IMAGE_URL}/document/by/${row.id}`)
+      await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/document/by/${row.id}/`)
           .then((response) => response.json())
           .then(res => {
             this.selected_doc = res
             this.visible_rows = this.selected_doc.smgses.filter(el => el.number);
             this.selected_smgs = this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
-            this.current_image = `${process.env.VUE_APP_IMAGE_URL}/` + this.selected_smgs.image_path
+            this.current_image = `${process.env.VUE_APP_ORDER_URL}/` + this.selected_smgs.image_path
           })
     },
     async onRowClick(row) {
       this.selected_smgs = row
-      this.forwarder = {label: row.forwarder_name, value: row.forwarder_id}
+      this.forwarder.selected = row.forwarder
+      this.code.selected = row.code
+      this.departure.selected = row.departure_station
+      this.destination.selected = row.destination_station
+      this.shipper.selected = row.shipper
+      this.consignee.selected = row.consignee
+      this.wagon.selected = row.wagon
+      this.container.selected = row.container
       this.isCreate = false
-      this.current_image = `${process.env.VUE_APP_IMAGE_URL}/` + this.selected_smgs.image_path
-
+      this.current_image = `${process.env.VUE_APP_ORDER_URL}/` + this.selected_smgs.image_path
+    },
+    async getCode(input) {
+      console.log(input)
+      // codes = await OrderService({
+      //   url: `/code/application/list/?number=${input}&limit=${7}`,
+      //   method: 'get',
+      // })
     },
     async addEditSmgsRow() {
       let headers = new Headers();
       headers.append("Content-Type", `application/json`);
-      this.selected_smgs.forwarder_name = this.forwarder.label
-      this.selected_smgs.forwarder_id = this.forwarder.value
-      await axios.put(`${process.env.VUE_APP_IMAGE_URL}/smgs/${this.selected_smgs.id}/`,
+      this.selected_smgs.forwarder_id = this.forwarder.selected.id
+      this.selected_smgs.code_id = this.code.selected.id
+      this.selected_smgs.departure_station_id = this.departure.selected.id
+      this.selected_smgs.destination_station_id = this.destination.selected.id
+      this.selected_smgs.wagon_id = this.wagon.selected.id
+      this.selected_smgs.container_id = this.container.selected.id
+      this.selected_smgs.consignee_id = this.consignee.selected.id
+      this.selected_smgs.shipper_id = this.shipper.selected.id
+      await axios.put(`${process.env.VUE_APP_ORDER_URL}/smgs/update/${this.selected_smgs.id}/`,
           this.selected_smgs,
           {headers: headers})
           .then((res) => {
@@ -310,19 +560,69 @@ export default {
             alert(err)
           })
       this.isCreate = true
-      this.current_image = `${process.env.VUE_APP_IMAGE_URL}/` + this.selected_smgs.image_path
+      this.current_image = `${process.env.VUE_APP_ORDER_URL}/` + this.selected_smgs.image_path
     },
+
     async getDocument() {
-      await fetch(`${process.env.VUE_APP_IMAGE_URL}/document/`, {method: 'GET'})
+      await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/document/`, {method: 'GET'})
         .then((response) => response.json())
         .then((res) => {
           this.documents = res.results
         })
+    },
+
+    async handleError(err) {
+      console.log(err)
+    },
+
+    async getStationOptions(query, option_type) {
+      if (query.length <= 1) return;
+      const options = (await this.coreApi.getCoreList('stations', query, 4)).results
+      if (option_type === 'departure') {
+        this.departure.selected = null
+        this.departure.options = options
+      } else if (option_type === 'destination') {
+        this.destination.selected = null
+        this.destination.options = options
+      }
+    },
+    async getWagonOrContainerOptions(query, option_type) {
+      if (query.length <= 1) return;
+      const options = (await this.coreApi.getCoreList(option_type, query, 4)).results
+      if (option_type === 'container') {
+        this.container.selected = null
+        this.container.options = options
+      } else if (option_type === 'wagon') {
+        this.wagon.selected = null
+        this.wagon.options = options
+      }
+    },
+    async getThirdPartyOptions(query, option_type) {
+      if (query.length <= 1) return;
+
+      const options = (await this.coreApi.getCoreList(option_type, query, 4)).results
+      if (option_type === 'consignees') {
+        this.consignee.selected = null
+        this.consignee.options = options
+      } else if (option_type === 'shippers') {
+        this.shipper.selected = null
+        this.shipper.options = options
+      }
+    },
+    async onCodeOptionSelect(selected) {
+      let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/extractor/${selected.id}/`)
+      let result = await res.json()
+        this.departure.selected = result.departure ? result.departure : null
+        this.destination.selected = result.destination ? result.destination : null
+    },
+    itemProjectionFunction(item) {
+      console.log(item)
+      return item
+    },  
+    async onOptionSelect(event, option_type) {
+      console.log(event)
+      console.log(option_type)
     }
-  },
-  async mounted() {
-    await this.getDocument()
-    await this.getCounterpartyList()
   },
 }
 </script>
