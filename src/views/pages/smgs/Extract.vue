@@ -495,10 +495,10 @@ export default {
     },
     async getCodeOptions(query) {
       if (query.length < 2) {return}
-      let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/extractor/list/?forwarder_id=${this.forwarder.selected.id}&number=${query}`).results
+      let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/code/extractor/list/?forwarder_id=${this.forwarder.selected.id}&number=${query}`)
       let result = await res.json()
       this.code.selected = null
-      this.code.options = result
+      this.code.options = result.results
     },
     async confirm() {
 
