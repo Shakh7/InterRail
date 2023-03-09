@@ -1,4 +1,4 @@
-FROM node:16.0.0 as builder
+FROM node:14.0.0 as builder
 
 RUN apt update && apt-get install -y yarn
 
