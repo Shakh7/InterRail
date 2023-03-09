@@ -160,7 +160,7 @@ export default {
                     <input class="form-check-input" type="checkbox">
                   </td>
                   <td class="country">
-                    <router-link :to="{name: 'client_profile', params: {id: tr.id}}">
+                    <router-link :to="{name: 'customer_profile', params: {id: tr.id}}">
                       <span>{{ tr.full_name }}</span>
                     </router-link>
                   </td>

@@ -213,7 +213,7 @@ export default {
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link menu-link" :to="{name: 'clients_list'}">
+            <router-link class="nav-link menu-link" :to="{name: 'customers_list'}">
               <i class="ri-home-line ri-user-3-line"></i>
               <span data-key="t-users">{{ $t("t-clients") }}</span>
             </router-link>

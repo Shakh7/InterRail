@@ -89,11 +89,11 @@ export default {
   computed: {
     getHeaders() {
       return this.headers.filter(header => (header.visible === undefined || header.visible === true)).map(i => {
-            return {
-              ...i,
-              searchText: '',
-            }
-          })
+        return {
+          ...i,
+          searchText: '',
+        }
+      })
     },
     pagination: {
       get() {
@@ -156,13 +156,17 @@ export default {
 
     },
     async searchChange(query) {
-      if (query.toString().length === 0) {
-        await this.getData();
-      } else if (query.toString().length >= 1) {
-        this.table.current_page = 1
-        setTimeout(async () => {
+      if (this.url === '') {
+        alert('Please set the url prop to perform search action.')
+      } else {
+        if (query.toString().length === 0) {
           await this.getData();
-        }, 250);
+        } else if (query.toString().length >= 1) {
+          this.table.current_page = 1
+          setTimeout(async () => {
+            await this.getData();
+          }, 250);
+        }
       }
     },
 
@@ -206,7 +210,9 @@ export default {
       this.table.current_page = 1
       this.table.per_page = 10
     }
-    await this.getData()
+    if (this.url !== '') {
+      await this.getData()
+    }
   },
   watch: {
     getUpdate() {
@@ -306,7 +312,8 @@ export default {
                           @change="searchChange"
                       ></flat-pickr>
                     </div>
-                    <select class="form-select form-select-sm" v-model="th.searchText" @change="searchChange(th.searchText)"
+                    <select class="form-select form-select-sm" v-model="th.searchText"
+                            @change="searchChange(th.searchText)"
                             v-else-if="th.searchType === 'select'">
                       <option v-for="option in th.searchOptions" :key="option.value" :value="option.value">
                         {{ option.label }}

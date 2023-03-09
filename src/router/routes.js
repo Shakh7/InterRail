@@ -92,7 +92,11 @@ export default [
                 name: 'managers_list',
                 component: () => import("../views/pages/users/ManagersList.vue"),
             },
-            {path: 'clients/', name: 'clients_list', component: () => import("../views/pages/users/ClientsList.vue"),},
+            {
+                path: 'customers/',
+                name: 'customers_list',
+                component: () => import("../views/pages/users/customer/list.vue"),
+            },
             {
                 path: 'users/:id',
                 name: 'user_profile',
@@ -106,11 +110,11 @@ export default [
                 component: () => import("../views/pages/profile/setting.vue"),
             },
             {
-                path: 'clients/:id',
-                name: 'client_profile',
+                path: 'customers/:company_name',
+                name: 'customer_profile',
                 hide: true,
-                component: () => import("../views/pages/users/client/index.vue"),
-            }
+                component: () => import("../views/pages/users/customer/simple.vue"),
+            },
         ],
     },
 
@@ -238,7 +242,11 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'applications_list', component: () => import("../views/pages/applications/index.vue"),},
-            {path: 'statistics/', name: 'applications_statistics', component: () => import("../views/pages/applications/statistics.vue"),},
+            {
+                path: 'statistics/',
+                name: 'applications_statistics',
+                component: () => import("../views/pages/applications/statistics.vue"),
+            },
             {
                 path: 'create/',
                 name: 'application_create',
@@ -259,7 +267,11 @@ export default [
         component: () => import("../layouts/layout.vue"),
         children: [
             {path: '', name: 'codes_list', component: () => import("../views/pages/codes/index.vue"),},
-            {path: 'statistics/', name: 'codes_statistics', component: () => import("../views/pages/codes/statistics.vue"),},
+            {
+                path: 'statistics/',
+                name: 'codes_statistics',
+                component: () => import("../views/pages/codes/statistics.vue"),
+            },
             {path: 'update/:id/', name: 'code_update', component: () => import("../views/pages/codes/update.vue"),},
         ],
     },
