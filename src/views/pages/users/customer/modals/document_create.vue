@@ -52,7 +52,9 @@
           </div>
           <div class="text-end">
             <button v-if="!isFormValid" type="submit" class="btn btn-success" disabled>Save document</button>
-            <button v-if="isFormValid" type="submit" class="btn btn-success">Save document</button>
+            <button v-if="isFormValid" :type="is_creating ? 'button' : 'submit'" class="btn btn-success">
+              {{ is_creating ? 'Creating' : 'Save document' }}
+            </button>
           </div>
         </form>
       </div>
@@ -79,7 +81,8 @@ export default {
     return {
       name: '',
       comment: '',
-      file: null
+      file: null,
+      is_creating: false
     }
   },
   computed: {
@@ -89,23 +92,24 @@ export default {
   },
   methods: {
     async createDoc() {
+      this.is_creating = true
       let response = await createDocument({
         name: this.name,
         comment: this.comment,
         contract: this.contract_id,
         file: this.file
       })
+      this.is_creating = false
       if (response.ok) {
         document.querySelector('#doc_create_modal .modal-header .btn-close').click()
+        this.$emit('update')
         await Swal.fire({
           icon: 'success',
           title: 'Document created successfully',
           showConfirmButton: false,
           timer: 2000
         })
-        this.$emit('update')
       } else {
-
         await Swal.fire({
           icon: 'error',
           title: 'Oops...',

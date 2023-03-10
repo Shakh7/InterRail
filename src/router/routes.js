@@ -113,7 +113,13 @@ export default [
                 path: 'customers/:company_name',
                 name: 'customer_profile',
                 hide: true,
-                component: () => import("../views/pages/users/customer/simple.vue"),
+                component: () => import("../views/pages/users/customer/profile.vue"),
+            },
+            {
+                path: 'customers/:company_name/settings',
+                name: 'customer_profile_settings',
+                hide: true,
+                component: () => import("../views/pages/users/customer/settings.vue"),
             },
         ],
     },
@@ -285,6 +291,8 @@ export default [
         redirect: {name: "products_list"},
         children: [
             {path: 'products/', name: 'products_list', component: () => import("../views/pages/products/index.vue"),},
+            {path: 'consignees/', name: 'consignees_list', component: () => import("../views/pages/general/consignees/index.vue"),},
+            {path: 'shippers/', name: 'shippers_list', component: () => import("../views/pages/general/shippers/index.vue"),},
             {
                 path: 'stations/',
                 name: 'stations_list',

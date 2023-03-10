@@ -68,7 +68,7 @@
               </b-button>
 
               <!-- Dropdown Menu Item Color -->
-              <div class="btn-group">
+              <div class="btn-group ms-3">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">Edit Contract
                 </button>
@@ -88,7 +88,7 @@
                         data-bs-target="#act_create_modal"
                         variant="success">Add act
               </b-button>
-              <div class="btn-group">
+              <div class="btn-group ms-3">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">Edit Contract
                 </button>
@@ -368,6 +368,7 @@ export default {
           .catch(() => alert('An error in downloading the file sorry'));
     },
     onContractDeleted() {
+      this.current_contract = null
       this.$emit('onContractDeleted')
     },
     onContractCreated() {
@@ -385,7 +386,7 @@ export default {
       if (newVal === null) return
       this.getDocumentsByContract(newVal)
       this.getActsByContract(newVal)
-    }
+    },
   }
 }
 </script>

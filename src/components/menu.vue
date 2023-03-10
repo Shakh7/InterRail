@@ -361,6 +361,16 @@ export default {
                   Counterparties
                 </router-link>
               </li>
+               <li class="nav-item">
+                <router-link :to="{ name: 'consignees_list'}" class="nav-link" data-key="t-task-details">
+                  Consignees
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{ name: 'shippers_list'}" class="nav-link" data-key="t-task-details">
+                  Shippers
+                </router-link>
+              </li>
             </ul>
           </div>
         </li>

@@ -117,13 +117,13 @@ export default {
       })
       if (response) {
         document.querySelector('#act_edit_modal .modal-header .btn-close').click()
+        this.$emit('update')
         await Swal.fire({
           icon: 'success',
           title: 'Act updated successfully',
           showConfirmButton: false,
           timer: 2000
         })
-        this.$emit('update')
       } else {
         await Swal.fire({
           icon: 'error',

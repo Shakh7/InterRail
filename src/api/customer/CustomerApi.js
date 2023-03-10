@@ -10,8 +10,44 @@ function validateResponse(response) {
 }
 
 export async function getCompanyByName(companyName) {
-    let response = await axios.get(url + '/companies/' + companyName + '/')
-    return validateResponse(response)
+
+    let response = {
+        ok: true,
+        data: null
+    };
+
+    try {
+        let res = await axios.get(url + '/companies/' + companyName + '/')
+        response.data = res.data
+    } catch (error) {
+        response.ok = false
+        response.data = error.response.data
+    }
+    return response
+}
+
+export async function updateCompany(company) {
+
+    const req_url = url + '/companies/' + company.slug + '/';
+    const formData = new FormData();
+
+    formData.append('name', company.name);
+    formData.append('slug', company.slug);
+    formData.append('email', company.email);
+    formData.append('phone', company.phone);
+    formData.append('address', company.address);
+
+    let response = null;
+
+    await axios.put(req_url, formData)
+        .then(res => {
+            response = validateResponse(res)
+        })
+        .catch(() => {
+            return response
+        })
+
+    return response
 }
 
 export async function getContractsByCompanyId(companyId) {
