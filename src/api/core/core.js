@@ -48,10 +48,10 @@ class CoreApi {
         return data
     }
     // TODO: get counter party can be merged
-    async getCounterpartiesForCode(limit, offset) {
+    async getCounterpartiesForCode(name, limit, offset) {
         let data = []
         try {
-            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?is_used_for_code=true&limit=${limit}&offset=${offset}`)
+            let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/counterparty/counterparties/?is_used_for_code=true&search=${name}&limit=${limit}&offset=${offset}`)
             data = await response.json()
         } catch (error) {
             console.log(error)

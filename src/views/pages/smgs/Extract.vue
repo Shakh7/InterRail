@@ -1,8 +1,44 @@
 <template>
+  <!-- Grids in modals -->
+    <b-modal v-model="modalShow" hide-footer title="Import smgses from XLSX" class="v-modal-custom" centered>
+      <form action="/" method="POST" @submit.prevent="submit">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Forwarder</label>
+              <!-- <v-select 
+              v-model="forwarder.selected"
+              placeholder="Search forwarder"
+              :options="forwarder.options"
+              @search="getCounterpartyOptions($event)"
+              label="name">
+            </v-select> -->
+            <v-select :options="forwarder.options" label="name" v-model="forwarder.selected" @search="getCounterpartyOptions($event)" >
+              <template #search="{attributes, events}">
+                <input
+                  class="vs__search"
+                  :required="!forwarder.selected"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+            </v-select>
+            </div>
+            <div class="mb-3">
+              <label for="xlsxfile" class="form-label">XLSX</label>
+              <input id="xlsxfile" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            </div>
+          </div>
+          <div class="modal-footer hstack gap-2 justify-content-end">
+              <b-button type="button" variant="light" @click="modalShow = false">
+                  Close</b-button>
+              <b-button type="submit" variant="success">Submit</b-button>
+          </div>
+        </form>
+    </b-modal>
   <PageHeader title="SMGS" :items="items"/>
   <b-card v-if="!selected_doc">
     <b-card-body class="p-1">
-      <div class="text-center" v-if="isReadingDocs">
+      <div class="text-center" v-if="isReadingDoc">
         <b-spinner variant="info" class="mb-2"></b-spinner>
         <h5 class="mb-0">We are processing your documents, please wait !</h5>
       </div>
@@ -27,7 +63,7 @@
         <td>{{ getFormatedDate(row.modified) }}</td>
         <td>
           <div class="hstack gap-3 flex-wrap">
-            <b-link @click="onEditDoc(row)"
+            <b-link @click="onEditDoc(row.id)"
                     class="link-success fs-15"><i
                 class="ri-edit-2-line"></i></b-link>
             <b-link @click="deleteDocRow(row)"
@@ -40,17 +76,15 @@
     </table>
   </div>
   <div class="container-fluid" v-else>
-    <div class="card" id="contactList">
-      <div class="card-header p-2 mb-4">
-        <div class="row gy-3">
-          <div class="col-md-4">
-          </div>
+    <div class="card">
+      <div class="card-header p-2">
+        <div class="row">
           <div class="col-md-auto ms-auto">
-            <div class="d-grid gap-2">
-              <b-button variant="soft-info" :disabled="visible_rows.length != selected_doc.smgses.length"
-                        @click="confirm">Confirm
-              </b-button>
-            </div>
+            <b-button class="p-2 m-1" variant="success" @click="downloadXLSX">Download XLSX</b-button>
+            <b-button class="p-2 m-1" variant="primary" @click="modalShow = !modalShow">Upload XLSX</b-button>
+            <b-button variant="soft-info" :disabled="visible_rows.length != selected_doc.smgses.length"
+                      @click="confirm">Confirm
+            </b-button>
           </div>
         </div>
       </div>
@@ -66,43 +100,25 @@
           </div>
           <div class="col-xxl-6 ps-3">
             <div class=" mb-4">
-              <h5>Selected Page Number: {{ selected_smgs.index + 1 }}</h5>
+              <h5>Selected Page Number: {{ selected_smgs.index + 1 + '/' + selected_doc.smgses.length }}</h5>
             </div>
             <form @submit.prevent="addEditSmgsRow">
               <div class="modal-body">
                 <div class="row">
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
-                          v-model="forwarder.selected"
-                          :searchable="true"
-                          :closeOnSelect="true"
-                          :options="forwarder.options"
-                          placeholder="Forwarder"
-                          :object="true"
-                          required
-                      /> -->
                       <v-select 
                       required
                       v-model="forwarder.selected"
                       placeholder="Select forwarder"
                       :options="forwarder.options"
+                      @search="getCounterpartyOptions($event)"
                       label="name">
                     </v-select>
                     </div>
                   </div>
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
-                          v-model="code.selected"
-                          :searchable="true"
-                          :closeOnSelect="true"
-                          :options="code.options"
-                          placeholder="Search Code"
-                          :object="true"
-                          @search-change="getCodeOptions($event)"
-                          @input="onCodeOptionSelect($event)"
-                          required -->
                         <v-select 
                           required
                           v-model="code.selected"
@@ -134,17 +150,32 @@
                 <div class="row">
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
+                      <v-select 
                         required
-                        v-model="departure.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="departure.options"
-                        placeholder="Departure Station"
-                        @search-change="getStationOptions($event, 'departure')"
-                        :object="true"
-                        @input="onOptionSelect($event, 'departure')"
-                      /> -->
+                        v-model="wagon.selected"
+                        placeholder="Search wagon"
+                        :options="wagon.options"
+                        @search="getWagonOrContainerOptions($event, 'wagon')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
+                      <v-select 
+                        required
+                        v-model="container.selected"
+                        placeholder="Search container"
+                        :options="container.options"
+                        @search="getWagonOrContainerOptions($event, 'container')"
+                        label="name">
+                      </v-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xxl-6 ps-0">
+                    <div class="mb-3">
                       <v-select 
                         required
                         v-model="departure.selected"
@@ -156,19 +187,8 @@
                       </v-select>
                     </div>
                   </div>
-                  
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
-                        required
-                        v-model="destination.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="destination.options"
-                        placeholder="Destination"
-                        @search-change="getStationOptions($event, 'destination')"
-                        :object="true"
-                        @input="onOptionSelect($event, 'departure')" /> -->
                       <v-select 
                         required
                         v-model="destination.selected"
@@ -184,62 +204,6 @@
                 <div class="row">
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
-                        required
-                        v-model="wagon.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="wagon.options"
-                        placeholder="Wagon"
-                        @search-change="getWagonOrContainerOptions($event, 'wagon')"
-                        :object="true"
-                      /> -->
-                      <v-select 
-                        required
-                        v-model="wagon.selected"
-                        placeholder="Search wagon"
-                        :options="wagon.options"
-                        @search="getWagonOrContainerOptions($event, 'wagon')"
-                        label="name">
-                      </v-select>
-                    </div>
-                  </div>
-                  <div class="col-xxl-6 ps-0">
-                    <div class="mb-3">
-                      <!-- <Multiselect
-                        required
-                        v-model="container.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="container.options"
-                        placeholder="Container"
-                        @search-change="getWagonOrContainerOptions($event, 'container')"
-                        :object="true"
-                      /> -->
-                      <v-select 
-                        required
-                        v-model="container.selected"
-                        placeholder="Search container"
-                        :options="container.options"
-                        @search="getWagonOrContainerOptions($event, 'container')"
-                        label="name">
-                      </v-select>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-xxl-6 ps-0">
-                    <div class="mb-3">
-                      <!-- <Multiselect
-                        required
-                        v-model="consignee.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="consignee.options"
-                        placeholder="Consignee"
-                        @search-change="getThirdPartyOptions($event, 'consignees')"
-                        :object="true"
-                      /> -->
                       <v-select 
                         required
                         v-model="consignee.selected"
@@ -252,16 +216,6 @@
                   </div>
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
-                      <!-- <Multiselect
-                        required
-                        v-model="shipper.selected"
-                        :searchable="true"
-                        :hideSelected="true"
-                        :options="shipper.options"
-                        placeholder="Shipper"
-                        @search-change="getThirdPartyOptions($event, 'shippers')"
-                        :object="true"
-                      /> -->
                       <v-select 
                         required
                         v-model="shipper.selected"
@@ -303,13 +257,15 @@
               </div>
             </form>
             <div class="table-responsive table-card">
-              <table class="table text-center">
+              <table class="table text-center table-bordered">
                 <thead class="table-light">
                 <tr>
                   <th scope="col">№</th>
-                  <th scope="col">SMGS Number</th>
-                  <th scope="col">Code</th>
+                  <th scope="col">SMGS №</th>
+                  <th scope="col">Code №</th>
                   <th scope="col">Date</th>
+                  <th scope="col">Wagon</th>
+                  <th scope="col">Container</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -324,6 +280,8 @@
                   </td>
                   <td>{{ row.code ? row.code.number: '' }}</td>
                   <td>{{ row.date }}</td>
+                  <td>{{ row.wagon ? row.wagon.name: '' }}</td>
+                  <td>{{ row.container ? row.container.name: '' }}</td>
                   <!-- <td>{{ row.forwarder ? row.forwarder.name: '' }}</td>g -->
                 </tr>
                 </tbody>
@@ -342,8 +300,6 @@ import Swal from "sweetalert2";
 import PageHeader from "../../../components/page-header.vue";
 import DropZone from "@/components/widgets/dropZone";
 import axios from 'axios'
-// import "@vueform/multiselect/themes/default.css";
-// import Multiselect from "@vueform/multiselect";
 import OrderService from "@/api";
 import CoreApi from "@/api/core/core";
 import vSelect from 'vue-select'
@@ -394,7 +350,11 @@ export default {
       isCreate: true,
       selected_doc: null,
       imagePath: '',
-      isReadingDocs: false,
+      isReadingDoc: false,
+      modalShow: false, 
+      rules: {
+      select: [(v) =>  v.length>0 || "Item is required in select 2"],
+      },
       items: [
         {
           text: "Home",
@@ -410,7 +370,6 @@ export default {
   components: {
     DropZone,
     flatPickr,
-    // Multiselect,
     PageHeader,
     vSelect
   },
@@ -419,7 +378,6 @@ export default {
   },
   mounted() {
     this.getDocument()
-    this.getCounterpartyOptions()
   },
   methods: {
     getFormatedDate(timestamp) {
@@ -427,7 +385,7 @@ export default {
       return date.toLocaleString()
     },
     async selectedFile() {
-      this.isReadingDocs = true
+      this.isReadingDoc = true
       const Toast = Swal.mixin({
         toast: true,
         position: 'bottom',
@@ -460,7 +418,23 @@ export default {
           title: err
         })
       })
-      this.isReadingDocs = false
+      this.isReadingDoc = false
+    },
+    async submit() {
+      const formData = new FormData();
+      formData.append('file', document.getElementById('xlsxfile').files[0]);
+      await OrderService({
+        url: `/smgs/xlsx/process/${this.forwarder.selected.id}/`,
+        method: 'post',
+        data: formData,
+        headers: {"Content-Type": "multipart/form-data"},
+      }).then(() => {
+        Swal.fire("Smgses Updated!", "", "success");
+      }).catch((err) => {
+        Swal.fire("Sorry!", `${err}`, "error");
+      })
+      await this.onEditDoc(this.selected_doc.id)
+      this.modalShow = !this.modalShow
     },
     async deleteDocRow(row) {
       Swal.fire({
@@ -488,8 +462,9 @@ export default {
           }
       });
     },
-    async getCounterpartyOptions() {
-      let forwarders = (await this.coreApi.getCounterpartiesForCode(7, 0)).results
+    async getCounterpartyOptions(query) {
+      if (query.length < 1) {return}
+      let forwarders = (await this.coreApi.getCounterpartiesForCode(query,7, 0)).results
         this.forwarder.selected = null
         this.forwarder.options = forwarders
     },
@@ -500,16 +475,19 @@ export default {
       this.code.selected = null
       this.code.options = result.results
     },
+    async downloadXLSX() {
+      window.open(`${process.env.VUE_APP_ORDER_URL}/smgs/xlsx/download/${this.selected_doc.id}/`, '_blank');
+    },
     async confirm() {
 
     },
-    async onEditDoc(row) {
-      await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/document/by/${row.id}/`)
+    async onEditDoc(id) {
+      await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/document/by/${id}/`)
           .then((response) => response.json())
           .then(res => {
             this.selected_doc = res
             this.visible_rows = this.selected_doc.smgses.filter(el => el.number);
-            this.selected_smgs = this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
+            this.selected_smgs =  this.visible_rows.length == this.selected_doc.smgses.length ? this.selected_doc.smgses[this.visible_rows.length-1]:this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
             this.current_image = `${process.env.VUE_APP_ORDER_URL}/` + this.selected_smgs.image_path
           })
     },
@@ -554,7 +532,7 @@ export default {
               var foundIndex = this.visible_rows.findIndex(x => x.index == res.data.index);
               this.visible_rows[foundIndex] = res.data
             }
-            this.selected_smgs = this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
+            this.selected_smgs = this.visible_rows.length == this.selected_doc.smgses.length ? this.selected_doc.smgses[this.visible_rows.length-1]:this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
           })
           .catch(err => {
             alert(err)
