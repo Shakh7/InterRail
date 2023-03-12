@@ -30,10 +30,10 @@ export default {
       let User = new UserApi(localStorage.getItem("jwt"))
       let new_user = await User.createUser(this.user)
 
-      if (new_user.ok === true) {
+      if (new_user.ok) {
         this.$emit('onUserCreated', true)
         this.closeModal('edtclosemodal')
-        await Swal.fire("Done!", "New users has been created.", "success");
+        await Swal.fire("Done!", "New user has been created.", "success");
       } else {
         7
         await Swal.fire(`Error - ${new_user.status}`, "An Error Has Occured !", "error");
