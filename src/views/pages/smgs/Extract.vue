@@ -1,17 +1,10 @@
 <template>
   <!-- Grids in modals -->
-    <b-modal v-model="modalShow" hide-footer title="Import smgses from XLSX" class="v-modal-custom" centered>
+    <b-modal v-model="showModal" hide-footer title="Import smgses from XLSX" class="v-modal-custom" centered>
       <form action="/" method="POST" @submit.prevent="submit">
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">Forwarder</label>
-              <!-- <v-select 
-              v-model="forwarder.selected"
-              placeholder="Search forwarder"
-              :options="forwarder.options"
-              @search="getCounterpartyOptions($event)"
-              label="name">
-            </v-select> -->
             <v-select :options="forwarder.options" label="name" v-model="forwarder.selected" @search="getCounterpartyOptions($event)" >
               <template #search="{attributes, events}">
                 <input
@@ -29,7 +22,7 @@
             </div>
           </div>
           <div class="modal-footer hstack gap-2 justify-content-end">
-              <b-button type="button" variant="light" @click="modalShow = false">
+              <b-button type="button" variant="light" @click="showModal = false">
                   Close</b-button>
               <b-button type="submit" variant="success">Submit</b-button>
           </div>
@@ -81,7 +74,7 @@
         <div class="row">
           <div class="col-md-auto ms-auto">
             <b-button class="p-2 m-1" variant="success" @click="downloadXLSX">Download XLSX</b-button>
-            <b-button class="p-2 m-1" variant="primary" @click="modalShow = !modalShow">Upload XLSX</b-button>
+            <b-button class="p-2 m-1" variant="primary" @click="showModal = !showModal">Upload XLSX</b-button>
             <b-button variant="soft-info" :disabled="visible_rows.length != selected_doc.smgses.length"
                       @click="confirm">Confirm
             </b-button>
@@ -99,9 +92,12 @@
             </div>
           </div>
           <div class="col-xxl-6 ps-3">
-            <div class=" mb-4">
-              <h5>Selected Page Number: {{ selected_smgs.index + 1 + '/' + selected_doc.smgses.length }}</h5>
-            </div>
+            <h5>Selected Page Number: {{ selected_smgs.index + 1 + '/' + selected_doc.smgses.length }}</h5>
+            <!-- Primary Alert -->
+            <b-alert :show="showAlert" dismissible variant="success" class="alert-border-left fade show" role="alert">
+              <i class="ri-user-smile-line me-1 align-large"></i>
+              Code: <b>{{ this.scanned.code ? this.scanned.code: ""  }}</b> Smgs: <b>{{ this.scanned.smgs_number ? this.scanned.smgs_number: ""  }}</b>  Container: <b>{{ this.scanned.container ? this.scanned.container: ""  }}</b>
+            </b-alert>
             <form @submit.prevent="addEditSmgsRow">
               <div class="modal-body">
                 <div class="row">
@@ -113,6 +109,7 @@
                       placeholder="Select forwarder"
                       :options="forwarder.options"
                       @search="getCounterpartyOptions($event)"
+                      @option:selected="selectForwarder($event)"
                       label="name">
                     </v-select>
                     </div>
@@ -341,20 +338,17 @@ export default {
         selected: null,
         options: []
       },
-      images: [],
+      showAlert: false,
       current_image: '',
       visible_rows: [],
       selected_smgs: {},
-      smgsMap: {},
       documents: [],
       isCreate: true,
       selected_doc: null,
       imagePath: '',
       isReadingDoc: false,
-      modalShow: false, 
-      rules: {
-      select: [(v) =>  v.length>0 || "Item is required in select 2"],
-      },
+      showModal: false,
+      scanned: {},
       items: [
         {
           text: "Home",
@@ -434,7 +428,7 @@ export default {
         Swal.fire("Sorry!", `${err}`, "error");
       })
       await this.onEditDoc(this.selected_doc.id)
-      this.modalShow = !this.modalShow
+      this.showModal = !this.showModal
     },
     async deleteDocRow(row) {
       Swal.fire({
@@ -461,6 +455,25 @@ export default {
             })
           }
       });
+    },
+    async selectForwarder(query) {
+      console.log(query)
+      let image_path = this.selected_smgs.image_path.split("/").slice(2).join("/");
+      let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/image/${image_path}/${query.id}/`)
+      let result = await res.json()
+      if (result.scanned.code || result.scanned.smgs_number || result.scanned.container) {
+        this.showAlert = true
+        this.scanned = result.scanned
+        // setTimeout(() => { this.showAlert = false }, 2000);
+      }
+      this.container.selected = result.populated.container ? result.populated.container : null
+      // this.selected_smgs.number = result
+      if (result.populated.code) {
+        const code = result.populated.code
+        this.code.selected = {id: code.id, number: code.number}
+        this.departure.selected = code.departure ? code.departure : null
+        this.destination.selected = code.destination ? code.destination : null
+      }
     },
     async getCounterpartyOptions(query) {
       if (query.length < 1) {return}
