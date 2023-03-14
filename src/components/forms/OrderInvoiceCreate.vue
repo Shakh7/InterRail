@@ -3,8 +3,8 @@ import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import OrderApi from "../../api/order/OrderApi";
 import Swal from "sweetalert2";
+import axios from "axios"
 
 export default {
   props: {
@@ -16,15 +16,17 @@ export default {
   data() {
     return {
       config: {
-        wrap: true, // set wrap to true only when using 'input-group'
+        wrap: true,
         altFormat: "M j, Y",
         altInput: true,
       },
 
-      date: null,
+      date: new Date().toJSON().slice(0, 10),
 
       rows: [],
       orderData: null,
+
+      detailedInfo: false,
 
       sscs: 'retybi'
     };
@@ -35,89 +37,67 @@ export default {
   },
   methods: {
     addRow() {
-      this.rows.push({
-        forwarder: null,
+      this.orderData.freight_charges.push({
+        is_new: true,
         quantity: 5,
-        unit: 1,
-        amount: 1,
-        usd: 0
+        container_type: 1,
+        agreed_rate: 1,
+        total: 0
       })
     },
     removeRow(row, index) {
-      if (this.rows.filter(i => !i.deleted).length === 1) {
+      if (this.orderData.freight_charges.filter(i => !i.deleted).length === 1) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'You cannot delete the last row!',
         })
       } else {
-        let r = this.rows[index]
+        let r = this.orderData.freight_charges[index]
         r.deleted = true
       }
     },
     async getOrder() {
-      let api = new OrderApi();
-      let order = await api.getOrderByNumber(this.orderNumber);
-      this.orderData = order;
-      this.date = this.order.date
-
-
-      this.orderData[0]['container_types'].forEach(c => {
-        c.container_preliminary_costs.forEach(f => {
-          this.rows.push({
-            forwarder: f.counterparty.counterparty.id,
-            quantity: c.quantity,
-            unit: c.container_type,
-            amount: c.agreed_rate,
-            deleted: false,
-            deleted_and_hidden: false,
-          })
-        })
-      })
+      let order = await axios.get('/container_order/info_for_invoice/' + this.orderNumber + '/');
+      this.orderData = order.data
+      this.orderData.freight_charges.forEach(i => {
+        i.forwarder = 'Add Charges'
+      });
     },
-
     restoreRow(row, index) {
-      let r = this.rows[index]
+      let r = this.orderData.freight_charges[index]
       r.deleted = false
     },
   },
+  // watch: {
+  //   detailedInfo(newVal) {
+  //     if (!newVal) return
+  //     setTimeout(() => {
+  //       window.scroll({
+  //         top: document.body.scrollHeight * 0.5,
+  //         behavior: 'smooth'
+  //       });
+  //     }, 100)
+  //   }
+  // },
   computed: {
-    totalUSD() {
-      return this.rows.filter(i => !i.deleted).reduce((total, row) => (parseFloat(total) + (parseFloat(row.amount) * parseFloat(row.quantity))).toFixed(2).toLocaleString('en-US'), 0);
-    },
-    totalAmount() {
-      return this.rows.filter(i => !i.deleted).reduce((total, row) => (parseFloat(total) + parseFloat(row.amount)).toFixed(2), 0);
-    },
-    totalQuantity() {
-      return this.rows.filter(i => !i.deleted).reduce((total, row) => total + row.quantity, 0);
-    },
-    order() {
-      return this.orderData[0]['order']
-    },
-    counterparties() {
-      return this.orderData[0]['order']['counterparties'].map(c => {
-        return {
-          value: c.counterparty.id,
-          label: c.counterparty.name
-        }
-      })
-    },
-    containers: {
+    freightCharges: {
       get() {
-        let containers = []
-        this.orderData[0]['container_types'].forEach(c => {
-          c['expanses'].filter(v => v.container !== null).forEach(e => {
-            containers.push({
-              container_type: c.container_type,
-              container: e.container.name,
-            })
-          })
-        })
-        return containers
+        return this.orderData.freight_charges
       }
     },
-    customer() {
-      return this.$store.state.users_list.filter(user => user.id === this.order.customer)[0];
+    totalQuantity() {
+      return this.orderData.freight_charges.filter(a => a.is_new !== true).map(i => i.quantity).reduce((a, b) => a + b, 0)
+    },
+    totalAmount() {
+      return this.orderData.freight_charges.map(i => i.agreed_rate).reduce((a, b) => a + b, 0)
+    },
+    total() {
+      let total = 0
+      this.orderData.freight_charges.forEach(i => {
+        total += i.agreed_rate * i.quantity
+      })
+      return total
     },
   },
   async mounted() {
@@ -135,14 +115,14 @@ export default {
 
           <div class="row justify-content-between">
             <div class="col-lg-4">
-              <h5 class="text-dark fw-semibold mb-1">InterRailServicesAG</h5>
+              <h5 class="text-dark fw-semibold mb-1">InterRail Services AG</h5>
               <h6>Postfach230</h6>
               <h6>Winkelriedstrasse19</h6>
               <h6>CH-9001St.Gallen/Switzerland</h6>
             </div>
             <div class="col-lg-5 text-end">
               <img alt="Responsive image" class="img-fluid"
-                     src="https://system.interrail.uz/img/interrail-logo.268299c8.png">
+                   src="https://system.interrail.uz/img/interrail-logo.268299c8.png">
               <div class="mt-4">
                 <div class="table-responsive">
                   <table class="table table-borderless table-sm table-nowrap align-middle mb-0">
@@ -166,8 +146,8 @@ export default {
         <div class="card-body p-4 py-3">
           <div class="row align-items-end justify-content-between">
             <div class="col-lg-5 col-sm-6">
-              <h6 class="text-dark fw-semibold mb-1">{{ customer['full_name'] }}</h6>
-              <h6>{{ customer['email'] }}</h6>
+              <h6 class="text-dark fw-semibold mb-1">Customer</h6>
+              <h6>Customer</h6>
               <h6>Customer</h6>
             </div>
             <div class="col-lg-3 col-sm-6">
@@ -190,7 +170,7 @@ export default {
                   <tr>
                     <th scope="row">SHIPPER:</th>
                     <td>
-                      <input :value="order.shipper" type="text" class="form-control bg-light border-0"
+                      <input :value="orderData.shipper" type="text" class="form-control bg-light border-0"
                              id="cart-subtotal"
                              placeholder="SHIPPER" readonly/>
                     </td>
@@ -198,7 +178,7 @@ export default {
                   <tr>
                     <th scope="row">CONSIGNEE:</th>
                     <td>
-                      <input :value="order.consignee" type="text" class="form-control bg-light border-0"
+                      <input :value="orderData.consignee" type="text" class="form-control bg-light border-0"
                              id="cart-subtotal"
                              placeholder="CONSIGNEE" readonly/>
                     </td>
@@ -218,9 +198,9 @@ export default {
                       <span class="pe-3">FROM:</span>
                     </th>
                     <td>
-                      <input :Value="order.departure_country" type="text" class="form-control bg-light border-0"
+                      <input :value="orderData.departure_country" type="text" class="form-control bg-light border-0"
                              id="cart-subtotal"
-                             placeholder="CONSIGNEE" readonly/>
+                             placeholder="Departure Country" readonly/>
                     </td>
                   </tr>
                   </tbody>
@@ -236,9 +216,9 @@ export default {
                       <span class="pe-3">TO:</span>
                     </th>
                     <td>
-                      <input :value="order.destination_country" type="text" class="form-control bg-light border-0"
+                      <input :value="orderData.destination_country" type="text" class="form-control bg-light border-0"
                              id="cart-subtotal"
-                             placeholder="CONSIGNEE" readonly/>
+                             placeholder="Destination Country" readonly/>
                     </td>
                   </tr>
                   </tbody>
@@ -248,27 +228,14 @@ export default {
           </div>
         </div>
 
-        <div class="card-body p-4 py-2 border-top border-top-dashed">
-          <div class="row align-items-end justify-content-between">
-            <div class="col-11 col-lg-9 lh-lg">
-              {{ containers.map(c => c.container).join(', ') }}
-            </div>
-            <div class="col-1 col-lg-3 lh-lg text-end fw-semibold">
-              <VTooltip>
-                  <span>{{ containers.map(c => c.container).length }}/
-                    {{ this.orderData[0].container_types.map(c => c.quantity).reduce((a, b) => a + b, 0) }}</span>
-                <template #popper>
-                  Showing <span class="fw-semibold">
-                  {{ containers.map(c => c.container).length }}</span> container out of
-                  <span class="fw-semibold">
-                    {{ this.orderData[0].container_types.map(c => c.quantity).reduce((a, b) => a + b, 0) }}</span>
-                </template>
-              </VTooltip>
-            </div>
-          </div>
+        <div class="border-top border-top-dashed px-4 py-2">
+          <p class="w-75 lh-lg mb-0" v-if="orderData.containers.filter(i=>i!==null).length > 0">
+            {{ orderData.containers.join(', ') }} </p>
+          <p class="w-75 lh-lg mb-0 text-danger" v-else>
+            Order has {{ orderData.containers.length }} container. However, the container names for your order have not been provided yet!</p>
         </div>
 
-        <div class="card-body p-4 pb-0 border-top border-top-dashed ">
+        <div class="card-body p-4 pb-0 border-top border-bottom border-top-dashed border-bottom-dashed">
           <div class="table-responsive">
             <table class="table table-borderless table-nowrap mb-0">
               <thead class="align-middle text-center">
@@ -283,12 +250,11 @@ export default {
               </tr>
               </thead>
               <tbody>
-
-              <tr class="text-center" v-for="(row, n) in rows.filter(r => r.deleted_and_hidden === false)"
-                  :key="row.forwarder" :id="n+1" :class="{'bg-soft-danger deleted-row' : row.deleted}">
+              <tr class="text-center" v-for="(row, n) in freightCharges"
+                  :key="n" :class="{'deleted-row bg-soft-danger' : row.deleted}">
                 <td class="text-start">
-                  <Multiselect class="form-control w-md" v-model="row.forwarder"
-                               :searchable="true" :options="counterparties"/>
+                  <Multiselect :options="['Freight Charges', 'Add Charges']"
+                               class="form-control w-md" v-model="row.forwarder" :searchable="true"/>
                 </td>
                 <td>
                   <div class="input-step">
@@ -299,21 +265,18 @@ export default {
                   </div>
                 </td>
                 <td class="text-end">
-                  <div>
-                    <input v-model="row.unit" type="text" class="form-control bg-light border-0"
-                           placeholder="Unit" readonly/>
-                  </div>
+                  <input v-model="row.container_type" type="text" class="form-control bg-light border-0"
+                         placeholder="Container Type" :readonly="!row.is_new===true"/>
                 </td>
                 <td class="text-end">
-                  <div>
-                    <input v-model="row.amount" type="number" class="form-control bg-light border-0"
-                           placeholder="$0.00"/>
-                  </div>
+                  <input v-model="row.agreed_rate" type="number" class="form-control bg-light border-0"
+                         placeholder="$0.00"/>
                 </td>
                 <td class="text-end">
                   <div>
                     <VTooltip>
-                      <input :value="'$'+ row.quantity * row.amount" type="text" class="form-control bg-light border-0"
+                      <input :value="'$'+ (row.agreed_rate * row.quantity).toLocaleString('en-US')" type="text"
+                             class="form-control bg-light border-0"
                              placeholder="$0.00" readonly/>
                       <template #popper>
                         <span>This field is read only</span>
@@ -335,7 +298,6 @@ export default {
 
                 </td>
               </tr>
-
               <tr class="border-top border-top-dashed">
                 <th>
                   <button class="btn btn-sm btn-soft-secondary" @click="addRow">
@@ -345,7 +307,7 @@ export default {
                 <td class="fw-semibold text-center">{{ totalQuantity }}</td>
                 <th colspan="1"></th>
                 <td class="fw-semibold text-center">${{ totalAmount }}</td>
-                <td class="fw-semibold text-center">${{ totalUSD }}</td>
+                <td class="fw-semibold text-center">${{ total.toLocaleString('en-US') }}</td>
                 <th colspan="1"></th>
               </tr>
               </tbody>
@@ -353,24 +315,97 @@ export default {
           </div>
         </div>
 
-        <div class="card-body p-4 border-top border-top-dashed ">
+        <div class="p-4 pb-0">
+          <div class="form-check my-0">
+            <input class="form-check-input" type="checkbox" id="detailedInfoCheckbox" v-model="detailedInfo">
+            <label class="form-check-label" for="detailedInfoCheckbox">
+              Include detailed information in the invoice
+            </label>
+          </div>
+        </div>
+
+
+        <div class="mt-3" v-if="detailedInfo">
+          <div class="table-responsive">
+            <table class="table table-nowrap">
+              <thead class="text-center">
+              <tr>
+                <th scope="col">Container</th>
+                <th scope="col">Type</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Date</th>
+                <th scope="col">Agreed Rate</th>
+              </tr>
+              </thead>
+              <tbody class="text-center">
+              <tr v-for="i in 6" :key="i">
+                <td scope="row">TGHU165695{{ i }}</td>
+                <td>40HC</td>
+                <td>1</td>
+                <td>10.03.2023</td>
+                <td><a class="link-success">$400</a></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
           <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-            <button type="button" class="btn btn-success">
-              <i class="ri-printer-line align-bottom me-1"></i> Save
+            <button type="button" class="btn btn-info" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                    aria-controls="offcanvasRight">
+              <i class="ri-printer-line align-bottom me-1"></i> Detailed
             </button>
-            <a href="javascript:void(0);" class="btn btn-primary"><i
+            <a href="javascript:void(0);" class="btn btn-success"><i
                 class="ri-download-2-line align-bottom me-1"></i> Download
-              Invoice</a>
-            <a href="javascript:void(0);" class="btn btn-danger"><i
-                class="ri-send-plane-fill align-bottom me-1"></i> Send
               Invoice</a>
           </div>
         </div>
+
       </div>
     </div>
     <!--end col-->
   </div>
   <!--end row-->
+
+
+  <!-- right offcanvas -->
+  <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">Detailed Invoice</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body pt-0">
+      <div class="h-100 d-flex flex-column text-center justify-content-between gy-3">
+        <div class="table-responsive">
+          <table class="table table-nowrap">
+            <thead class="text-center">
+            <tr>
+              <th scope="col">Container</th>
+              <th scope="col">Type</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Date</th>
+              <th scope="col">Agreed Rate</th>
+            </tr>
+            </thead>
+            <tbody class="text-center">
+            <tr v-for="i in 6" :key="i">
+              <td scope="row">TGHU165695{{ i }}</td>
+              <td>40HC</td>
+              <td>1</td>
+              <td>10.03.2023</td>
+              <td><a class="link-success">$400</a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="w-100">
+          <b-button variant="primary">Download Excel</b-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <style scoped>

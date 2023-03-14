@@ -6,6 +6,7 @@
       :confirmationPlaceholder="data.name"
       @onDelete="deleteConsignee">
   </DeleteConfirmation>
+
 </template>
 
 <script>

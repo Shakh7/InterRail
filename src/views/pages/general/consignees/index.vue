@@ -1,5 +1,6 @@
 <template>
   <PageHeader title="General" :items="items"/>
+
   <Table :headers="table.headers" :url="table.url" :perPage="20" :selectable="true" :getUpdate="table.getUpdate">
     <template #top-right>
       <b-button variant="success" data-bs-target="#consigneeCreateModal" data-bs-toggle="modal">

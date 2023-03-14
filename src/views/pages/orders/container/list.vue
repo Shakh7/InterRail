@@ -1,5 +1,5 @@
 <script>
-import CustomTable from '../../../../components/custom/table.vue'
+import CustomTable from '../../../../components/custom/table2.vue'
 import OrderApi from '@/api/orders/orders_api.js'
 import {ordersMehtods} from "@/state/helpers";
 import Swal from "sweetalert2";
@@ -93,7 +93,7 @@ export default {
       isLoading: false,
 
       table: {
-        url: `${process.env.VUE_APP_ORDER_URL}/container_order/list/`,
+        url: `/container_order/list/`,
       },
       widgets_url: `${process.env.VUE_APP_ORDER_URL}/container_order/statistic/`,
       pagination: {
@@ -243,7 +243,6 @@ export default {
       :selectable="true"
       :searchable="true"
       :url="table.url"
-      :isLoading="isLoading"
       :pagination="pagination"
       :getUpdate="getUpdate"
       :widgets="widgets"
@@ -255,9 +254,7 @@ export default {
         </button>
         <div class="dropdown-menu dropdownmenu-success">
           <router-link class="dropdown-item" :to="{name: 'create_container'}">Container</router-link>
-          <div class="dropdown-divider"></div>
           <router-link class="dropdown-item" :to="{name: 'create_wagon'}">Wagon</router-link>
-          <div class="dropdown-divider"></div>
           <router-link class="dropdown-item" :to="{name: 'create_empty_wagon'}">Empty wagon</router-link>
         </div>
       </div>
