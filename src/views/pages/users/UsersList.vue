@@ -7,7 +7,7 @@ import store from "../../../state/store";
 
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-import CreautUserModal from './modals/create_user.vue'
+import CreateUserModal from './modals/create_user.vue'
 import deleteUserButton from './components/delete_user_button.vue'
 import editUserButton from './components/edit_user_button.vue'
 import PageHeader from "../../../components/page-header.vue";
@@ -57,7 +57,7 @@ export default {
   components: {
     Multiselect,
     // lottie: Lottie,
-    CreautUserModal,
+    CreateUserModal,
     deleteUserButton,
     editUserButton,
     PageHeader
@@ -206,6 +206,6 @@ export default {
     </div>
   </div>
 
-  <CreautUserModal @onUserCreated="this.getUsersList"/>
+  <CreateUserModal @onUserCreated="this.getUsersList"/>
   <!--end row-->
 </template>
