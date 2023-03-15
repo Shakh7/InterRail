@@ -5,16 +5,16 @@ RUN apt update && apt-get install -y yarn
 RUN mkdir app
 
 WORKDIR app
-
 COPY . ./
 
 RUN yarn install
 RUN yarn build 
 
-# production environment
-FROM nginx:1.23
-COPY --from=build /app/dist /usr/share/nginx/html
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx/nginx.conf /etc/nginx/conf.d
-EXPOSE 80
+
+FROM nginx:stable-alpine as production-stage
+
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
 CMD ["nginx", "-g", "daemon off;"]
