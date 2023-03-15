@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const OrderService = axios.create({
   baseURL: process.env.VUE_APP_ORDER_URL,
-  timeout: 10000
+  timeout: 1000000
 })
 
 // request interceptor
