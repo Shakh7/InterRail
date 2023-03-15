@@ -417,7 +417,7 @@ export default {
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'smgs_base'}" class="nav-link" data-key="t-task-details">
+          <router-link :to="{ name: 'smgs_extractor'}" class="nav-link" data-key="t-task-details">
             <font-awesome-icon icon="fa-solid fa-print"/>
             <span data-key="t-orders">SMGS extractor</span>
           </router-link>

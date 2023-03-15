@@ -39,8 +39,9 @@
     </b-card-body>
   </b-card>
   <div class="card container-fluid p-2 mt-2" v-if="!selected_doc">
-    <table class="table  table-nowrap">
-      <thead>
+    <div class="table-responsive">
+    <table class="table align-middle position-relative table-nowrap">
+      <thead class="table-active">
       <tr>
         <th scope="col">№</th>
         <th scope="col">Document Name</th>
@@ -48,7 +49,7 @@
         <th scope="col">Updated Date</th>
       </tr>
       </thead>
-      <tbody>
+      <tbody id="task-lists">
       <tr v-for="(row, index) in documents" :key="row.id">
         <th>{{ index + 1 }}</th>
         <td>{{ row.name }}</td>
@@ -67,6 +68,7 @@
       </tr>
       </tbody>
     </table>
+  </div>
   </div>
   <div class="container-fluid" v-else>
     <div class="card">
@@ -253,9 +255,9 @@
                 </button>
               </div>
             </form>
-            <div class="table-responsive table-card">
-              <table class="table text-center table-bordered">
-                <thead class="table-light">
+            <div class="table-responsive table-card" style="height: 600px; overflow-y: auto;">
+              <table class="table align-middle position-relative table-nowrap">
+                <thead class="table-active">
                 <tr>
                   <th scope="col">№</th>
                   <th scope="col">SMGS №</th>
@@ -492,6 +494,37 @@ export default {
       window.open(`${process.env.VUE_APP_ORDER_URL}/smgs/xlsx/download/${this.selected_doc.id}/`, '_blank');
     },
     async confirm() {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      const newArray = this.visible_rows.map(obj => {
+        if (obj.code) {return {code_id: obj.code.id, smgs_id: obj.id}}
+        return
+      });
+      await OrderService({
+        url: '/smgs/sync/code/',
+        method: 'PUT',
+        data: newArray,
+      }).then(() => {
+        Toast.fire({
+          icon: 'success',
+          title: 'All codes have been updated!'
+        })
+      }).catch((err) => {
+        Toast.fire({
+          icon: 'error',
+          title: err
+        })
+      })
+
 
     },
     async onEditDoc(id) {
@@ -691,6 +724,13 @@ export default {
   font-weight: bold;
   font-size: 28px;
   transition: 0.6s ease;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
 }
 
 .dropzone {
