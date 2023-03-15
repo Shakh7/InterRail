@@ -1,10 +1,16 @@
 <template>
   <Table name="Invoice Lists" :url="table.url" :headers="table.headers">
     <template v-slot:file="props">
-      <span class="big_icon_on_hover" @click="downloadInvoice(props.row.file)">
+      <span class="big_icon_on_hover link-info" @click="downloadInvoice(props.row.file)">
         {{ getFileName(props.row.file) }}
         <i class="bx bxs-download text-secondary fs-16 ms-1"></i>
       </span>
+    </template>
+    <template v-slot:total_cost="props">
+      <span v-if="props.row.total_cost">
+        ${{ parseFloat(Math.round(parseFloat(props.row.total_cost) * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+      </span>
+      <span v-else>-</span>
     </template>
   </Table>
 </template>
@@ -88,7 +94,6 @@ export default {
 
 .big_icon_on_hover:hover {
   cursor: pointer;
-  color: #0d6efd;
 }
 
 .big_icon_on_hover:hover i {

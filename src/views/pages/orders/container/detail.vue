@@ -409,7 +409,61 @@
             </div>
           </div>
         </div>
+        <div class="card">
+          <div class="card-header align-items-center d-flex border-bottom-dashed">
+            <h4 class="card-title mb-0 flex-grow-1">Invoices</h4>
+            <div class="flex-shrink-0">
+              <router-link :to="{ name: 'order_invoice_create', params: {order_number: order.order_number}}">
+                <button type="button" class="btn btn-soft-info btn-sm">
+                  <i class="bx bx-plus-medical me-1 "></i>
+                  Create
+                </button>
+              </router-link>
+            </div>
+          </div>
+
+          <div class="card-body p-0 py-2" v-if="invoices.length > 0">
+
+            <TransitionGroup name="list" tag="ul" class="list-unstyled">
+              <li class="px-3 py-2 my-1" v-for="invoice in invoices" :key="invoice.id">
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar-sm">
+                      <div class="avatar-title bg-light text-secondary rounded fs-24">
+                        <i class="bx bx-file"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 overflow-hidden">
+                    <h5 class="fs-13 mb-1">
+                      <a class="text-body text-truncate d-block">{{ getInvoiceName(invoice.file) }}</a>
+                    </h5>
+                    <div>{{ getInvoiceFileSize(invoice.file_size) }}</div>
+                  </div>
+                  <div class="flex-shrink-0 ms-2">
+                    <i @click="downloadInvoice(invoice.file)" class="bx bxs-download c_icon_hoverable fs-18"></i>
+                    <i @click="deleteInvoice(invoice)"
+                       class="bx bxs-trash-alt c_icon_hoverable fs-18 ms-2 text-danger"></i>
+                  </div>
+                </div>
+              </li>
+            </TransitionGroup>
+
+          </div>
+          <div class="card-body p-0 py-2 text-center" v-else-if="invoices.length === 0">
+            <h5 class="pt-5">You have no invoices yet </h5>
+            <div class="pb-5">
+              <span>Create an invoice</span>
+              <span>
+              <router-link :to="{ name: 'order_invoice_create', params: {order_number: order.order_number}}">
+              <span class="fw-semibold"> here</span>
+            </router-link>
+            </span>
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
 
   </div>
@@ -434,6 +488,7 @@ import ActualCostInput from "../components/ActualCostInput.vue";
 import CounterpartyActions from "../components/CounterpartyActions.vue";
 import PageHeader from "../../../../components/page-header.vue"
 import skeleton from "../../../../components/custom/skeleton.vue"
+import axios from "axios";
 
 export default {
   name: "detail",
@@ -444,6 +499,7 @@ export default {
       container_types: null,
       counterparty_list: [],
       category_list: [],
+      invoice_list: [],
       sending_type: '',
       agreed_cost_sum: 0,
       profit_sum: 0,
@@ -458,6 +514,7 @@ export default {
     async fetchData() {
       let response = await fetch(`${process.env.VUE_APP_ORDER_URL}/container_order/list/${this.$route.params.id}/`)
       let data = await response.json()
+      console.log(data)
       if (data.length === 0) {
         let timerInterval
         Swal.fire({
@@ -481,6 +538,7 @@ export default {
       this.product = data[0]['product']
       this.container_types = data[0]['container_types']
       this.sending_type = data[0]['sending_type']
+      this.invoice_list = data[0]['order']['invoices']
       this.sumAgreedCosts()
       this.sumProfits()
     },
@@ -640,6 +698,73 @@ export default {
       await this.fetchData();
       await this.getCategoryList()
       await this.getCounterpartyList()
+    },
+
+    getInvoiceName(file) {
+      return file.split('/').pop()
+    },
+    getInvoiceFileSize(size) {
+      return ((size / 1024) / 1024).toFixed(2) + ' MB'
+    },
+    downloadInvoice(file) {
+      let url = process.env.VUE_APP_ORDER_URL + file;
+      fetch(url)
+          .then(resp => resp.blob())
+          .then(blobobject => {
+            const blob = window.URL.createObjectURL(blobobject);
+            const anchor = document.createElement('a');
+            anchor.style.display = 'none';
+            anchor.href = blob;
+            anchor.download = url.toString().split('/')[url.toString().split('/').length - 1];
+            document.body.appendChild(anchor);
+            anchor.click();
+            window.URL.revokeObjectURL(blob);
+          })
+          .catch(() => alert('An error in downloading the file sorry'));
+    },
+    async deleteInvoice(invoice) {
+      let response = confirm('Are you sure you want to delete invoice?' + invoice.id);
+      if (response) {
+        let headers = new Headers();
+        headers.append("Content-Type", `application/json`);
+
+        let req = await axios.delete('/invoice/delete/' + invoice.id + '/', headers)
+        if (req.status >= 200) {
+          this.invoice_list = this.invoice_list.filter(i => i.id !== invoice.id)
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          await Toast.fire({
+            icon: 'success',
+            title: 'Successfully deleted'
+          })
+        } else {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          await Toast.fire({
+            icon: 'error',
+            title: 'Something went wrong'
+          })
+        }
+      }
     }
   },
   async mounted() {
@@ -656,6 +781,11 @@ export default {
     PageHeader,
     skeleton
   },
+  computed: {
+    invoices() {
+      return this.invoice_list
+    },
+  }
 }
 </script>
 
@@ -673,5 +803,16 @@ export default {
 .slide-up-leave-to {
   opacity: 0;
   transform: translateY(-30px);
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
