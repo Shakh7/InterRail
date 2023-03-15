@@ -68,6 +68,43 @@ export default {
       let r = this.orderData.freight_charges[index]
       r.deleted = false
     },
+
+    async downloadInvoice() {
+      let formData = new FormData()
+
+      formData.append('order_number', this.orderNumber)
+      formData.append('customer', 1)
+      formData.append('shipper', this.orderData.shipper)
+      formData.append('consignee', this.orderData.consignee)
+      formData.append('departure_country', this.orderData.departure_country)
+      formData.append('destination_country', this.orderData.destination_country)
+      formData.append('quantity', this.orderData.freight_charges[0].quantity)
+      formData.append('unit', this.orderData.freight_charges[0].container_type)
+      formData.append('amount', this.orderData.freight_charges[0].agreed_rate)
+      formData.append('total', this.orderData.freight_charges[0].agreed_rate * this.orderData.freight_charges[0].quantity)
+      formData.append('date', this.date)
+
+      let response = await axios.post('/invoice/create/', formData)
+      let invoice = response.data
+
+      let url = process.env.VUE_APP_ORDER_URL + invoice.file
+      fetch(url)
+          .then(resp => resp.blob())
+          .then(blobobject => {
+            const blob = window.URL.createObjectURL(blobobject);
+            const anchor = document.createElement('a');
+            anchor.style.display = 'none';
+            anchor.href = blob;
+            anchor.download = url.toString().split('/')[url.toString().split('/').length - 1];
+            document.body.appendChild(anchor);
+            anchor.click();
+            window.URL.revokeObjectURL(blob);
+          })
+          .catch(() => alert('An error in downloading the file sorry'));
+
+
+      console.log(invoice)
+    }
   },
   // watch: {
   //   detailedInfo(newVal) {
@@ -158,7 +195,6 @@ export default {
               </div>
             </div>
           </div>
-          <!--end row-->
         </div>
 
         <div class="card-body p-4 py-3 border-top border-top-dashed">
@@ -232,7 +268,8 @@ export default {
           <p class="w-75 lh-lg mb-0" v-if="orderData.containers.filter(i=>i!==null).length > 0">
             {{ orderData.containers.join(', ') }} </p>
           <p class="w-75 lh-lg mb-0 text-danger" v-else>
-            Order has {{ orderData.containers.length }} container. However, the container names for your order have not been provided yet!</p>
+            Order has {{ orderData.containers.length }} container. However, the container names for your order have not
+            been provided yet!</p>
         </div>
 
         <div class="card-body p-4 pb-0 border-top border-bottom border-top-dashed border-bottom-dashed">
@@ -356,7 +393,7 @@ export default {
                     aria-controls="offcanvasRight">
               <i class="ri-printer-line align-bottom me-1"></i> Detailed
             </button>
-            <a href="javascript:void(0);" class="btn btn-success"><i
+            <a @click="downloadInvoice()" class="btn btn-success"><i
                 class="ri-download-2-line align-bottom me-1"></i> Download
               Invoice</a>
           </div>

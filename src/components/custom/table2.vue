@@ -190,10 +190,12 @@ export default {
       this.getData()
     },
     goNextPage() {
+      if (this.pagination.ratio === 1 || this.pagination.current_page === this.pagination.ratio) return
       this.table.current_page = this.table.current_page + 1
       this.getData()
     },
     goPrevPage() {
+      if (this.pagination.ratio === 1 || this.pagination.current_page === 1) return
       this.table.current_page = this.table.current_page - 1
       this.getData()
     },
