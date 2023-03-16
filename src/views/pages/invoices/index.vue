@@ -8,9 +8,18 @@
     </template>
     <template v-slot:total_cost="props">
       <span v-if="props.row.total_cost">
-        ${{ parseFloat(Math.round(parseFloat(props.row.total_cost) * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+        ${{
+          parseFloat(Math.round(parseFloat(props.row.total_cost) * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        }}
       </span>
       <span v-else>-</span>
+    </template>
+
+    <template v-slot:paid_status="props">
+      <span class="badge" :class="{
+        'badge-outline-danger' : props.row.paid_status === 'unpaid',
+        'badge-outline-success' : props.row.paid_status === 'paid',
+      }">{{ props.row.paid_status }}</span>
     </template>
   </Table>
 </template>
@@ -45,6 +54,11 @@ export default {
           {
             field: 'file',
             label: 'FILE',
+            align: 'center'
+          },
+          {
+            field: 'paid_status',
+            label: 'PAID',
             align: 'center'
           },
           {

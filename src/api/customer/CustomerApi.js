@@ -77,6 +77,15 @@ export async function createCompany(company) {
     return response
 }
 
+export async function deleteCompanyBySlug(companyId) {
+    let response = await axios.delete(url + '/companies/' + companyId + '/')
+    if (response.status === 204) {
+        return response.data
+    } else {
+        return null
+    }
+
+}
 export async function getContractsByCompanyId(companyId) {
     let response = await axios.get(url + '/contracts/' + companyId + '/by_company/')
     return validateResponse(response)

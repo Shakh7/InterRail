@@ -26,14 +26,17 @@
             class="c_icon me-1 c_icon_hoverable text-dark"
         />
 
-        <font-awesome-icon icon="fa-solid fa-trash"
-                           class="c_icon c_icon_hoverable text-danger"
+        <font-awesome-icon
+            @click="current_company = props.row" href="#company_delete_modal" data-bs-toggle="modal"
+            icon="fa-solid fa-trash"
+            class="c_icon c_icon_hoverable text-danger"
         />
       </div>
     </template>
   </Table>
 
   <CreateCustomerModal @customer-created="table.getUpdate = !table.getUpdate"/>
+  <DeleteCustomerModal @deleted="table.getUpdate = !table.getUpdate" :company="current_company"/>
 </template>
 
 <script>
@@ -42,13 +45,15 @@ import Table from "@/components/custom/table2.vue";
 
 
 import CreateCustomerModal from './modals/customer_create.vue'
+import DeleteCustomerModal from './modals/customer_delete.vue'
 
 export default {
   name: "customers_list",
   components: {
     PageHeader,
     Table,
-    CreateCustomerModal
+    CreateCustomerModal,
+    DeleteCustomerModal
   },
   data() {
     return {
@@ -92,7 +97,9 @@ export default {
             align: "center",
           },
         ],
-      }
+      },
+
+      current_company: {},
     }
   }
 }
