@@ -450,6 +450,7 @@
             </TransitionGroup>
 
           </div>
+
           <div class="card-body p-0 py-2 text-center" v-else-if="invoices.length === 0">
             <h5 class="pt-5">You have no invoices yet </h5>
             <div class="pb-5">

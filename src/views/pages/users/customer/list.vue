@@ -4,6 +4,7 @@
       name="Customers List"
       :headers="table.header"
       url="/customer/companies/"
+      :getUpdate="table.getUpdate"
   >
     <template v-slot:name="props">
       <span>
@@ -13,6 +14,11 @@
       </span>
     </template>
 
+    <template #top-right>
+      <a class="btn btn-success" href="#CreateCustomerModal" data-bs-toggle="modal"><i
+          class="ri-add-line align-bottom me-1"></i>
+        Create Customer</a>
+    </template>
     <template v-slot:actions="props">
       <div class="w-100 text-center" :id="props.row.id">
         <font-awesome-icon
@@ -26,17 +32,23 @@
       </div>
     </template>
   </Table>
+
+  <CreateCustomerModal @customer-created="table.getUpdate = !table.getUpdate"/>
 </template>
 
 <script>
 import PageHeader from "@/components/page-header.vue";
 import Table from "@/components/custom/table2.vue";
 
+
+import CreateCustomerModal from './modals/customer_create.vue'
+
 export default {
   name: "customers_list",
   components: {
     PageHeader,
-    Table
+    Table,
+    CreateCustomerModal
   },
   data() {
     return {
@@ -52,6 +64,7 @@ export default {
         },
       ],
       table: {
+        getUpdate: false,
         header: [
           {
             label: "Name",

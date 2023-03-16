@@ -145,7 +145,6 @@ export default {
     </div>
     <!--end row-->
   </div>
-
   <div v-if="!is_loading_company" class="row">
     <div class="col-lg-12">
       <div>

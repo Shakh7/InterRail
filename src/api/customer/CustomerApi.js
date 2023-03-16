@@ -2,7 +2,7 @@ let url = '/customer'
 import axios from "axios";
 
 function validateResponse(response) {
-    if (response.statusText === 'OK') {
+    if (response.status === 200) {
         return response.data
     } else {
         return null
@@ -46,6 +46,33 @@ export async function updateCompany(company) {
         .catch(() => {
             return response
         })
+
+    return response
+}
+
+export async function createCompany(company) {
+
+    const req_url = url + '/companies/';
+    const formData = new FormData();
+
+    formData.append('name', company.name);
+    formData.append('email', company.email);
+    formData.append('phone', company.phone);
+    formData.append('address', company.address);
+    formData.append('about', company.about);
+
+    let response = {
+        ok: true,
+        data: null
+    };
+
+    try {
+        let res = await axios.post(req_url, formData)
+        response.data = res.data
+    } catch (error) {
+        response.ok = false
+        response.data = error.response.data
+    }
 
     return response
 }
