@@ -19,20 +19,10 @@
         <div class="p-4">
           <div class="row g-3 mb-3" v-for="(li, index) in list" :key="li">
             <div class="col-12 py-0 text-start" v-if="index === 1">
-
               <div>
                 <span class="text-warning"><i class="ri-alert-fill fs-5 my-0 me-2"></i></span>
                 <span class="text-muted">All the codes below will be considered as sub codes of the code above.</span>
               </div>
-              <!--              <div style="max-width: 150px">-->
-              <!--                <VTooltip>-->
-              <!--                  <h6 class="my-0">Sub codes: <i class="ri-question-fill my-0"></i></h6>-->
-              <!--                  <template #popper>-->
-              <!--                    All the codes below will be considered as sub codes of the code above.-->
-              <!--                  </template>-->
-              <!--                </VTooltip>-->
-              <!--              </div>-->
-
             </div>
             <div class="col-2">
               <label for="prefixInput" class="form-label">Prefix</label>
@@ -48,14 +38,14 @@
               <span class="text-danger ms-1">*</span>
 
               <div @dblclick="li.manualEnd = false">
-                <input v-if="li.manualEnd" v-model="li.end" type="text" class="form-control"
+                <input v-if="li.manualEnd" v-model="li.end" type="number" class="form-control"
                        id="endInput"
                        :placeholder="li.start ? parseInt(li.start) + application.quantity - 1 : 'Manual end'"
                        :class="getClassName(index)">
               </div>
 
               <div @dblclick="li.manualEnd = true">
-                <input v-if="!li.manualEnd" type="text" class="form-control"
+                <input v-if="!li.manualEnd" type="number" class="form-control"
                        id="endInput"
                        :value="li.start ? parseInt(li.start) + application.quantity - 1: ''"
                        placeholder="Double click to enter manually"
