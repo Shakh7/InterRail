@@ -110,6 +110,7 @@ export default {
   methods: {
     async getData() {
       let axios_params = new Object({})
+      // let table_local_storage = new Object({})
 
       let currentSearchedFields = this.getHeaders.filter(header => header.searchText !== '').map(header => {
         return {
@@ -121,8 +122,11 @@ export default {
       if (currentSearchedFields.length > 0) {
         currentSearchedFields.forEach((item) => {
           axios_params[item.field] = item.searchText
+          // table_local_storage[item.field] = item.searchText
         })
       }
+
+      // localStorage.setItem(this.id, JSON.stringify(table_local_storage))
 
       axios_params['offset'] = this.pagination.per_page * (this.pagination.current_page - 1)
       axios_params['limit'] = this.pagination.per_page
@@ -213,6 +217,15 @@ export default {
       this.table.per_page = 10
     }
     if (this.url !== '') {
+      // if (localStorage.getItem(this.id) !== null) {
+      //   this.headers.filter(header => (header.visible === undefined || header.visible === true)).forEach((header) => {
+      //     let local_storage = JSON.parse(localStorage.getItem(this.id))
+      //     if (local_storage[header.field] !== undefined) {
+      //       header.searchText = local_storage[header.field]
+      //     }
+      //   })
+      // }
+      // console.log(this.getHeaders)
       await this.getData()
     }
   },

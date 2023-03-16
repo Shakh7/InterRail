@@ -393,10 +393,7 @@ export default {
       :headers="table.headers"
       :selectable="true"
       :searchable="true"
-      :isLoading="false"
-      :pagination="table.pagination"
       :getUpdate="getUpdate"
-      :treeUrl="table.tree_url"
   >
 
     <template #top-right>
