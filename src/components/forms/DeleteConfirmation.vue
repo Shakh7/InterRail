@@ -14,7 +14,7 @@
           <h5 class="fw-light">Are you sure you want to delete <span class="fw-semibold">{{ confirmationPlaceholder }} </span>? </h5>
           <form @submit.prevent="deleteRecord" class="mt-4">
             <div class="mb-3">
-              <label for="recordName" class="form-label text-dark fw-light">
+              <label for="recordName" class="form-label text-dark fw-medium">
                 <slot name="recordName">
                   Type <code><span class="fw-medium">{{ confirmationPlaceholder }}</span></code> to confirm deletion
                 </slot>
