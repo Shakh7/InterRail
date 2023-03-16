@@ -325,6 +325,7 @@ export default [
         children: [
             {path: 'list/', name: 'smgs_list', component: () => import("../views/pages/smgs/list.vue"),},
             {path: 'update/:id', name: 'smgs_update', component: () => import("../views/pages/smgs/update.vue"),},
+            // {path: 'base/list/', name: 'smgs_base', component: () => import("../views/pages/smgs/Main.vue"),},
             {
                 path: 'extractor/',
                 name: 'smgs_extractor',

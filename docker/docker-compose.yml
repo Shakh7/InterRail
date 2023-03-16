@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
-      - PORT=80
+      - PORT=3000
       - VUE_APP_URL=${VUE_APP_URL}
       - VUE_APP_ORDER_URL=${VUE_APP_ORDER_URL}
       - VUE_APP_USERS_URL=${VUE_APP_USERS_URL}
@@ -14,4 +14,4 @@ services:
       - VUE_APP_I18N_FALLBACK_LOCALE=${VUE_APP_I18N_FALLBACK_LOCALE}
       - VUE_APP_DEFAULT_AUTH=${VUE_APP_DEFAULT_AUTH}
     ports:
-      - 3000:80
+      - 3000:3000
