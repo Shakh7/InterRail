@@ -98,7 +98,7 @@
             <!-- Primary Alert -->
             <b-alert :show="showAlert" dismissible variant="success" class="alert-border-left fade show" role="alert">
               <i class="ri-user-smile-line me-1 align-large"></i>
-              Code: <b>{{ this.scanned.code ? this.scanned.code: ""  }}</b> Smgs: <b>{{ this.scanned.smgs_number ? this.scanned.smgs_number: ""  }}</b>  Container: <b>{{ this.scanned.container ? this.scanned.container: ""  }}</b>
+              Code: <b>{{ this.scan ? this.scan.code: ""  }}</b> Smgs: <b>{{ this.scan.smgs_number ? this.scan.smgs_number: ""  }}</b>  Container: <b>{{ this.scan.container ? this.scan.container: ""  }}</b>
             </b-alert>
             <form @submit.prevent="addEditSmgsRow">
               <div class="modal-body">
@@ -106,7 +106,6 @@
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
                       <v-select 
-                      required
                       v-model="forwarder.selected"
                       placeholder="Select forwarder"
                       :options="forwarder.options"
@@ -119,7 +118,6 @@
                   <div class="col-xxl-6 ps-0">
                     <div class="mb-3">
                         <v-select 
-                          required
                           v-model="code.selected"
                           placeholder="Search code"
                           :options="code.options"
@@ -350,7 +348,7 @@ export default {
       imagePath: '',
       isReadingDoc: false,
       showModal: false,
-      scanned: {},
+      scan: {},
       items: [
         {
           text: "Home",
@@ -463,9 +461,9 @@ export default {
       let image_path = this.selected_smgs.image_path.split("/").slice(2).join("/");
       let res = await fetch(`${process.env.VUE_APP_ORDER_URL}/smgs/image/${image_path}/${query.id}/`)
       let result = await res.json()
-      if (result.scanned.code || result.scanned.smgs_number || result.scanned.container) {
+      if (result.scan.code || result.scan.smgs_number || result.scan.container) {
         this.showAlert = true
-        this.scanned = result.scanned
+        this.scan = result.scan
         // setTimeout(() => { this.showAlert = false }, 2000);
       }
       this.container.selected = result.populated.container ? result.populated.container : null
@@ -578,7 +576,18 @@ export default {
               var foundIndex = this.visible_rows.findIndex(x => x.index == res.data.index);
               this.visible_rows[foundIndex] = res.data
             }
-            this.selected_smgs = this.visible_rows.length == this.selected_doc.smgses.length ? this.selected_doc.smgses[this.visible_rows.length-1]:this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
+            if (this.visible_rows.length == this.selected_doc.smgses.length) {
+              this.selected_smgs = this.selected_doc.smgses[this.visible_rows.length-1]
+            } else {
+              const prev_number = this.selected_smgs.number
+              const prev_date = this.selected_smgs.date
+              this.selected_smgs = this.selected_doc.smgses.find(el => el.index == this.visible_rows.length)
+              this.selected_smgs.number = prev_number
+              this.selected_smgs.date = prev_date
+              this.code.selected = null
+              this.container.selected = null
+              this.wagon.selected = null
+            }
           })
           .catch(err => {
             alert(err)
@@ -652,6 +661,13 @@ export default {
 </script>
 
 <style scoped>
+:root {
+  /* --vs-search-input-placeholder-color: inherit; */
+  --vs-search-input-color: inherit;
+    --vs-search-input-bg: rgb(255, 0, 0);
+    --vs-search-input-placeholder-color: inherit;
+
+}
 .image {
   width: 100%;
   height: auto;
@@ -661,6 +677,15 @@ export default {
   position: relative;
 }
 
+.style-chooser .vs__search::placeholder,
+.style-chooser .vs__dropdown-toggle,
+.style-chooser .vs__dropdown-menu {
+  background: #dfe5fb;
+  border: none;
+  color: #394066;
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
 .image-container {
   width: 100%;
   height: auto;
