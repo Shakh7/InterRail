@@ -350,36 +350,30 @@ export default {
   >
     <swiper-slide v-for="widget in applicationWidgets" :key="widget.id">
       <div class="card">
-        <div class="card-body pb-0">
-          <div class="d-flex justify-content-between align-items-center">
-
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
             <div>
               <h5 class="fs-15 fw-semibold text-capitalize">{{ widget['forwarder__name'] }}</h5>
-              <p class="text-muted">Empty applications</p>
             </div>
-
-            <div class="text-end">
-              <h5 class="fs-15 fw-semibold text-capitalize"
-                  :class="{
-                      'text-success': widget.filled >= widget.not_filled,
-                      'text-danger': widget.not_filled > widget.filled}"
-              >
-                {{ widget.filled + widget.not_filled }}
-              </h5>
-              <p class="text-muted">{{
-                  widget.not_filled
-                }}</p>
-            </div>
-
           </div>
-
-        </div>
-        <div class="progress pt-0 animated-progess rounded-bottom rounded-0" style="height: 4px">
-          <div :class="{
-                      'bg-success': widget.filled >= widget.not_filled,
-                      'bg-danger': widget.not_filled > widget.filled}"
-               class="progress-bar rounded-0" role="progressbar" style="width: 100%" aria-valuenow="100"
-               aria-valuemin="0" aria-valuemax="100">
+          <div class="mt-auto">
+            <div class="d-flex mb-2">
+              <div class="flex-grow-1">
+                <div>Applications</div>
+              </div>
+              <div class="flex-shrink-0">
+                <div>
+                  <i class="ri-list-check align-bottom me-1 text-muted"></i>
+                  {{ widget.filled }}/{{ widget.filled + widget.not_filled }}
+                </div>
+              </div>
+            </div>
+            <div class="progress progress-sm animated-progess">
+              <div class="progress-bar bg-success" role="progressbar"
+                   :aria-valuenow="widget.filled" aria-valuemin="0"
+                   aria-valuemax="100"
+                   :style="{width: ((widget.filled) / (widget.filled + widget.not_filled)) *100 + '%'}"></div>
+            </div>
           </div>
         </div>
       </div>
